@@ -1,0 +1,34 @@
+/* Estilo general del navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+  }
+  
+  /* Contenedor del icono */
+  .icon-container {
+    margin-right: 15px;
+  }
+  
+  /* Estilo del botón del icono */
+  .icon-button {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Estilo de la imagen del logo */
+  .logo {
+    height: 40px;
+    object-fit: contain;
+  }
+  
+
+  .navbar-text{
+    margin: 10px;
+    font-size: 24px;
+  }
