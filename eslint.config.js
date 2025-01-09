@@ -1,38 +1,39 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
+import prettierConfig from 'eslint-config-prettier'
+import prettierPlugin from 'eslint-plugin-prettier'
+import reactPlugin from 'eslint-plugin-react'
 
 export default [
-  { ignores: ['dist'] },
+  {
+    ignores: ['node_modules/', 'dist/', 'build/'], // Ignorar directorios
+  },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
       parserOptions: {
         ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        React: 'readonly', // Si usas JSX sin importar React explícitamente
       },
     },
-    settings: { react: { version: '18.3' } },
+    settings: {
+      react: {
+        version: '18', // Especifica tu versión de React aquí
+      },
+    },
     plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      react: reactPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules,
-      'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      ...reactPlugin.configs.recommended.rules, // Reglas recomendadas para React
+      ...prettierConfig.rules, // Configuración de Prettier
+      'prettier/prettier': 'error', // Forzar formato de Prettier
+      'react/react-in-jsx-scope': 'off', // Desactivar regla obsoleta para React 17+
     },
   },
 ]
