@@ -36,11 +36,6 @@
     "prettier": "^3.4.2",
     "vite": "^6.0.5"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "src/**/*.{js,jsx}": [
       "eslint --fix",
