@@ -154,7 +154,7 @@ const Navbar = () => {
                     type="button"
                     onClick={() =>
                       setActiveForm(
-                        activeForm === 'login' ? 'register' : 'login',
+                        activeForm === 'login' ? 'register' : 'login'
                       )
                     }
                     className="switch-form-button"

@@ -152,32 +152,14 @@ npx prettier --help
 
 Husky es una herramienta que permite integrar hooks personalizados en Git. Los hooks son acciones que se ejecutan automáticamente en eventos específicos, como antes de realizar un commit (`pre-commit`) o antes de realizar un push (`pre-push`). Con Husky, puedes garantizar que el código pase por verificaciones automáticas antes de ser enviado al repositorio.
 
-### 4.2 Configurar Husky
-
-1. **Habilitar Husky en tu proyecto:**
-
-   ```bash
-   npm run prepare
-   ```
-
-   Esto configura Husky y crea la carpeta `.husky`.
-
-2. **Agregar un Hook de Pre-commit:**
-
-   ```bash
-   npx husky add .husky/pre-commit "npx lint-staged"
-   ```
-
-   Este comando crea un archivo `.husky/pre-commit` que ejecutará `lint-staged` antes de confirmar los cambios.
-
-### 4.3 Ejecutar Linters Automáticamente Antes de Confirmar Cambios
+### 4.2 Ejecutar Linters Automáticamente Antes de Confirmar Cambios
 
 Si has configurado `lint-staged`, este proceso incluirá:
 
 1. Ejecutar `eslint --fix` para solucionar problemas de estilo.
 2. Ejecutar `prettier --write` para formatear el código.
 
-### 4.4 Simular un Pre-commit Manualmente
+### 4.3 Simular un Pre-commit Manualmente
 
 ```bash
 npx lint-staged
