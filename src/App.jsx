@@ -4,7 +4,7 @@
 
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Navbar from './components/molecules/Navbar'
+import Home from './components/pages/Home'
 
 //------------------
 //BrowserRouter
@@ -15,7 +15,7 @@ import Navbar from './components/molecules/Navbar'
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Navbar />} />
+      <Route path="/" element={<Home />} />
     </Routes>
   </BrowserRouter>
 )
