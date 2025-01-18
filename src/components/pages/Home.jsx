@@ -8,7 +8,6 @@ const Home = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Trend Pulse</h1>
       <Button theme="lightGreen" onClick={handleClick}>
         Ir a Home
       </Button>
