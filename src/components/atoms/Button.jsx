@@ -27,8 +27,6 @@ const StyledButton = styled.button.attrs((props) => ({
   cursor: pointer;
   box-shadow: 0px 2px 2px lightgray;
   transition: ease background-color 250ms;
-  width: 100px;
-  height: 100px;
 
   &:hover {
     background-color: ${(props) => props.$themeStyle.hover};
