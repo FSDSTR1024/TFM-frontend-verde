@@ -19,14 +19,16 @@ const StyledButton = styled.button.attrs((props) => ({
   background-color: 'none';
   color: black;
   padding: 8px 16px;
-  border-radius: 5px;
+  border-radius: 0px;
   outline: 0;
-  border: 1px black solid;
+  border: 1.4px black solid;
   text-transform: uppercase;
   margin: 10px 9px;
   cursor: pointer;
   box-shadow: 0px 2px 2px lightgray;
   transition: ease background-color 250ms;
+  width: 100px;
+  height: 100px;
 
   &:hover {
     background-color: ${(props) => props.$themeStyle.hover};
