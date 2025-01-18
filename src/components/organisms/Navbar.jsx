@@ -8,9 +8,8 @@ const NavBar = () => (
       display: 'grid',
       justifyContent: 'space-between', // Espacio entre logo y botón
       justifyItems: 'center',
-      alignItems: 'stretch',
+      alignItems: 'center',
       padding: '10px 20px',
-      width: '100%',
       backgroundColor: 'white',
       margin: '0px',
       gridTemplateColumns: 'repeat(6, 1fr)',

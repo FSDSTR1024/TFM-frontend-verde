@@ -19,7 +19,6 @@ const StyledButton = styled.button.attrs((props) => ({
   background-color: 'none';
   color: black;
   padding: 8px 16px;
-  border-radius: 0px;
   outline: 0;
   border: 1.4px black solid;
   text-transform: uppercase;
