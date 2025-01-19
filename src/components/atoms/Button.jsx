@@ -22,9 +22,7 @@ const StyledButton = styled.button.attrs((props) => ({
   outline: 0;
   border: 1.4px black solid;
   text-transform: uppercase;
-  margin: 10px 9px;
   cursor: pointer;
-  box-shadow: 0px 2px 2px lightgray;
   transition: ease background-color 250ms;
 
   &:hover {

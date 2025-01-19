@@ -9,17 +9,16 @@ const StyledLogo = styled.a`
   text-decoration: none;
 
   img {
-    width: ${(props) =>
-      props.$width}; /* Usamos $ para definir transient props */
-    height: ${(props) => props.$height};
-    max-width: 100%;
+    height: 100%; /* Ocupará el 100% de la altura del contenedor del Header */
+    width: auto; /* Ajustará el ancho proporcionalmente */
+    max-width: 105px; /* Límite máximo para evitar que el logo sea demasiado grande */
   }
 
   /* Estilo responsivo para dispositivos móviles */
   @media (max-width: 768px) {
     img {
-      width: ${(props) => props.$responsiveWidth};
-      height: ${(props) => props.$responsiveHeight};
+      height: auto; /* Cambia el comportamiento en dispositivos pequeños */
+      width: ${(props) => props.$responsiveWidth || '40px'};
     }
   }
 `
@@ -32,22 +31,24 @@ const StyledLogo = styled.a`
  * @param {string} [height='50px'] - Alto del logo.
  * @param {string} [responsiveWidth='40px'] - Ancho responsivo del logo.
  * @param {string} [responsiveHeight='40px'] - Alto responsivo del logo.
+ * @param {string} [altText='Logo'] - Texto alternativo para accesibilidad.
  */
 const Logo = ({
   href = '/',
   width = '50px',
   height = '50px',
-  responsiveWidth = '40px',
-  responsiveHeight = '40px',
+  responsiveWidth = 'auto',
+  responsiveHeight = 'auto',
+  altText = 'Logo',
 }) => (
   <StyledLogo
     href={href}
-    $width={width} /* Pasamos las transient props con $ */
+    $width={width}
     $height={height}
     $responsiveWidth={responsiveWidth}
     $responsiveHeight={responsiveHeight}
   >
-    <img src={logo} alt="Logo de la empresa" />
+    <img src={logo} alt={altText} />
   </StyledLogo>
 )
 
@@ -58,6 +59,7 @@ Logo.propTypes = {
   height: PropTypes.string, // Alto del logo
   responsiveWidth: PropTypes.string, // Ancho responsivo del logo
   responsiveHeight: PropTypes.string, // Alto responsivo del logo
+  altText: PropTypes.string, // Texto alternativo para accesibilidad
 }
 
 export default Logo

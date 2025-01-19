@@ -9,7 +9,7 @@ const StyledButtonNav = styled(Button)`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px; /* Ajusta el padding */
+  width: 100%;
 `
 
 const ButtonNav = ({ icon, label, theme, onClick, disabled }) => {
