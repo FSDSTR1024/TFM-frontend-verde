@@ -10,9 +10,10 @@ const StyledButtonNav = styled(Button)`
   align-items: center;
   justify-content: center;
   width: 100%;
+  border: none;
 `
 
-const ButtonNav = ({ icon, label, theme, onClick, disabled }) => {
+const ButtonNav = ({ label, theme, onClick, disabled }) => {
   return (
     <StyledButtonNav theme={theme} onClick={onClick} disabled={disabled}>
       <span>{label}</span> {/* Texto del botón */}

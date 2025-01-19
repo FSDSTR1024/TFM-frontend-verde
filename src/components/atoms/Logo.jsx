@@ -35,8 +35,8 @@ const StyledLogo = styled.a`
  */
 const Logo = ({
   href = '/',
-  width = '50px',
-  height = '50px',
+  width = 'auto',
+  height = 'auto',
   responsiveWidth = 'auto',
   responsiveHeight = 'auto',
   altText = 'Logo',

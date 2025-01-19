@@ -2,12 +2,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import Logo from '../atoms/Logo'
-import NavBar from './Navbar'
+import Navbar from '../organisms/Navbar'
 
 const StyledHeader = styled.header`
   width: 100%;
-  height: 200px;
-  background-color: green;
+  background-color: transparent;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -18,7 +17,8 @@ const HeaderContainer = styled.div`
   margin: 0 auto;
   padding: 0 2rem;
   height: 80px; // Definimos una altura fija para el header
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
 
   @media (max-width: 768px) {
     height: auto;
@@ -29,6 +29,13 @@ const LogoContainer = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
+  border: 1px solid black;
+  position: relative;
+  right: 45px;
+`
+
+const NavbarContainer = styled.div`
+  height: 100%;
 `
 
 const Header = () => (
@@ -43,7 +50,9 @@ const Header = () => (
           responsiveHeight="40px"
         />
       </LogoContainer>
-      <NavBar />
+      <NavbarContainer>
+        <Navbar />
+      </NavbarContainer>
     </HeaderContainer>
   </StyledHeader>
 )

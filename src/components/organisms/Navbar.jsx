@@ -5,8 +5,11 @@ import ButtonNav from '../molecules/ButtonsNav'
 const StyledNavBar = styled.nav`
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: center;
+  align-items: start;
   gap: 2rem;
+  height: 75%;
+  position: relative;
+  left: 2.7rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -16,7 +19,8 @@ const StyledNavBar = styled.nav`
 
 const NavButtons = styled.div`
   display: flex;
-
+  width: 65%;
+  height: 65%;
   @media (max-width: 768px) {
     justify-content: center;
   }
@@ -24,6 +28,7 @@ const NavButtons = styled.div`
 
 const NavBar = () => (
   <StyledNavBar>
+    <div />
     <div /> {/* Espaciador */}
     <NavButtons>
       <ButtonNav label="Home" theme="darkGreen" to="/" />
