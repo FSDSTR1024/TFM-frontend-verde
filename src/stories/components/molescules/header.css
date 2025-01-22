@@ -1,0 +1,22 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo {
+    flex-shrink: 0;
+    /* Evitamos que el logo se redimensione */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-logo img {
+    width: 100px;
+    height: auto;
+}
