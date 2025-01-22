@@ -13,7 +13,7 @@ const Header = ({ className }) => {
 }
 
 Header.propTypes = {
-  className: PropTypes.string, // Permite agregar clases adicionales si es necesario
+  className: PropTypes.string,
 }
 
 Header.defaultProps = {
