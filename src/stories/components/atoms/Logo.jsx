@@ -16,8 +16,8 @@ const Logo = ({ variant, size, className }) => {
 }
 
 Logo.propTypes = {
-  variant: PropTypes.oneOf(['primary', 'secondary', 'tertiary']),
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  variant: PropTypes.oneOf(['primary']),
+  size: PropTypes.oneOf(['predefined']),
   className: PropTypes.string,
 }
 

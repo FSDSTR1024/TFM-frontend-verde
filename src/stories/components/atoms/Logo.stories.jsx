@@ -5,7 +5,7 @@ export default {
   component: Logo,
   args: {
     variant: 'primary',
-    size: 'small',
+    size: 'predefined',
     className: '',
   },
 }
