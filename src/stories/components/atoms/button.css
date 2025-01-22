@@ -1,0 +1,31 @@
+.button {
+    /* accent-color sirve para cambiar el color */
+    --accent-color: #e1e3ac;
+    /* Color de fondo del botón */
+    background-color: var(--accent-color);
+    border: none;
+    color: black;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.button:hover {
+    background-color: #648a64;
+}
+
+.secondary {
+    background-color: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(var(--accent-color));
+}
+
+.tertiary {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--accent-color);
+}
