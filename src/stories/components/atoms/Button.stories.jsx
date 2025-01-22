@@ -16,17 +16,17 @@ export const Default = Template.bind({})
 export const Primary = Template.bind({})
 Primary.args = {
   children: 'Cartera Fría',
-  className: 'button--primary',
+  className: 'button-primary',
 }
 
 export const Secondary = Template.bind({})
 Secondary.args = {
   children: 'Cartera Caliente',
-  className: 'button--secondary',
+  className: 'button-secondary',
 }
 
 export const tertiary = Template.bind({})
 tertiary.args = {
   children: 'Mercados',
-  className: 'button--tertiary',
+  className: 'button-tertiary',
 }
