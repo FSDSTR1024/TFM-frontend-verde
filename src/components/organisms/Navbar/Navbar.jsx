@@ -1,5 +1,6 @@
 import Header from '@components/molecules/Header'
 import '@components/organisms/Navbar/Navbar.css'
+import PropTypes from 'prop-types' // ✅ Añade esta línea
 import React from 'react'
 
 const Navbar = ({ className }) => (

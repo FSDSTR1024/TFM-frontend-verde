@@ -1,24 +1,51 @@
+/* Estilos base del botón */
 .button {
+    --accent-color: #648a64;
+    /* Variable CSS para personalización */
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    text-align: center;
+    display: inline-block;
 }
 
+/* Estilos para hover y focus */
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Variantes */
 .primary {
-    background-color: #648a64;
+    background-color: var(--accent-color);
     color: white;
 }
 
 .secondary {
     background-color: transparent;
-    border: 2px solid #648a64;
-    color: #648a64;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
 }
 
 .tertiary {
     background-color: transparent;
-    color: #648a64;
+    color: var(--accent-color);
     text-decoration: underline;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
 }

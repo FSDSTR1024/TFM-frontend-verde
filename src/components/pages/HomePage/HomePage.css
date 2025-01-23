@@ -1,0 +1,12 @@
+.home-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-page {
+        padding: 1rem;
+    }
+}

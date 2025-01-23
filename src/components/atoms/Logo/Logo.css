@@ -1,0 +1,22 @@
+.logo {
+    max-width: 150px;
+    padding: 1rem;
+}
+
+.logo img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover img {
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .logo {
+        max-width: 100px;
+        padding: 0.5rem;
+    }
+}

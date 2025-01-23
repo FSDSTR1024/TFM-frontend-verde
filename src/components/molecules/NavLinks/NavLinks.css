@@ -1,0 +1,18 @@
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .nav-links .button {
+        width: 100%;
+        text-align: center;
+    }
+}
