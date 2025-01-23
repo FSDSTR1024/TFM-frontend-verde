@@ -1,13 +1,13 @@
+import HomePage from '@components/pages/HomePage'
 import React from 'react'
-import { BrowserRouter, Routes } from 'react-router-dom'
-import Header from './components/organisms/Header'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import './App.css'
 
 const App = () => (
   <BrowserRouter>
-    <Header />
-    <main>
-      <Routes></Routes>
-    </main>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+    </Routes>
   </BrowserRouter>
 )
 

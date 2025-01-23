@@ -1,13 +1,7 @@
-/* Fonts to project */
+@import '@assets/fonts/Playfair_Display/font.css';
 
-/* App.css */
-* {
+body {
+    font-family: 'Playfair Display', serif;
     margin: 0;
-    /* Elimina márgenes predeterminados */
     padding: 0;
-    /* Elimina relleno predeterminado */
-    box-sizing: border-box;
-    /* Asegura que el padding no afecte el tamaño total */
-    overflow-x: hidden;
-    /* Previene desbordamientos horizontales */
 }

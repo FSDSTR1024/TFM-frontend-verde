@@ -1,0 +1,48 @@
+/* Fuentes estáticas (pesos fijos) */
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('./static/PlayfairDisplay-Regular.ttf') format('truetype');
+    font-weight: 400;
+    /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('./static/PlayfairDisplay-Italic.ttf') format('truetype');
+    font-weight: 400;
+    /* Regular */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('./static/PlayfairDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+    /* Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('./static/PlayfairDisplay-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    /* Bold */
+    font-style: italic;
+}
+
+/* Opcional: Fuentes variables (si las usas) */
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('./static/PlayfairDisplay-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    /* Rango de pesos */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('./static/PlayfairDisplay-Italic-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+}
