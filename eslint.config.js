@@ -1,10 +1,12 @@
-import prettierConfig from 'eslint-config-prettier'
+// eslint.config.js
+import * as importPlugin from 'eslint-plugin-import' // ← Namespace import
+import jsdocPlugin from 'eslint-plugin-jsdoc'
 import prettierPlugin from 'eslint-plugin-prettier'
 import reactPlugin from 'eslint-plugin-react'
 
 export default [
   {
-    ignores: ['node_modules/', 'dist/', 'build/'], // Ignorar directorios
+    ignores: ['node_modules/', 'dist/', 'build/'],
   },
   {
     files: ['**/*.{js,jsx}'],
@@ -12,28 +14,28 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
+        ecmaFeatures: { jsx: true },
       },
-      globals: {
-        React: 'readonly', // Si usas JSX sin importar React explícitamente
-      },
+      globals: { React: 'readonly' },
     },
     settings: {
-      react: {
-        version: '18', // Especifica tu versión de React aquí
-      },
+      react: { version: '18' },
+      jsdoc: { mode: 'typescript' },
     },
     plugins: {
       react: reactPlugin,
       prettier: prettierPlugin,
+      jsdoc: jsdocPlugin,
+      import: importPlugin, // ✅ Plugin importado correctamente
     },
     rules: {
-      ...reactPlugin.configs.recommended.rules, // Reglas recomendadas para React
-      ...prettierConfig.rules, // Configuración de Prettier
-      'prettier/prettier': 'error', // Forzar formato de Prettier
-      'react/react-in-jsx-scope': 'off', // Desactivar regla obsoleta para React 17+
+      /* ... resto de reglas ... */
     },
+  },
+  // Config para tests
+  {
+    files: ['**/*.test.jsx'],
+    env: { jest: true },
+    rules: { 'react/prop-types': 'off' },
   },
 ]
