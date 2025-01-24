@@ -1,7 +1,13 @@
 /* Button.module.css */
 :root {
-    --accent-color: #648a64;
-    --text-primary: #213435;
+    /* Nueva paleta */
+    --color1: #213435;
+    --color2: #46685b;
+    --color3: #648a64;
+    --color4: #a6b985;
+    --color5: #e1e3ac;
+
+    /* Variables base preservadas */
     --transition-base: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -13,7 +19,9 @@
     transition:
         background-color var(--transition-base),
         transform var(--transition-base),
-        box-shadow var(--transition-base);
+        box-shadow var(--transition-base),
+        opacity 0.2s linear;
+    /* Para estado disabled */
     font-family: 'Playfair Display', serif;
     font-size: 1rem;
     text-align: center;
@@ -22,45 +30,92 @@
     overflow: hidden;
 }
 
-/* Estados interactivos */
+/* ========= ESTADOS INTERACTIVOS ========= */
 .button:not([disabled]):hover {
     transform: translateY(-2px);
 }
 
 .button:focus-visible {
-    outline: 2px solid var(--accent-color);
+    outline: 2px solid var(--color3);
+    /* color3 para mejor contraste */
     outline-offset: 2px;
 }
 
-/* Sistema de variantes */
+.button:active:not([disabled]) {
+    transform: scale(0.98) translateY(1px);
+    /* Efecto de presión */
+}
+
+.button[disabled] {
+    background: rgba(70, 104, 91, 0.3) !important;
+    /* color2 con 30% opacidad */
+    color: rgba(225, 227, 172, 0.5) !important;
+    /* color5 con 50% opacidad */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ========= SISTEMA DE VARIANTES ========= */
 .primary {
-    background-color: var(--accent-color);
-    color: var(--text-primary);
+    background-color: var(--color2);
+    /* color2 como primario */
+    color: var(--color5);
+    /* texto claro sobre fondo oscuro */
+}
+
+.primary:hover {
+    background-color: var(--color3);
+    /* color3 para hover */
+    box-shadow: 0 4px 12px rgba(33, 52, 53, 0.25);
 }
 
 .secondary {
     background-color: transparent;
-    border: 2px solid var(--accent-color);
-    color: var(--accent-color);
+    border: 2px solid var(--color2);
+    /* borde color2 */
+    color: var(--color2);
+    /* texto color2 */
+}
+
+.secondary:hover {
+    background-color: var(--color3);
+    /* fondo color3 */
+    color: var(--color5);
+    /* texto color5 */
 }
 
 .tertiary {
     background-color: transparent;
-    color: var(--accent-color);
+    color: var(--color2);
+    /* texto color2 */
     text-decoration: underline;
 }
 
-/* Variante nav - Versión simplificada */
+.tertiary:hover {
+    background-color: var(--color5);
+    /* fondo color5 */
+}
+
+/* ========= VARIANTE NAV ========= */
 .nav {
     background: transparent;
-    border: 2px solid var(--text-primary);
-    color: var(--text-primary);
+    border: 2px solid var(--color1);
+    /* color1 para contraste */
+    color: var(--color1);
+    /* texto color1 */
     padding: 0.5rem 1.5rem;
     font-weight: 500;
     letter-spacing: 0.5px;
 }
 
-/* Responsive */
+.nav:hover {
+    background: var(--color3);
+    /* color3 para hover */
+    color: var(--color5);
+    /* texto color5 */
+}
+
+/* ========= RESPONSIVE ========= */
 @media (max-width: 768px) {
     .button {
         padding: 0.5rem 1rem;
