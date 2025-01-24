@@ -1,18 +1,18 @@
+/* NavLinks.css */
 .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
+    align-items: center;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .nav-links {
-        flex-direction: column;
-        gap: 0.5rem;
-        width: 100%;
-    }
+.nav-link {
+    /* Estilos base de tus botones */
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
 
-    .nav-links .button {
-        width: 100%;
-        text-align: center;
-    }
+.nav-link:hover {
+    background-color: #f0f0f0;
+    /* Ejemplo */
 }

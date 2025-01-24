@@ -1,8 +1,7 @@
 // src/components/molecules/Header/Header.jsx
 import Logo from '@components/atoms/Logo'
-import '@components/molecules/Header/Header.css' // ✔️
 import NavLinks from '@components/molecules/NavLinks'
-import React from 'react'
+import './Header.css' // ✔️ Ruta relativa
 
 const Header = () => (
   <header className="header">
@@ -11,4 +10,4 @@ const Header = () => (
   </header>
 )
 
-export default Header
+export default Header // ✔️ Exportación estándar

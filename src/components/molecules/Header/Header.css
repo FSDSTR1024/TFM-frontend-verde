@@ -1,17 +1,20 @@
+/* src/components/molecules/Header/Header.css */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    width: 100vw;
+    margin-left: -2rem;
+    padding: 8px 8px;
     background-color: white;
     border-bottom: 1px solid #e0e0e0;
+    box-sizing: border-box;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .header {
-        flex-direction: column;
-        padding: 1rem;
-        gap: 1rem;
+        flex-direction: row;
+        padding: 0.5rem 1rem;
+        margin-left: -1rem;
     }
 }
