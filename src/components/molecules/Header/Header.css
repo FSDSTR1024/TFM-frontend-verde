@@ -1,21 +1,19 @@
-/* src/components/molecules/Header/Header.css */
 /* Header.css */
 .header {
     width: 100%;
     padding: 0 2rem;
-    margin: 0;
-    box-sizing: border-box;
-    /* ¡Clave! */
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    /* Centrado vertical */
     background: white;
 }
 
+/* Mobile: Eliminar márgenes negativos */
 @media (max-width: 768px) {
     .header {
-        flex-direction: row;
         padding: 0.5rem 1rem;
-        margin-left: -1rem;
+        margin-left: 0;
+        /* Corrección crítica */
     }
 }

@@ -1,6 +1,7 @@
 .logo {
     max-width: 150px;
     padding: 1rem;
+    flex-shrink: 0;
 }
 
 .logo img {
@@ -13,7 +14,7 @@
     transform: scale(1.05);
 }
 
-/* Responsive */
+/* Mobile */
 @media (max-width: 768px) {
     .logo {
         max-width: 100px;
