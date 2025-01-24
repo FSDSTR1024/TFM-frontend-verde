@@ -1,9 +1,12 @@
+/** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
-  stories: ['../src/components/**/*.stories.@(js|jsx)'],
+  stories: [
+    // Ruta correcta para encontrar tus stories en toda la carpeta src:
+    '../src/**/*.stories.@(js|jsx|ts|tsx)',
+  ],
   addons: [
+    '@storybook/addon-onboarding',
     '@storybook/addon-essentials',
-    '@storybook/addon-actions',
-    '@storybook/addon-a11y', // ✅ Addon instalado
     '@chromatic-com/storybook',
     '@storybook/addon-interactions',
   ],
@@ -11,7 +14,5 @@ const config = {
     name: '@storybook/react-vite',
     options: {},
   },
-  docs: {
-    autodocs: 'tag',
-  },
 }
+export default config
