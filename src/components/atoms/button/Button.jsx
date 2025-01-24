@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import styles from './Button.module.css' // ✔️ CSS Modules
+import styles from './Button.module.css'
 
 const Button = ({ children, type = 'primary', onClick }) => (
   <button

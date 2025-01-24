@@ -1,16 +1,10 @@
 import Header from '@components/molecules/Header'
-import '@components/organisms/Navbar/Navbar.css'
-import PropTypes from 'prop-types' // ✅ Añade esta línea
 import React from 'react'
 
-const Navbar = ({ className }) => (
-  <nav className={`navbar ${className}`}>
-    <Header />
+const Navbar = () => (
+  <nav className="navbar">
+    <Header /> {/* Logo a la izquierda */}
   </nav>
 )
-
-Navbar.propTypes = {
-  className: PropTypes.string,
-}
 
 export default Navbar

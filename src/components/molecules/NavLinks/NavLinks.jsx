@@ -3,18 +3,19 @@ import Button from '@components/atoms/Button' // ✔️ Importa tus botones
 import '@components/molecules/NavLinks/NavLinks.css'
 import React from 'react'
 
+// NavLinks.jsx
 const NavLinks = () => (
-  <nav className="nav-links">
-    <Button
-      to="/productos"
-      className="nav-link" // ✔️ Clase para estilos específicos
-    >
-      Productos
-    </Button>
-    <Button to="/contacto" className="nav-link">
-      Contacto
-    </Button>
-  </nav>
+  <ul className="nav-links">
+    <li>
+      <Button variant="nav">SHARE</Button>
+    </li>
+    <li>
+      <Button variant="nav">ABOUT</Button>
+    </li>
+    <li>
+      <Button variant="nav">THE FILMS</Button>
+    </li>
+  </ul>
 )
 
 export default NavLinks
