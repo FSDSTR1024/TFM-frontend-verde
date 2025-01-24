@@ -1,21 +1,21 @@
 /* NavLinks.css */
-.nav-links {
+.nav-container {
     display: flex;
-    gap: 1rem;
-    /* Espaciado uniforme */
+    justify-content: flex-end;
+}
+
+.nav-list {
+    display: flex;
+    gap: 2px;
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    align-items: center;
 }
 
-.nav-link {
-
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.nav-link:hover {
-    background-color: green;
-    /* Ejemplo */
+/* Mobile (opcional) */
+@media (max-width: 768px) {
+    .nav-list {
+        display: none;
+    }
 }

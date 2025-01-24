@@ -50,3 +50,91 @@
         font-size: 0.875rem;
     }
 }
+
+/* Nueva variante para el navbar */
+.nav {
+    --accent-color: #333;
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Efecto hover elegante */
+.nav:hover {
+    background: #648a64;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(100, 138, 100, 0.3);
+    border-color: transparent;
+}
+
+/* Efecto de onda al hacer hover */
+.nav::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+    z-index: -1;
+}
+
+.nav:hover::after {
+    transform: translate(-50%, -50%) scale(30);
+}
+
+/* Animación al hacer click */
+.nav:active {
+    transform: translateY(1px) scale(0.98);
+    transition: all 0.1s ease;
+}
+
+/* Animación de borde flotante */
+@keyframes border-pulse {
+    0% {
+        border-width: 2px;
+    }
+
+    50% {
+        border-width: 3px;
+    }
+
+    100% {
+        border-width: 2px;
+    }
+}
+
+.nav:focus {
+    animation: border-pulse 1.5s infinite;
+    outline: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .nav {
+        padding: 0.4rem 1rem;
+        border-width: 1px;
+    }
+
+    .nav:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .nav::after {
+        display: none;
+        /* Desactivar efecto en móviles */
+    }
+}
