@@ -1,20 +1,21 @@
-// NavLinks.jsx (Versión corregida)
+// NavLinks.jsx (Actualizado)
 import Button from '@components/atoms/Button'
-import '@components/molecules/NavLinks/NavLinks.css' // ✔️ CSS estándar
 import React from 'react'
+import styles from './NavLinks.module.css' // CSS Module
 
 const NAV_ITEMS = ['SHARE', 'ABOUT', 'THE FILMS', 'PRESS', 'EDUCATION']
 
 const NavLinks = () => (
-  <nav className="nav-container">
-    {' '}
-    {/* Clase normal */}
-    <ul className="nav-list">
-      {' '}
-      {/* Clase normal */}
+  <nav className={styles.navContainer}>
+    <ul className={styles.navList}>
       {NAV_ITEMS.map((item) => (
         <li key={item}>
-          <Button type="nav">{item}</Button>
+          <Button
+            type="nav"
+            aria-current={item === 'SHARE' ? 'page' : undefined}
+          >
+            {item}
+          </Button>
         </li>
       ))}
     </ul>

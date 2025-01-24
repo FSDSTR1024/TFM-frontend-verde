@@ -1,7 +1,33 @@
+/* App.css */
 @import '@assets/fonts/Playfair_Display/font.css';
 
+:root {
+    /* Paleta de Colores (Coherente con tus componentes) */
+    --color1: #213435;
+    /* Principal - Fondos oscuros */
+    --color2: #46685b;
+    /* Secundario - Botones/Headers */
+    --color3: #648a64;
+    /* Hover/Énfasis */
+    --color4: #a6b985;
+    /* Texto en oscuro */
+    --color5: #e1e3ac;
+    /* Fondos claros */
+
+    /* Variables RGB para transparencias (Usadas en bordes/sombras) */
+    --color1-rgb: 33, 52, 53;
+    --color2-rgb: 70, 104, 91;
+
+    /* Tipografía */
+    --font-primary: 'Playfair Display', serif;
+}
+
 body {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-primary);
     margin: 0;
     padding: 0;
+    background: var(--color5);
+    /* Fondo claro por defecto */
+    color: var(--color1);
+    /* Texto principal */
 }

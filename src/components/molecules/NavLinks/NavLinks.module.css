@@ -1,21 +1,24 @@
-/* NavLinks.css */
-.nav-container {
+/* NavLinks.module.css */
+.navContainer {
     display: flex;
     justify-content: flex-end;
 }
 
-.nav-list {
+.navList {
     display: flex;
-    gap: 2px;
+    gap: 1.2rem;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 1rem;
     align-items: center;
 }
 
-/* Mobile (opcional) */
+.navList li button {
+    color: var(--color1);
+}
+
 @media (max-width: 768px) {
-    .nav-list {
+    .navList {
         display: none;
     }
 }

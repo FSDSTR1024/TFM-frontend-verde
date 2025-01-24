@@ -1,23 +1,48 @@
+/* Logo.module.css */
 .logo {
     max-width: 150px;
     padding: 1rem;
     flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    transform: translateY(8px);
+    /* ← Ajuste vertical controlado */
 }
 
 .logo img {
     width: 100%;
     height: auto;
     transition: transform 0.3s ease;
+    cursor: pointer;
 }
 
 .logo:hover img {
     transform: scale(1.05);
 }
 
-/* Mobile */
+/* Header.module.css - Versión Móvil Consolidada */
 @media (max-width: 768px) {
+
+    /* Logo */
     .logo {
         max-width: 100px;
-        padding: 0.5rem;
+        padding: 0.5rem 0;
+        margin: 0 auto -4px;
+        /* ✔️ Combina centrado + ajuste vertical */
+        transform: none;
+        /* ← Resetea transforms heredados de desktop */
+    }
+
+    /* Header */
+    .header {
+        align-items: center;
+        padding: 0.4rem 1rem;
+        row-gap: 0.5rem;
+    }
+
+    /* NavLinks */
+    .nav-container {
+        padding-top: 0 !important;
+        justify-content: center;
     }
 }
