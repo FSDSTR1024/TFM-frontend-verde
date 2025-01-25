@@ -3,7 +3,14 @@
     --header-max-height: clamp(50px, 15vh, 80px);
     --header-min-height: 60px;
     --mobile-min-height: 50px;
+    /* Variables añadidas con sintaxis corregida */
+    --color1-rgb: 33, 52, 53;
+    --color1: #213435;
 }
+
+/* ------------------------------------------- */
+/* ⬇️ El resto del código permanece IGUAL ⬇️ */
+/* ------------------------------------------- */
 
 .header {
     /* Dimensiones dinámicas */
@@ -67,10 +74,8 @@
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 4rem);
-    /* 2rem de margen a cada lado */
     height: 1px;
     background: rgba(var(--color1-rgb), 0.15);
-    /* Usa la paleta del proyecto */
     opacity: 0;
     transition: opacity 0.3s ease;
 }

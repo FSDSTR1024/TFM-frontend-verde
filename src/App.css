@@ -1,37 +1,57 @@
 /* src/App.css */
-@import '/static/fonts/Playfair_Display/font.css';
+@import '../public/fonts/Playfair_Display/font.css';
 
-
-/* Variables globales */
+/* ===== VARIABLES GLOBALES ===== */
 :root {
     /* Paleta de colores */
-    --color1: #213435;
-    /* Principal - Fondos oscuros */
-    --color2: #46685b;
-    /* Secundario - Botones/Headers */
-    --color3: #648a64;
-    /* Hover/Énfasis */
-    --color4: #a6b985;
-    /* Texto en oscuro */
-    --color5: #e1e3ac;
-    /* Fondos claros */
+    --primary-dark: #213435;
+    --secondary-dark: #46685b;
+    --primary-light: #e1e3ac;
+    --hover-state: #648a64;
 
-    /* Variables RGB para transparencias */
-    --color1-rgb: 33, 52, 53;
-    --color2-rgb: 70, 104, 91;
+    /* RGB */
+    --primary-dark-rgb: 33, 52, 53;
+    --secondary-dark-rgb: 70, 104, 91;
 
     /* Tipografía */
     --font-primary: 'Playfair Display', serif;
+
+    /* Responsive */
+    --mobile: 768px;
+    --tablet: 1024px;
+
+    /* Efectos */
+    --shadow-base: 0 2px 8px rgba(var(--primary-dark-rgb), 0.1);
+    --transition-base: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Estilos base */
+/* ===== RESET Y ESTILOS BASE ===== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 100%;
+}
+
 body {
     font-family: var(--font-primary);
-    margin: 0;
-    background: var(--color5);
-    color: var(--color1);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    line-height: 1.6;
 }
 
-* {
-    box-sizing: border-box;
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
 }
