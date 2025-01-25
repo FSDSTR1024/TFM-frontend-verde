@@ -1,9 +1,8 @@
-// NavLinks.jsx (Actualizado)
 import Button from '@components/atoms/Button'
 import React from 'react'
-import styles from './NavLinks.module.css' // CSS Module
+import styles from './NavLinks.module.css'
 
-const NAV_ITEMS = ['SHARE', 'ABOUT', 'THE FILMS', 'PRESS', 'EDUCATION']
+const NAV_ITEMS = ['SHARE', 'ABOUT', 'FILMS', 'PRESS', 'EDUCATION']
 
 const NavLinks = () => (
   <nav className={styles.navContainer}>
@@ -12,6 +11,7 @@ const NavLinks = () => (
         <li key={item}>
           <Button
             type="nav"
+            arialabel={`Navegar a ${item}`} // ✅ Prop requerida añadida
             aria-current={item === 'SHARE' ? 'page' : undefined}
           >
             {item}
