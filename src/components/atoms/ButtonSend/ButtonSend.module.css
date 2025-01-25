@@ -1,0 +1,85 @@
+/* ButtonSend.module.css */
+.button {
+    --button-padding: var(--spacing-sm) var(--spacing-md);
+    --button-radius: 4px;
+    --transition-base: 0.2s ease-in-out;
+
+    padding: var(--button-padding);
+    border: none;
+    border-radius: var(--button-radius);
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+        background-color var(--transition-base),
+        opacity var(--transition-base),
+        transform var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+/* Variantes */
+.primary {
+    background-color: var(--color2);
+    /* #46685b */
+    color: var(--color5);
+    /* #e1e3ac */
+}
+
+.secondary {
+    background-color: var(--color4);
+    /* #a6b985 */
+    color: var(--color1);
+    /* #213435 */
+}
+
+.text {
+    background: transparent;
+    color: var(--color2);
+    padding: 0;
+}
+
+/* Estados Interactivos */
+.button:not([disabled]):hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--color1);
+    outline-offset: 2px;
+}
+
+.button[disabled],
+.button[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Animación de Carga */
+.loading__spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Clase para texto oculto accesible */
+.visually-hidden {
+    position: absolute;
+    clip: rect(0 0 0 0);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+}

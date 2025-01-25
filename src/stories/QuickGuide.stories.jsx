@@ -4,18 +4,20 @@ import Logo from '@components/atoms/Logo'
 import Header from '@components/molecules/Header'
 import Navbar from '@components/organisms/Navbar'
 import React from 'react'
+// ✅ Corrección 1: Ruta de importación consistente con alias
+import ButtonSend from '@components/atoms/ButtonSend/ButtonSend'
+// ✅ Corrección 2: Importaciones faltantes para interacciones
+import { within } from '@storybook/testing-library'
+import userEvent from '@testing-library/user-event'
 
 export default {
   title: 'Guía Rápida',
   parameters: {
     layout: 'centered',
-    // ======= EXTRAS PROFESIONALES ======= //
     viewport: {
-      // Addon para probar responsive
       defaultViewport: 'responsive',
     },
     backgrounds: {
-      // Addon para fondos
       default: 'light',
       values: [
         { name: 'light', value: '#ffffff' },
@@ -41,7 +43,6 @@ export const Botones = (args) => (
   </div>
 )
 
-// Configuración interactiva para botones
 Botones.args = {
   children: 'Primario Personalizable',
   type: 'primary',
@@ -60,7 +61,6 @@ Botones.argTypes = {
 Botones.parameters = {
   docs: {
     description: {
-      // Nota técnica
       component:
         '**Componente atómico reutilizable**\n\n- Usar `type="primary"` para acciones principales\n- `disabled=true` para estados inactivos\n- Requiere `aria-label` para accesibilidad',
     },
@@ -80,7 +80,6 @@ Logotipo.parameters = {
       '**Elemento de marca principal**\n\n- Animación suave al hacer hover\n- Tamaño responsive automático\n- Ratio fijo 3.87:1 (118x30.5px)',
   },
   backgrounds: {
-    // Prueba en diferentes fondos
     values: [
       { name: 'light', value: '#ffffff' },
       { name: 'dark', value: '#213435' },
@@ -97,7 +96,6 @@ export const HeaderCompleto = () => (
 
 HeaderCompleto.parameters = {
   viewport: {
-    // Prueba responsive avanzada
     defaultViewport: 'iphone12',
     viewports: {
       iphone12: {
@@ -108,7 +106,6 @@ HeaderCompleto.parameters = {
   },
   docs: {
     source: {
-      // Muestra código de implementación
       code: '<Header />',
       language: 'jsx',
     },
@@ -121,16 +118,74 @@ export const NavbarEnContexto = () => (
   </div>
 )
 
-// ========= EXTRAS AVANZADOS ========= //
 NavbarEnContexto.play = async ({ canvasElement }) => {
-  // Simulación de interacción
   const canvas = within(canvasElement)
   await userEvent.click(canvas.getByRole('button', { name: /menú/i }))
 }
 
 NavbarEnContexto.parameters = {
-  chromatic: { disable: false }, // Habilita test visual
+  chromatic: { disable: false },
   controls: {
-    expanded: true, // Muestra todos los controles
+    expanded: true,
+  },
+}
+
+// ========= HISTORIA ACTUALIZADA PARA BUTTONSEND ========= //
+export const BotonesSend = (args) => (
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '1rem',
+      padding: '2rem',
+      borderBottom: '1px solid #eee',
+    }}
+  >
+    <ButtonSend {...args} />
+    <ButtonSend variant="secondary">Secundario</ButtonSend>
+    <ButtonSend variant="text">Modo Texto</ButtonSend>
+    <ButtonSend isLoading>Cargando...</ButtonSend>
+    <ButtonSend disabled>Deshabilitado</ButtonSend>
+    <ButtonSend
+      ariaLabel="Acción secreta"
+      onClick={() => console.log('Acción ejecutada')}
+    >
+      Con Click Handler
+    </ButtonSend>
+  </div>
+)
+
+BotonesSend.args = {
+  children: 'Enviar Formulario',
+  variant: 'primary',
+}
+
+BotonesSend.argTypes = {
+  variant: {
+    control: { type: 'select' },
+    options: ['primary', 'secondary', 'text'],
+    description: 'Variante visual del botón',
+  },
+  isLoading: {
+    control: 'boolean',
+    description: 'Estado de carga',
+  },
+  disabled: {
+    control: 'boolean',
+    description: 'Estado deshabilitado',
+  },
+  ariaLabel: {
+    control: 'text',
+    description: 'Etiqueta ARIA para accesibilidad',
+  },
+}
+
+// ✅ Corrección 3: Eliminado el backgrounds redundante
+BotonesSend.parameters = {
+  docs: {
+    description: {
+      component:
+        '**Componente de acción avanzado**\n\n- Variantes: primary/secondary/text\n- Estados: loading/disabled\n- Accesibilidad AAA (WCAG 2.1)\n- Integración con sistema de diseño mediante CSS Modules',
+    },
   },
 }
