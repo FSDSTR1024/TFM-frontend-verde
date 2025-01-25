@@ -1,1 +1,1 @@
-export { default } from './Button' // Asegúrate de que la ruta coincida
+export { default } from './Button'
