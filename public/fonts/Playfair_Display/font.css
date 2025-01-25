@@ -89,7 +89,7 @@
     font-display: swap;
 }
 
-/* Fuentes variables (WOFF2 + WOFF) */
+/* Fuentes variables (WOFF2 + WOFF) - ¡Verifica que los archivos existan! */
 @font-face {
     font-family: 'Playfair Display';
     src: url('./PlayfairDisplay-VariableFont_wght.woff2') format('woff2'),
