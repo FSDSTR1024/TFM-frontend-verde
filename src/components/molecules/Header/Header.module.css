@@ -3,40 +3,59 @@
     --header-max-height: clamp(50px, 15vh, 80px);
     --header-min-height: 60px;
     --mobile-min-height: 50px;
-    /* Variables añadidas con sintaxis corregida */
     --color1-rgb: 33, 52, 53;
+    /* Definido para usar en el borde */
     --color1: #213435;
+    /* Color principal */
 }
 
-/* ------------------------------------------- */
-/* ⬇️ El resto del código permanece IGUAL ⬇️ */
-/* ------------------------------------------- */
-
+/* ========= HEADER - ANCHO COMPLETO ========= */
 .header {
     /* Dimensiones dinámicas */
     min-height: var(--header-min-height);
     max-height: var(--header-max-height);
-    width: 100%;
-
-    /* Espaciado seguro */
+    width: 100vw;
+    /* Ocupa todo el ancho del viewport */
     margin: 0;
+    margin-left: calc(-50vw + 50%);
+    /* Compensa el padding del contenedor padre */
+    left: 0;
+    /* Alineación forzada a la izquierda */
 
     /* Flexbox optimizado */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 2;
     gap: 1.2rem;
 
-    /* Herencia visual */
+    /* Estilos base */
     background: white;
     box-sizing: border-box;
-
-    /* Posicionamiento */
     position: relative;
 }
 
-/* Mobile: Priorizar espacio vertical */
+/* ========= BORDE DINÁMICO ========= */
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 4rem);
+    /* 2rem de margen a cada lado */
+    height: 1px;
+    background: rgba(var(--color1-rgb), 0.15);
+    /* Usa la paleta del proyecto */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.header:hover::after {
+    opacity: 1;
+    /* Efecto hover (opcional) */
+}
+
+/* ========= RESPONSIVE ========= */
 @media (max-width: 768px) {
     .header {
         min-height: var(--mobile-min-height);
@@ -44,7 +63,7 @@
         flex-wrap: wrap;
     }
 
-    /* Asegurar relación logo/botones */
+    /* Logo y NavLinks en móvil */
     .header :global(.logo) {
         order: 1;
         flex-basis: 100%;
@@ -56,38 +75,17 @@
         justify-content: center;
         width: 100%;
     }
-}
 
-/* Tablet: Transición suave */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .header {
-        padding: 0.25rem 1.5rem;
-        gap: 1rem;
+    /* Ocultar borde en móvil */
+    .header::after {
+        display: none;
     }
 }
 
-/* Borde separador (solo desktop) */
-.header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 4rem);
-    height: 1px;
-    background: rgba(var(--color1-rgb), 0.15);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* Mostrar borde al hacer hover (opcional) */
-.header:hover::after {
-    opacity: 1;
-}
-
-/* Mobile: Ocultar siempre */
-@media (max-width: 768px) {
-    .header::after {
-        display: none;
+@media (min-width: 769px) and (max-width: 1024px) {
+    .header {
+        padding: 0.25rem 1.5rem;
+        /* Ajuste para tablet */
+        gap: 1rem;
     }
 }
