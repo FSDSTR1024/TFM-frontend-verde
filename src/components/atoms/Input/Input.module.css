@@ -1,0 +1,113 @@
+/* input.module.css */
+:root {
+    --color1: #213435;
+    --color2: #46685b;
+    --color3: #648a64;
+    --color4: #a6b985;
+    --color5: #e1e3ac;
+    --error-color: #c44536;
+    --success-color: var(--color3);
+    --input-border: var(--color2);
+    --primary-text: var(--color1);
+    --background-input: var(--color5);
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --transition-base: 0.2s ease-in-out;
+}
+
+.input__wrapper {
+    position: relative;
+    margin: 1.5rem 0 var(--spacing-sm);
+    width: fit-content;
+    max-width: 100%;
+}
+
+.input__label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color2);
+    pointer-events: none;
+    transition:
+        transform var(--transition-base),
+        font-size var(--transition-base),
+        color var(--transition-base);
+}
+
+.label__floating {
+    transform: translateY(-170%) scale(0.85);
+    font-size: 0.75rem;
+    color: var(--color1) !important;
+    background: linear-gradient(to bottom, var(--background-input) 50%, transparent 50%);
+    padding: 0 0.3rem;
+    left: 0.8rem;
+}
+
+.input__field {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 2px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--background-input);
+    font-size: 1rem;
+    color: var(--primary-text);
+    box-sizing: border-box;
+    transition:
+        border-color var(--transition-base),
+        box-shadow var(--transition-base),
+        outline var(--transition-base);
+}
+
+.input__field:focus-visible {
+    outline: 3px solid var(--color1);
+    outline-offset: 2px;
+    box-shadow: 0 2px 8px rgba(33, 52, 53, 0.1);
+}
+
+.input__field[data-valid="true"] {
+    padding-right: 2.5rem;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23648a64" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+}
+
+.input__field[data-invalid="true"] {
+    border-color: var(--error-color);
+    background-color: #fff5f5;
+}
+
+.input__field[data-invalid="true"]:focus-visible {
+    outline-color: var(--error-color);
+}
+
+.input__error {
+    display: block;
+    margin-top: var(--spacing-xs);
+    color: var(--error-color);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    position: absolute;
+    bottom: -1.25rem;
+}
+
+.input__error[role="alert"] {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(4px);
+    }
+
+    75% {
+        transform: translateX(-4px);
+    }
+}
