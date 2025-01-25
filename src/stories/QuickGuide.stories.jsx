@@ -180,7 +180,6 @@ BotonesSend.argTypes = {
   },
 }
 
-// ✅ Corrección 3: Eliminado el backgrounds redundante
 BotonesSend.parameters = {
   docs: {
     description: {
