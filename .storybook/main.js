@@ -4,7 +4,6 @@ const config = {
     '../src/**/*.stories.@(js|jsx|ts|tsx)' // Ruta correcta para tus stories
   ],
   addons: [
-    '@storybook/addon-onboarding', // Guía de inicio rápido
     '@storybook/addon-links', // Enlaces entre stories
     '@storybook/addon-essentials', // Addons esenciales (docs, controls, etc.)
     '@storybook/addon-actions', // Registro de acciones (opcional)
