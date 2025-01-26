@@ -1,15 +1,17 @@
 {
   "semi": false,
   "singleQuote": true,
-  "printWidth": 80,
+  "printWidth": 100,
   "tabWidth": 2,
-  "trailingComma": "es5",
+  "trailingComma": "none",
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "jsxSingleQuote": true,
   "overrides": [
     {
       "files": ["*.module.css"],
       "options": {
-        "trailingComma": "none",
-        "cssDeclarationSorter": false
+        "parser": "css"
       }
     }
   ]

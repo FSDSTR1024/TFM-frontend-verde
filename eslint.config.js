@@ -1,41 +1,56 @@
-// eslint.config.js
-import * as importPlugin from 'eslint-plugin-import' // ← Namespace import
-import jsdocPlugin from 'eslint-plugin-jsdoc'
-import prettierPlugin from 'eslint-plugin-prettier'
-import reactPlugin from 'eslint-plugin-react'
+// @ts-check
+import eslint from '@eslint/js'
+import prettierPlugin from 'eslint-plugin-prettier/recommended'
+import reactRecommended from 'eslint-plugin-react/configs/recommended.js'
 
 export default [
+  eslint.configs.recommended,
+  reactRecommended,
+  prettierPlugin,
   {
-    ignores: ['node_modules/', 'dist/', 'build/'],
-  },
-  {
+    // Configuración personalizada para React y JSX
     files: ['**/*.{js,jsx}'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/storybook-static/**',
+      '.eslintrc.js' // Ignorar si existe
+    ],
     languageOptions: {
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        ecmaFeatures: { jsx: true },
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        React: 'readonly',
+        process: 'readonly'
       },
-      globals: { React: 'readonly' },
-    },
-    settings: {
-      react: { version: '18' },
-      jsdoc: { mode: 'typescript' },
-    },
-    plugins: {
-      react: reactPlugin,
-      prettier: prettierPlugin,
-      jsdoc: jsdocPlugin,
-      import: importPlugin, // ✅ Plugin importado correctamente
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      }
     },
     rules: {
-      /* ... resto de reglas ... */
+      // Reglas específicas de React
+      'react/prop-types': 'off',
+      'react/jsx-uses-react': 'error',
+      'react/react-in-jsx-scope': 'off',
+
+      // Mejores prácticas
+      'no-unused-vars': 'warn',
+      'no-console': 'warn',
+
+      // Compatibilidad con Prettier
+      'prettier/prettier': [
+        'error',
+        {
+          endOfLine: 'auto'
+        }
+      ]
     },
-  },
-  // Config para tests
-  {
-    files: ['**/*.test.jsx'],
-    env: { jest: true },
-    rules: { 'react/prop-types': 'off' },
-  },
+    settings: {
+      react: {
+        version: '18.3.1' // Especificar tu versión exacta
+      }
+    }
+  }
 ]
