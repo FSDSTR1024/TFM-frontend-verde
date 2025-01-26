@@ -1,5 +1,4 @@
 import Button from '@components/atoms/Button'
-import React from 'react'
 import styles from './NavLinks.module.css'
 
 const NAV_ITEMS = ['SHARE', 'ABOUT', 'FILMS', 'PRESS', 'EDUCATION']
@@ -7,11 +6,11 @@ const NAV_ITEMS = ['SHARE', 'ABOUT', 'FILMS', 'PRESS', 'EDUCATION']
 const NavLinks = () => (
   <nav className={styles.navContainer}>
     <ul className={styles.navList}>
-      {NAV_ITEMS.map((item) => (
+      {NAV_ITEMS.map(item => (
         <li key={item}>
           <Button
-            type="nav"
-            arialabel={`Navegar a ${item}`} // ✅ Prop requerida añadida
+            type='nav'
+            arialabel={`Navegar a ${item}`}
             aria-current={item === 'SHARE' ? 'page' : undefined}
           >
             {item}

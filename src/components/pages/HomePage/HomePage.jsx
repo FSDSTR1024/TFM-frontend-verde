@@ -1,6 +1,6 @@
 // src/components/pages/HomePage/HomePage.jsx
-import Input from '@components/atoms/Input' // Cambia esta ruta a la correcta para tu componente Input
-import '@components/pages/HomePage/HomePage.css' // ✔️ Ruta correcta
+import Input from '@components/atoms/Input'
+import '@components/pages/HomePage/HomePage.css'
 
 const HomePage = () => {
   return (

@@ -20,7 +20,7 @@
     transform: scale(1.05);
 }
 
-/* Header.module.css - Versión Móvil Consolidada */
+/* Header.module.css - Versión Móvil */
 @media (max-width: 768px) {
 
     /* Logo */
@@ -28,9 +28,7 @@
         max-width: 100px;
         padding: 0.5rem 0;
         margin: 0 auto -4px;
-        /* ✔️ Combina centrado + ajuste vertical */
         transform: none;
-        /* ← Resetea transforms heredados de desktop */
     }
 
     /* Header */
