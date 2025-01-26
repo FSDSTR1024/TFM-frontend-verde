@@ -2,23 +2,39 @@ import Button from '@components/atoms/Button'
 import PropTypes from 'prop-types'
 import styles from './ButtonLogin.module.css'
 
-// Parámetros por defecto en la función (no más defaultProps)
-const ButtonLogin = ({ children, onClick, ariaLabel, isLoading = false }) => (
-  <Button
-    type='login'
-    onClick={onClick}
-    ariaLabel={ariaLabel}
-    disabled={isLoading}
-    className={styles.login}
-  >
-    {isLoading ? 'Cargando...' : children}
-  </Button>
-)
+const ButtonLogin = ({ children, onClick, ariaLabel, isLoading = false }) => {
+  // Depuración: Verifica las props recibidas
+  console.log('[DEBUG] Props en ButtonLogin:', {
+    children,
+    onClick: typeof onClick,
+    ariaLabel,
+    isLoading
+  })
+
+  return (
+    <Button
+      type='login'
+      onClick={e => {
+        // Depuración: Verifica el evento de clic
+        console.log('[DEBUG] Evento click:', e)
+        if (onClick) {
+          console.log('[DEBUG] Ejecutando onClick...')
+          onClick(e)
+        }
+      }}
+      ariaLabel={ariaLabel}
+      disabled={isLoading}
+      className={styles.login}
+    >
+      {isLoading ? 'Cargando...' : children}
+    </Button>
+  )
+}
 
 ButtonLogin.propTypes = {
   children: PropTypes.node.isRequired,
   onClick: PropTypes.func,
-  ariaLabel: PropTypes.string.isRequired, // ✅ Nombre correcto
+  ariaLabel: PropTypes.string.isRequired,
   isLoading: PropTypes.bool
 }
 
