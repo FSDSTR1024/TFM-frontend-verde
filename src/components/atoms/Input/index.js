@@ -1,1 +1,1 @@
-import { default } from './Input'
+export { default, EmailInput, PasswordInput } from './Input'

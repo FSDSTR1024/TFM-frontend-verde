@@ -7,6 +7,8 @@ import Navbar from '@components/organisms/Navbar'
 import ButtonSend from '@components/atoms/ButtonSend/ButtonSend'
 // ✅ Corrección 2: Importaciones faltantes para interacciones
 import { userEvent, within } from '@storybook/testing-library'
+// Importa el componente Input
+import Input from '@components/atoms/Input'
 
 export default {
   title: 'Guía Rápida',
@@ -181,6 +183,44 @@ BotonesSend.parameters = {
     description: {
       component:
         '**Componente de acción avanzado**\n\n- Variantes: primary/secondary/tertiary/nav\n- Estados: loading/disabled\n- Accesibilidad AAA (WCAG 2.1)\n- Integración con sistema de diseño mediante CSS Modules' // Variantes actualizadas
+    }
+  }
+}
+
+// ========= NUEVA HISTORIA PARA INPUT ========= //
+export const InputComponent = args => (
+  <div style={{ padding: '2rem', width: '300px' }}>
+    <Input {...args} />
+  </div>
+)
+
+InputComponent.args = {
+  label: 'Correo electrónico',
+  name: 'email',
+  type: 'email'
+}
+
+InputComponent.argTypes = {
+  label: {
+    control: 'text',
+    description: 'Etiqueta del campo de entrada'
+  },
+  name: {
+    control: 'text',
+    description: 'Nombre del campo de entrada'
+  },
+  type: {
+    control: { type: 'select' },
+    options: ['text', 'email', 'password'],
+    description: 'Tipo de campo de entrada'
+  }
+}
+
+InputComponent.parameters = {
+  docs: {
+    description: {
+      component:
+        '**Componente de entrada de texto**\n\n- Soporta tipos: text, email, password\n- Validación integrada\n- Etiqueta flotante'
     }
   }
 }

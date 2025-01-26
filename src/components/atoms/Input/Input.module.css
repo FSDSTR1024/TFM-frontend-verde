@@ -1,4 +1,3 @@
-/* root permite definir variables globales */
 :root {
   --color1: #213435;
   --color2: #46685b;
@@ -15,14 +14,14 @@
   --transition-base: 0.2s ease-in-out;
 }
 
-.input__wrapper {
+.inputWrapper {
   position: relative;
   margin: 1.5rem 0 var(--spacing-sm);
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
+  max-width: 400px;
 }
 
-.input__label {
+.inputLabel {
   position: absolute;
   left: 1rem;
   top: 50%;
@@ -35,21 +34,18 @@
     color var(--transition-base);
 }
 
-.label__floating {
+.inputLabel.focused {
   transform: translateY(-170%) scale(0.85);
   font-size: 0.75rem;
   color: var(--color1) !important;
-  background: linear-gradient(
-    to bottom,
-    var(--background-input) 50%,
-    transparent 50%
-  );
+  background: linear-gradient(to bottom, var(--background-input) 50%, transparent 50%);
   padding: 0 0.3rem;
   left: 0.8rem;
 }
 
-.input__field {
+.inputField {
   width: 100%;
+  min-width: 250px;
   padding: var(--spacing-sm);
   border: 2px solid var(--input-border);
   border-radius: 4px;
@@ -63,13 +59,13 @@
     outline var(--transition-base);
 }
 
-.input__field:focus-visible {
+.inputField:focus-visible {
   outline: 3px solid var(--color1);
   outline-offset: 2px;
   box-shadow: 0 2px 8px rgba(33, 52, 53, 0.1);
 }
 
-.input__field[data-valid='true'] {
+.inputField[data-valid="true"] {
   padding-right: 2.5rem;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23648a64" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>');
   background-repeat: no-repeat;
@@ -77,30 +73,51 @@
   background-size: 1.25rem;
 }
 
-.input__field[data-invalid='true'] {
+.inputField[data-invalid="true"] {
   border-color: var(--error-color);
   background-color: #fff5f5;
 }
 
-.input__field[data-invalid='true']:focus-visible {
+.inputField[data-invalid="true"]:focus-visible {
   outline-color: var(--error-color);
 }
 
-.input__error {
+.inputField[data-invalid="true"]::after {
+  content: attr(data-error);
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  color: var(--error-color);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: bottom 0.3s ease-in-out;
+}
+
+.inputField[data-invalid="true"]:not(:focus)::after {
+  bottom: -2rem;
+}
+
+.error {
   display: block;
   margin-top: var(--spacing-xs);
   color: var(--error-color);
   font-size: 0.75rem;
   line-height: 1.4;
-  position: absolute;
-  bottom: -1.25rem;
+  text-align: center;
+  width: 100%;
+  position: static;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.input__error[role='alert'] {
+.error[role="alert"] {
   animation: shake 0.3s ease-in-out;
 }
 
 @keyframes shake {
+
   0%,
   100% {
     transform: translateX(0);
