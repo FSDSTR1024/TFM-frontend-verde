@@ -1,8 +1,9 @@
 import logo from '@assets/images/logo.svg'
-import './Logo.module.css'
+import styles from './Logo.module.css' // Importa los estilos como un objeto
 
 const Logo = () => (
-  <div className='logo'>
+  <div className={styles.logo}>
+    {' '}
     <img
       src={logo}
       alt='Plataforma de Seguimiento Financiero'
