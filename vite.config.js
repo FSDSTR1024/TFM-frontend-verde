@@ -12,11 +12,8 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: {
-      syntax: 'postcss-html', // Mejor análisis para CSS Modules
-      modules: {
-        localsConvention: 'camelCase', // Compatibilidad con tu configuración
-      },
+    modules: {
+      localsConvention: 'camelCase', // Soporte para camelCase en CSS Modules
     },
   },
 })

@@ -143,7 +143,9 @@ export const BotonesSend = (args) => (
   >
     <ButtonSend {...args} />
     <ButtonSend variant="secondary">Secundario</ButtonSend>
-    <ButtonSend variant="text">Modo Texto</ButtonSend>
+    <ButtonSend variant="tertiary">Terciario</ButtonSend>{' '}
+    {/* Cambiado text -> tertiary */}
+    <ButtonSend variant="nav">Navegación</ButtonSend> {/* Nueva variante */}
     <ButtonSend isLoading>Cargando...</ButtonSend>
     <ButtonSend disabled>Deshabilitado</ButtonSend>
     <ButtonSend
@@ -163,8 +165,8 @@ BotonesSend.args = {
 BotonesSend.argTypes = {
   variant: {
     control: { type: 'select' },
-    options: ['primary', 'secondary', 'text'],
-    description: 'Variante visual del botón',
+    options: ['primary', 'secondary', 'tertiary', 'nav'], // Opciones actualizadas
+    description: 'Variante visual del botón (primary/secondary/tertiary/nav)',
   },
   isLoading: {
     control: 'boolean',
@@ -184,7 +186,7 @@ BotonesSend.parameters = {
   docs: {
     description: {
       component:
-        '**Componente de acción avanzado**\n\n- Variantes: primary/secondary/text\n- Estados: loading/disabled\n- Accesibilidad AAA (WCAG 2.1)\n- Integración con sistema de diseño mediante CSS Modules',
+        '**Componente de acción avanzado**\n\n- Variantes: primary/secondary/tertiary/nav\n- Estados: loading/disabled\n- Accesibilidad AAA (WCAG 2.1)\n- Integración con sistema de diseño mediante CSS Modules', // Variantes actualizadas
     },
   },
 }

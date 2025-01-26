@@ -1,11 +1,10 @@
-// components/atoms/ButtonSend/ButtonSend.jsx
 import PropTypes from 'prop-types'
 import React from 'react'
 import styles from './ButtonSend.module.css'
 
 const ButtonSend = ({
   type = 'button',
-  variant = 'primary',
+  variant = 'primary', // Asegurar nombres coincidentes
   isLoading = false,
   disabled = false,
   children = 'Enviar',
@@ -26,12 +25,11 @@ const ButtonSend = ({
       onClick={handleClick}
       aria-label={ariaLabel || (isLoading ? 'Enviando datos' : children)}
       aria-disabled={disabled || isLoading}
-      role="button"
     >
       {isLoading ? (
         <span className={styles.loading__container}>
           <span className={styles.loading__spinner} aria-hidden="true" />
-          <span className="visually-hidden">Procesando...</span>
+          <span className={styles['visually-hidden']}>Procesando...</span>
         </span>
       ) : (
         children
@@ -42,7 +40,7 @@ const ButtonSend = ({
 
 ButtonSend.propTypes = {
   type: PropTypes.oneOf(['button', 'submit', 'reset']),
-  variant: PropTypes.oneOf(['primary', 'secondary', 'text']),
+  variant: PropTypes.oneOf(['primary', 'secondary', 'tertiary', 'nav']), // Nombres iguales
   isLoading: PropTypes.bool,
   disabled: PropTypes.bool,
   children: PropTypes.node,
