@@ -3,68 +3,66 @@ import Button from '@components/atoms/Button'
 import Logo from '@components/atoms/Logo'
 import Header from '@components/molecules/Header'
 import Navbar from '@components/organisms/Navbar'
-import React from 'react'
 // ✅ Corrección 1: Ruta de importación consistente con alias
 import ButtonSend from '@components/atoms/ButtonSend/ButtonSend'
 // ✅ Corrección 2: Importaciones faltantes para interacciones
-import { within } from '@storybook/testing-library'
-import userEvent from '@testing-library/user-event'
+import { userEvent, within } from '@storybook/testing-library'
 
 export default {
   title: 'Guía Rápida',
   parameters: {
     layout: 'centered',
     viewport: {
-      defaultViewport: 'responsive',
+      defaultViewport: 'responsive'
     },
     backgrounds: {
       default: 'light',
       values: [
         { name: 'light', value: '#ffffff' },
-        { name: 'dark', value: '#213435' },
-      ],
-    },
-  },
+        { name: 'dark', value: '#213435' }
+      ]
+    }
+  }
 }
 
 // ========= COMPONENTES BASE ========= //
-export const Botones = (args) => (
+export const Botones = args => (
   <div
     style={{
       display: 'flex',
       gap: '1rem',
       padding: '2rem',
-      borderBottom: '1px solid #eee',
+      borderBottom: '1px solid #eee'
     }}
   >
     <Button {...args} />
-    <Button type="secondary">Secundario</Button>
+    <Button type='secondary'>Secundario</Button>
     <Button disabled>Deshabilitado</Button>
   </div>
 )
 
 Botones.args = {
   children: 'Primario Personalizable',
-  type: 'primary',
+  type: 'primary'
 }
 
 Botones.argTypes = {
   type: {
     control: { type: 'select' },
-    options: ['primary', 'secondary', 'nav'],
+    options: ['primary', 'secondary', 'nav']
   },
   children: {
-    control: 'text',
-  },
+    control: 'text'
+  }
 }
 
 Botones.parameters = {
   docs: {
     description: {
       component:
-        '**Componente atómico reutilizable**\n\n- Usar `type="primary"` para acciones principales\n- `disabled=true` para estados inactivos\n- Requiere `aria-label` para accesibilidad',
-    },
-  },
+        '**Componente atómico reutilizable**\n\n- Usar `type="primary"` para acciones principales\n- `disabled=true` para estados inactivos\n- Requiere `aria-label` para accesibilidad'
+    }
+  }
 }
 
 // ========= LOGOTIPO CON CONTEXTOS ========= //
@@ -77,14 +75,14 @@ export const Logotipo = () => (
 Logotipo.parameters = {
   docs: {
     description:
-      '**Elemento de marca principal**\n\n- Animación suave al hacer hover\n- Tamaño responsive automático\n- Ratio fijo 3.87:1 (118x30.5px)',
+      '**Elemento de marca principal**\n\n- Animación suave al hacer hover\n- Tamaño responsive automático\n- Ratio fijo 3.87:1 (118x30.5px)'
   },
   backgrounds: {
     values: [
       { name: 'light', value: '#ffffff' },
-      { name: 'dark', value: '#213435' },
-    ],
-  },
+      { name: 'dark', value: '#213435' }
+    ]
+  }
 }
 
 // ========= COMPONENTES COMPUESTOS ========= //
@@ -100,16 +98,16 @@ HeaderCompleto.parameters = {
     viewports: {
       iphone12: {
         name: 'iPhone 12',
-        styles: { width: '390px', height: '844px' },
-      },
-    },
+        styles: { width: '390px', height: '844px' }
+      }
+    }
   },
   docs: {
     source: {
       code: '<Header />',
-      language: 'jsx',
-    },
-  },
+      language: 'jsx'
+    }
+  }
 }
 
 export const NavbarEnContexto = () => (
@@ -126,32 +124,28 @@ NavbarEnContexto.play = async ({ canvasElement }) => {
 NavbarEnContexto.parameters = {
   chromatic: { disable: false },
   controls: {
-    expanded: true,
-  },
+    expanded: true
+  }
 }
 
 // ========= HISTORIA ACTUALIZADA PARA BUTTONSEND ========= //
-export const BotonesSend = (args) => (
+export const BotonesSend = args => (
   <div
     style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
       gap: '1rem',
       padding: '2rem',
-      borderBottom: '1px solid #eee',
+      borderBottom: '1px solid #eee'
     }}
   >
     <ButtonSend {...args} />
-    <ButtonSend variant="secondary">Secundario</ButtonSend>
-    <ButtonSend variant="tertiary">Terciario</ButtonSend>{' '}
-    {/* Cambiado text -> tertiary */}
-    <ButtonSend variant="nav">Navegación</ButtonSend> {/* Nueva variante */}
+    <ButtonSend variant='secondary'>Secundario</ButtonSend>
+    <ButtonSend variant='tertiary'>Terciario</ButtonSend> {/* Cambiado text -> tertiary */}
+    <ButtonSend variant='nav'>Navegación</ButtonSend> {/* Nueva variante */}
     <ButtonSend isLoading>Cargando...</ButtonSend>
     <ButtonSend disabled>Deshabilitado</ButtonSend>
-    <ButtonSend
-      ariaLabel="Acción secreta"
-      onClick={() => console.log('Acción ejecutada')}
-    >
+    <ButtonSend ariaLabel='Acción secreta' onClick={() => console.log('Acción ejecutada')}>
       Con Click Handler
     </ButtonSend>
   </div>
@@ -159,34 +153,34 @@ export const BotonesSend = (args) => (
 
 BotonesSend.args = {
   children: 'Enviar Formulario',
-  variant: 'primary',
+  variant: 'primary'
 }
 
 BotonesSend.argTypes = {
   variant: {
     control: { type: 'select' },
     options: ['primary', 'secondary', 'tertiary', 'nav'], // Opciones actualizadas
-    description: 'Variante visual del botón (primary/secondary/tertiary/nav)',
+    description: 'Variante visual del botón (primary/secondary/tertiary/nav)'
   },
   isLoading: {
     control: 'boolean',
-    description: 'Estado de carga',
+    description: 'Estado de carga'
   },
   disabled: {
     control: 'boolean',
-    description: 'Estado deshabilitado',
+    description: 'Estado deshabilitado'
   },
   ariaLabel: {
     control: 'text',
-    description: 'Etiqueta ARIA para accesibilidad',
-  },
+    description: 'Etiqueta ARIA para accesibilidad'
+  }
 }
 
 BotonesSend.parameters = {
   docs: {
     description: {
       component:
-        '**Componente de acción avanzado**\n\n- Variantes: primary/secondary/tertiary/nav\n- Estados: loading/disabled\n- Accesibilidad AAA (WCAG 2.1)\n- Integración con sistema de diseño mediante CSS Modules', // Variantes actualizadas
-    },
-  },
+        '**Componente de acción avanzado**\n\n- Variantes: primary/secondary/tertiary/nav\n- Estados: loading/disabled\n- Accesibilidad AAA (WCAG 2.1)\n- Integración con sistema de diseño mediante CSS Modules' // Variantes actualizadas
+    }
+  }
 }

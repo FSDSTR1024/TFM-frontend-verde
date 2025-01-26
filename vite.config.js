@@ -20,16 +20,24 @@ export default defineConfig({
     }
   },
   css: {
-    postcss: './postcss.config.js', // Usa PostCSS para procesar CSS
     modules: {
       localsConvention: 'camelCaseOnly' // Usa camelCase para nombres de clases
     }
+    // Si decides usar PostCSS en el futuro, descomenta esto:
+    // postcss: './postcss.config.js',
   },
   server: {
     port: 3000, // Puerto del servidor de desarrollo
-    open: true // Abre el navegador automáticamente
+    open: true, // Abre el navegador automáticamente
+    hmr: {
+      overlay: false // Desactiva el overlay de errores de Vite (opcional)
+    }
   },
   optimizeDeps: {
     include: ['@emotion/react', '@emotion/styled'] // Optimiza Emotion
+  },
+  build: {
+    outDir: 'dist', // Carpeta de salida para el build
+    sourcemap: true // Genera sourcemaps para debugging
   }
 })

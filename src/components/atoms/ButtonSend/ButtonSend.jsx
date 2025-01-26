@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-import React from 'react'
 import styles from './ButtonSend.module.css'
 
 const ButtonSend = ({
@@ -9,9 +8,9 @@ const ButtonSend = ({
   disabled = false,
   children = 'Enviar',
   onClick,
-  ariaLabel,
+  ariaLabel
 }) => {
-  const handleClick = (e) => {
+  const handleClick = e => {
     if (!disabled && !isLoading && onClick) {
       onClick(e)
     }
@@ -28,7 +27,7 @@ const ButtonSend = ({
     >
       {isLoading ? (
         <span className={styles.loading__container}>
-          <span className={styles.loading__spinner} aria-hidden="true" />
+          <span className={styles.loading__spinner} aria-hidden='true' />
           <span className={styles['visually-hidden']}>Procesando...</span>
         </span>
       ) : (
@@ -45,7 +44,7 @@ ButtonSend.propTypes = {
   disabled: PropTypes.bool,
   children: PropTypes.node,
   onClick: PropTypes.func,
-  ariaLabel: PropTypes.string,
+  ariaLabel: PropTypes.string
 }
 
 export default ButtonSend
