@@ -1,1 +1,9 @@
 @import '../BaseButtonStyle/BaseButton.module.css';
+
+/* Aplica los estilos del botón base y sobrescribe con secondary */
+.login {
+    @extend .button;
+    /* Hereda todos los estilos base */
+    @extend .secondary;
+    /* Prioriza los estilos de secondary */
+}

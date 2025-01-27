@@ -2,10 +2,10 @@ import Button from '@components/atoms/Button'
 import ButtonLogin from '@components/atoms/ButtonLogin/ButtonLogin'
 import styles from './NavLinks.module.css'
 
-// 2️⃣ Define el tipo de cada botón en el array
+// Define el array con los tipos de botones
 const NAV_ITEMS = [
   { label: 'Registrarse', type: 'nav' },
-  { label: 'Iniciar sesión', type: 'login' } // Identificador para el botón especial
+  { label: 'Iniciar sesión', type: 'login' } // Tipo especial para el botón de login
 ]
 
 const NavLinks = () => (
@@ -13,12 +13,17 @@ const NavLinks = () => (
     <ul className={styles.navList}>
       {NAV_ITEMS.map(item => (
         <li key={item.label}>
-          {/* 3️⃣ Lógica condicional para renderizar ButtonLogin */}
+          {/* Lógica condicional para renderizar el tipo de botón */}
           {item.type === 'login' ? (
             <ButtonLogin
               ariaLabel={`Acceder a ${item.label}`}
-              className={styles.navButton}
-              onClick={() => console.log('Lógica de login')} // Es en este apartado donde debo añadir la lçogica del botón
+              className={styles.navButton} // Hereda estilos comunes de NavLinks
+              onClick={() => {
+                console.log(`[DEBUG] Se hizo clic en ${item.label}`)
+                // Aquí va la lógica específica de login
+                console.log('Redirigiendo al flujo de login...')
+                // Simula redirección o llama a una función
+              }}
             >
               {item.label}
             </ButtonLogin>
@@ -26,7 +31,7 @@ const NavLinks = () => (
             <Button
               type={item.type}
               ariaLabel={`Navegar a ${item.label}`}
-              className={styles.navButton}
+              className={styles.navButton} // Hereda estilos comunes de NavLinks
             >
               {item.label}
             </Button>

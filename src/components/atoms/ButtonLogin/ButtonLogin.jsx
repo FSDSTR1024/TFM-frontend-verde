@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import styles from './ButtonLogin.module.css'
 
 const ButtonLogin = ({ children, onClick, ariaLabel, isLoading = false }) => {
-  // Depuración: Verifica las props recibidas
   console.log('[DEBUG] Props en ButtonLogin:', {
     children,
     onClick: typeof onClick,
@@ -13,9 +12,8 @@ const ButtonLogin = ({ children, onClick, ariaLabel, isLoading = false }) => {
 
   return (
     <Button
-      type='login'
+      type='secondary' // Prioriza la variante secondary
       onClick={e => {
-        // Depuración: Verifica el evento de clic
         console.log('[DEBUG] Evento click:', e)
         if (onClick) {
           console.log('[DEBUG] Ejecutando onClick...')
@@ -24,7 +22,7 @@ const ButtonLogin = ({ children, onClick, ariaLabel, isLoading = false }) => {
       }}
       ariaLabel={ariaLabel}
       disabled={isLoading}
-      className={styles.login}
+      className={styles.login} // Asocia la clase login al botón
     >
       {isLoading ? 'Cargando...' : children}
     </Button>
