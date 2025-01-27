@@ -1,7 +1,7 @@
 // src/stories/QuickGuide.stories.jsx
+import Header from '@/components/organisms/Header'
 import Button from '@components/atoms/Button'
 import Logo from '@components/atoms/Logo'
-import Header from '@components/molecules/Header'
 import Navbar from '@components/organisms/Navbar'
 // ✅ Corrección 1: Ruta de importación consistente con alias
 import ButtonSend from '@components/atoms/ButtonSend/ButtonSend'

@@ -5,7 +5,7 @@ import '@components/pages/HomePage/HomePage.css'
 const HomePage = () => {
   return (
     <div className='home-page'>
-      <h1>Se esta poniendo potente la paginita</h1>
+      <h1>Home Page</h1>
       <Input label='Ejemplo' name='ejemplo' type='email' />
     </div>
   )

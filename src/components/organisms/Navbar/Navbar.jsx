@@ -1,5 +1,5 @@
 // Navbar.jsx
-import Header from '@components/molecules/Header'
+import Header from '@/components/organisms/Header'
 import styles from './Navbar.module.css'
 
 const Navbar = () => (
