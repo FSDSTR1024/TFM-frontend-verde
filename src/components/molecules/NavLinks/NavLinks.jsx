@@ -1,4 +1,4 @@
-import Button from '@components/atoms/Button'
+import ButtonRegister from '@/components/atoms/ButtonRegister'
 import ButtonLogin from '@components/atoms/ButtonLogin/ButtonLogin'
 import styles from './NavLinks.module.css'
 
@@ -19,6 +19,7 @@ const NavLinks = () => (
               ariaLabel={`Acceder a ${item.label}`}
               className={styles.navButton} // Hereda estilos comunes de NavLinks
               onClick={() => {
+                // Aquí va la lógica para el evento onClick y añado console.log para depuración
                 console.log(`[DEBUG] Se hizo clic en ${item.label}`)
                 // Aquí va la lógica específica de login
                 console.log('Redirigiendo al flujo de login...')
@@ -28,13 +29,18 @@ const NavLinks = () => (
               {item.label}
             </ButtonLogin>
           ) : (
-            <Button
-              type={item.type}
-              ariaLabel={`Navegar a ${item.label}`}
+            <ButtonRegister
+              ariaLabel='Registrarse'
               className={styles.navButton} // Hereda estilos comunes de NavLinks
+              onClick={() => {
+                // Aquí va la lógica para el evento onClick y añado console.log para depuración
+                console.log(`[DEBUG] Se hizo clic en ${item.label}`)
+                // Aquí va la lógica específica de login
+                console.log('Redirigiendo al flujo de registro...')
+              }}
             >
               {item.label}
-            </Button>
+            </ButtonRegister>
           )}
         </li>
       ))}
