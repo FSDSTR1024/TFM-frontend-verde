@@ -1,32 +1,32 @@
 import PropTypes from 'prop-types'
+import ButtonOnLogout from '../../atoms/ButtonOnLogout'
 import styles from './Dropdown.module.css'
 
-const Dropdown = ({ username, userRole, onLogout }) => {
-  retunr(
+const Dropdown = ({ username, userRole = '', onLogout }) => {
+  return (
     <div className={styles.dropdown}>
+      {/* Nombre del usuario */}
       <p className={styles.username}>{username}</p>
 
-      {/* Aquí se muestra el apartado para el usuario administrador*/}
+      {/* Mostrar rol del administrador */}
       {userRole === 'admin' && <p className={styles.role}>Panel de administrador</p>}
 
-      {/* Aquí se muestra el botón para cerrar sesión */}
-      <Button onClick={onLogout} className={styles.logout}>
+      {/* Botón de cerrar sesión */}
+      <ButtonOnLogout
+        onClick={onLogout} // Lógica del cierre de sesión
+        ariaLabel='Cerrar sesión'
+      >
         Cerrar sesión
-      </Button>
+      </ButtonOnLogout>
     </div>
   )
 }
 
-// Validación de proptypes
+// Validación de props
 Dropdown.propTypes = {
-  username: PropTypes.string.isRequired,
-  userRole: PropTypes.string,
-  onLogout: PropTypes.func
-}
-
-// props por defecto
-Dropdown.defaultProps = {
-  userRole: '' // En el caso de que no aparezca un rol, etonces, se muestra un string vacío
+  username: PropTypes.string.isRequired, // Nombre del usuario
+  userRole: PropTypes.string, // Rol del usuario
+  onLogout: PropTypes.func.isRequired // Función para manejar el logout
 }
 
 export default Dropdown

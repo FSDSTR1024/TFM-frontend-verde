@@ -23,7 +23,6 @@ const NavLinks = () => (
                 console.log(`[DEBUG] Se hizo clic en ${item.label}`)
                 // Aquí va la lógica específica de login
                 console.log('Redirigiendo al flujo de login...')
-                // Simula redirección o llama a una función
               }}
             >
               {item.label}
