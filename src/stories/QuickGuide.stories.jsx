@@ -1,11 +1,9 @@
 // src/stories/QuickGuide.stories.jsx
 import Header from '@/components/organisms/Header'
 import Button from '@components/atoms/Button'
+import ButtonSend from '@components/atoms/ButtonSend/ButtonSend'
 import Logo from '@components/atoms/Logo'
 import Navbar from '@components/organisms/Navbar'
-// ✅ Corrección 1: Ruta de importación consistente con alias
-import ButtonSend from '@components/atoms/ButtonSend/ButtonSend'
-// ✅ Corrección 2: Importaciones faltantes para interacciones
 import { userEvent, within } from '@storybook/testing-library'
 // Importa el componente Input
 import Input from '@components/atoms/Input'
