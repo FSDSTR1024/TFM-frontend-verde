@@ -11,7 +11,7 @@ const ButtonRegister = ({
 }) => {
   return (
     <Button
-      type='secondary' // Prioriza la variante secondary
+      type='primary' // Prioriza la variante secondary
       onClick={e => {
         if (isLoading) return
         onClick(e)

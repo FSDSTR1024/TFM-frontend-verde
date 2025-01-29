@@ -1,31 +1,39 @@
-// components/atoms/PasswordToggle/PasswordToggle.jsx
 import { useState } from 'react'
 import { PasswordInput } from '../Input'
 import styles from './PasswordToggle.module.css'
 
-const PasswordToggle = () => {
+const PasswordToggle = ({ label = 'Contraseña', name, value, onChange, required }) => {
   const [showPassword, setShowPassword] = useState(false)
+
+  // Generamos un ID único basado en el name y un número aleatorio
+  const uniqueId = `${name}-${Math.random().toString(36).substr(2, 9)}`
 
   return (
     <div className={styles.input__group}>
-      <PasswordInput id='password' aria-describedby='password-help' />
+      {/* Input de contraseña con ID único */}
+      <PasswordInput
+        id={uniqueId} // ✅ Ahora cada input tendrá un ID único
+        label={label}
+        type={showPassword ? 'text' : 'password'}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        aria-describedby={`${uniqueId}-help`}
+      />
 
+      {/* Toggle para mostrar/ocultar contraseña */}
       <div className={styles.toggle__container}>
         <input
           type='checkbox'
-          id='toggle-password'
+          id={`toggle-${uniqueId}`} // ✅ ID único para el toggle también
           checked={showPassword}
-          onChange={e => setShowPassword(e.target.checked)}
+          onChange={() => setShowPassword(!showPassword)}
           className={styles.toggle__input}
-          aria-controls='password'
+          aria-controls={uniqueId}
           aria-label='Mostrar contraseña'
         />
-        <label
-          htmlFor='toggle-password'
-          className={styles.toggle__label}
-          role='switch'
-          aria-checked={showPassword}
-        >
+        <label htmlFor={`toggle-${uniqueId}`} className={styles.toggle__label} role='switch'>
           <span className='visually-hidden'>Mostrar contraseña</span>
           <svg aria-hidden='true' className={styles.toggle__icon} viewBox='0 0 24 24'>
             {showPassword ? (
