@@ -1,9 +1,0 @@
-@import url('../BaseButtonStyle/BaseButton.module.css');
-
-/* Aplica los estilos del botón base y sobrescribe con primary */
-.cancel {
-  @extend .button;
-  /* Hereda todos los estilos base */
-  @extend .primary;
-  /* Prioriza los estilos de secondary */
-}

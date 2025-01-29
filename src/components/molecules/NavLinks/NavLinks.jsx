@@ -1,5 +1,4 @@
-import ButtonRegister from '@/components/atoms/ButtonRegister'
-import ButtonLogin from '@components/atoms/ButtonLogin/ButtonLogin'
+import { Button } from '../../atoms/Button'
 import { useState } from 'react'
 import styles from './NavLinks.module.css'
 
@@ -23,14 +22,14 @@ const NavLinks = () => {
             {item.type === 'login' ? (
               <>
                 {/* Botón para iniciar sesión */}
-                <ButtonLogin
+                <Button
                   ariaLabel={`Acceder a ${item.label}`}
                   className={styles.navButton}
                   onClick={() => {
                   }}
                 >
                   {item.label}
-                </ButtonLogin>
+                </Button>
                 {/* Dropdown para login */}
                 {showDropdown && !isAuthenticated && (
                   <Dropdown
