@@ -31,7 +31,7 @@ const Template = args => <ButtonLogin {...args} />
 
 export const Default = Template.bind({})
 Default.args = {
-  children: 'Iniciar sesión',
+  children: 'Entrar',
   ariaLabel: 'Botón para iniciar sesión en la plataforma', // Mejor texto accesible
   isLoading: false
 }
