@@ -1,12 +1,20 @@
 import PropTypes from 'prop-types'
 import styles from './Button.module.css'
 
-const Button = ({ children, type = 'primary', onClick, ariaLabel, disabled, className }) => {
+const Button = ({
+  children,
+  variant = 'primary', // Asegurar nombres coincidentes
+  htmlType = 'button', // Utiliza el type nativo de html para el botón
+  onClick,
+  ariaLabel,
+  disabled,
+  className
+}) => {
   return (
     <button
-      className={`${styles.button} ${styles[type]} ${className || ''}`}
+      className={`${styles.button} ${styles[variant]} ${className || ''}`}
       onClick={onClick}
-      type='button'
+      type={htmlType} // 🔴 Usamos la nueva prop
       aria-label={ariaLabel}
       disabled={disabled}
     >
@@ -16,7 +24,8 @@ const Button = ({ children, type = 'primary', onClick, ariaLabel, disabled, clas
 }
 
 Button.propTypes = {
-  type: PropTypes.oneOf(['primary', 'secondary', 'tertiary', 'nav', 'login']),
+  variant: PropTypes.oneOf(['primary', 'secondary', 'tertiary']),
+  htmlType: PropTypes.oneOf(['button', 'submit', 'reset']),
   ariaLabel: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   className: PropTypes.string,

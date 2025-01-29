@@ -74,6 +74,7 @@
 
 .tertiary:hover {
   background: var(--color5);
+  text-decoration: none;
 }
 
 .nav {
