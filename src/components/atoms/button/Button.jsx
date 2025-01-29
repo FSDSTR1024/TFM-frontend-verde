@@ -1,66 +1,27 @@
-import Button from './Button'
+import PropTypes from 'prop-types'
+import styles from './Button.module.css'
 
-export default {
-  title: 'Components/Button',
-  component: Button,
-  argTypes: {
-    type: {
-      control: { type: 'select', options: ['primary', 'secondary', 'tertiary'] }
-    },
-    ariaLabel: { control: 'text' },
-    disabled: { control: 'boolean' },
-    className: { control: 'text' },
-    children: { control: 'text' },
-    onClick: { action: 'clicked' }
-  }
+const Button = ({ children, type = 'primary', onClick, ariaLabel, disabled, className }) => {
+  return (
+    <button
+      className={`${styles.button} ${styles[type]} ${className || ''}`}
+      onClick={onClick}
+      type='button'
+      aria-label={ariaLabel}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  )
 }
 
-const Template = args => <Button {...args} />
-
-export const Primary = Template.bind({})
-Primary.args = {
-  type: 'primary',
-  children: 'Primary Button',
-  ariaLabel: 'Primary button',
-  disabled: false
+Button.propTypes = {
+  type: PropTypes.oneOf(['primary', 'secondary', 'tertiary', 'nav', 'login']),
+  ariaLabel: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  onClick: PropTypes.func
 }
 
-export const Secondary = Template.bind({})
-Secondary.args = {
-  type: 'secondary',
-  children: 'Secondary Button',
-  ariaLabel: 'Secondary button',
-  disabled: false
-}
-
-export const Tertiary = Template.bind({})
-Tertiary.args = {
-  type: 'tertiary',
-  children: 'Tertiary Button',
-  ariaLabel: 'Tertiary button',
-  disabled: false
-}
-
-export const Nav = Template.bind({})
-Nav.args = {
-  type: 'nav',
-  children: 'Nav Button',
-  ariaLabel: 'Navigation button',
-  disabled: false
-}
-
-export const Login = Template.bind({})
-Login.args = {
-  type: 'login',
-  children: 'Login Button',
-  ariaLabel: 'Login button',
-  disabled: false
-}
-
-export const Disabled = Template.bind({})
-Disabled.args = {
-  type: 'primary',
-  children: 'Disabled Button',
-  ariaLabel: 'Disabled button',
-  disabled: true
-}
+export default Button
