@@ -5,7 +5,7 @@ import styles from './ButtonOnLogout.module.css'
 const ButtonOnLogout = ({ children, onClick = () => {}, ariaLabel }) => {
   return (
     <Button
-      type='secondary'
+      type='primary'
       onClick={e => onClick && onClick(e)}
       ariaLabel={ariaLabel}
       className={styles.logout}

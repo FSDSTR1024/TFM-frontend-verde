@@ -1,6 +1,5 @@
 import ButtonRegister from '@/components/atoms/ButtonRegister'
 import ButtonLogin from '@components/atoms/ButtonLogin/ButtonLogin'
-import Dropdown from '@components/molecules/Dropdown'
 import { useState } from 'react'
 import styles from './NavLinks.module.css'
 
@@ -16,26 +15,6 @@ const NavLinks = () => {
   const [username, setUsername] = useState('') // Nombre del usuario autenticado
   const [userRole, setUserRole] = useState('') // Rol del usuario autenticado
 
-  const handleLogin = (email, password) => {
-    // Simular autenticación
-    if (email === 'admin@example.com' && password === 'password123') {
-      setUsername('AdminUser') // Nombre simulado
-      setUserRole('admin') // Rol simulado
-      setIsAuthenticated(true) // Cambiar estado de autenticación
-      setShowDropdown(false) // Ocultar dropdown
-      console.log('[DEBUG] Inicio de sesión exitoso')
-    } else {
-      alert('Credenciales incorrectas')
-    }
-  }
-
-  const handleLogout = () => {
-    setIsAuthenticated(false)
-    setUsername('')
-    setUserRole('')
-    console.log('[DEBUG] Cierre de sesión exitoso')
-  }
-
   return (
     <nav className={styles.navContainer}>
       <ul className={styles.navList}>
@@ -48,8 +27,6 @@ const NavLinks = () => {
                   ariaLabel={`Acceder a ${item.label}`}
                   className={styles.navButton}
                   onClick={() => {
-                    console.log(`[DEBUG] Se hizo clic en ${item.label}`)
-                    setShowDropdown(!showDropdown) // Alternar el estado del dropdown
                   }}
                 >
                   {item.label}

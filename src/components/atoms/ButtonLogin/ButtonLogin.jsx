@@ -12,7 +12,7 @@ const ButtonLogin = ({ children, onClick, ariaLabel, isLoading = false }) => {
 
   return (
     <Button
-      type='secondary' // Prioriza la variante secondary
+      type='primary' // Prioriza la variante secondary
       onClick={e => {
         console.log('[DEBUG] Evento click:', e)
         if (onClick) {
