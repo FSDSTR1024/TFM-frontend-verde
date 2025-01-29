@@ -8,7 +8,7 @@ const NavLinks = () => {
         {/* Botón para Registrarse */}
         <li>
           <Button
-            type='secondary'
+            variant='secondary'
             ariaLabel='Acceder a Registrarse'
             className={styles.navButton}
             onClick={() => {
@@ -22,7 +22,7 @@ const NavLinks = () => {
         {/* Botón para Iniciar Sesión */}
         <li>
           <Button
-            type='secondary'
+            variant='secondary'
             ariaLabel='Acceder a Iniciar sesión'
             className={styles.navButton}
             onClick={() => {
