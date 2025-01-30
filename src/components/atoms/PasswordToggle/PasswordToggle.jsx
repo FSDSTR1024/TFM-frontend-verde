@@ -42,7 +42,7 @@ const PasswordToggle = ({ label = 'Contraseña', name, value, onChange, required
           role='switch'
           aria-checked={showPassword}
         >
-          <span className={styles.visually_hidden}>
+          <span className={styles.visually__hidden}>
             {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
           </span>
         </label>

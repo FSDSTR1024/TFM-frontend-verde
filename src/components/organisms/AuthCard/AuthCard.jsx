@@ -46,13 +46,13 @@ const AuthCard = ({
         aria-labelledby='auth-title'
         onClick={e => e.stopPropagation()}
       >
+        <button className={styles.closeButton} onClick={onCancel} aria-label='Cerrar'>
+          <X size={20} />
+        </button>
         <header className={styles.authCardHeader}>
           <div className={styles.authCardLogo}>
             <Logo />
           </div>
-          <button className={styles.closeButton} onClick={onCancel} aria-label='Cerrar'>
-            <X size={20} />
-          </button>
         </header>
 
         <h2 id='auth-title' className={styles.authTitle}>

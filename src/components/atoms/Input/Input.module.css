@@ -16,7 +16,7 @@
 
 .inputWrapper {
   position: relative;
-  margin: 1.5rem 0 var(--spacing-sm);
+  margin: 0.5rem 0 var(--spacing-sm);
   width: 100%;
   max-width: 400px;
 }
@@ -65,7 +65,7 @@
   box-shadow: 0 2px 8px rgba(33, 52, 53, 0.1);
 }
 
-.inputField[data-valid="true"] {
+.inputField[data-valid='true'] {
   padding-right: 2.5rem;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23648a64" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>');
   background-repeat: no-repeat;
@@ -73,16 +73,16 @@
   background-size: 1.25rem;
 }
 
-.inputField[data-invalid="true"] {
+.inputField[data-invalid='true'] {
   border-color: var(--error-color);
-  background-color: #fff5f5;
+  background-color: var(--color5);
 }
 
-.inputField[data-invalid="true"]:focus-visible {
+.inputField[data-invalid='true']:focus-visible {
   outline-color: var(--error-color);
 }
 
-.inputField[data-invalid="true"]::after {
+.inputField[data-invalid='true']::after {
   content: attr(data-error);
   position: absolute;
   bottom: -1.5rem;
@@ -94,7 +94,7 @@
   transition: bottom 0.3s ease-in-out;
 }
 
-.inputField[data-invalid="true"]:not(:focus)::after {
+.inputField[data-invalid='true']:not(:focus)::after {
   bottom: -2rem;
 }
 
@@ -112,12 +112,11 @@
   text-overflow: ellipsis;
 }
 
-.error[role="alert"] {
+.error[role='alert'] {
   animation: shake 0.3s ease-in-out;
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);

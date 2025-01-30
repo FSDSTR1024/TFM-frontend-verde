@@ -2,55 +2,70 @@
 
 /* ===== VARIABLES GLOBALES ===== */
 :root {
-    /* Paleta de colores */
-    --primary-dark: #213435;
-    --secondary-dark: #46685b;
-    --primary-light: #e1e3ac;
-    --hover-state: #648a64;
+  /* Paleta de colores */
+  --primary-dark: #213435;
+  --secondary-dark: #46685b;
+  --primary-light: #e1e3ac;
+  --hover-state: #648a64;
 
-    /* RGB */
-    --primary-dark-rgb: 33, 52, 53;
-    --secondary-dark-rgb: 70, 104, 91;
+  /* RGB */
+  --primary-dark-rgb: 33, 52, 53;
+  --secondary-dark-rgb: 70, 104, 91;
 
-    /* Tipografía */
-    --font-primary: 'Playfair Display', serif;
+  /* Tipografía */
+  --font-primary: 'Playfair Display', serif;
 
-    /* Responsive */
-    --mobile: 768px;
-    --tablet: 1024px;
+  /* Responsive */
+  --mobile: 768px;
+  --tablet: 1024px;
 
-    /* Efectos */
-    --shadow-base: 0 2px 8px rgba(var(--primary-dark-rgb), 0.1);
-    --transition-base: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Efectos */
+  --shadow-base: 0 2px 8px rgba(var(--primary-dark-rgb), 0.1);
+  --transition-base: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* ===== RESET Y ESTILOS BASE ===== */
 *,
 *::before,
 *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+input {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  font-family: var(--font-primary); /* Mantiene coherencia tipográfica */
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--primary-light) inset !important; /* Fondo blanco */
+  -webkit-text-fill-color: var(--primary-dark) !important; /* Color texto */
+}
+
+input:focus {
+  outline: 2px solid var(--hover-state); /* Usa tu variable de color */
+  outline-offset: 2px; /* Mejor accesibilidad */
+}
 html {
-    font-size: 100%;
+  font-size: 100%;
 }
 
 body {
-    font-family: var(--font-primary);
-    background: var(--primary-light);
-    color: var(--primary-dark);
-    line-height: 1.6;
+  font-family: var(--font-primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  line-height: 1.6;
 }
 
 img {
-    max-width: 100%;
-    height: auto;
-    display: block;
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 button {
-    cursor: pointer;
-    font-family: inherit;
+  cursor: pointer;
+  font-family: inherit;
 }
