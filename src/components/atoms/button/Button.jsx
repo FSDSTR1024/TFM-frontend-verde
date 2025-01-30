@@ -14,7 +14,7 @@ const Button = ({
     <button
       className={`${styles.button} ${styles[variant]} ${className || ''}`}
       onClick={onClick}
-      type={htmlType} // 🔴 Usamos la nueva prop
+      type={htmlType}
       aria-label={ariaLabel}
       disabled={disabled}
     >

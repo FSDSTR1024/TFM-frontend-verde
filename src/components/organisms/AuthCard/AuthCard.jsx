@@ -1,5 +1,4 @@
 import { X } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import Button from '../../atoms/Button'
 import { EmailInput } from '../../atoms/Input'
 import Logo from '../../atoms/Logo'
@@ -14,36 +13,30 @@ const AuthCard = ({
   onSwitchForm,
   onCancel
 }) => {
-  const [localFormData, setLocalFormData] = useState(formData)
-
-  // Sincronizar con cambios externos
-  useEffect(() => {
-    setLocalFormData(formData)
-  }, [formData])
-
   const handleInputChange = e => {
     const { name, value } = e.target
     const newData = {
-      ...localFormData,
+      ...formData,
       [name]: value
     }
 
-    setLocalFormData(newData)
-
-    if (onInputChange) {
-      // Propagamos el evento extendido con validación
-      onInputChange({
-        ...e,
-        isValid: e.isValid,
-        formData: newData
-      })
-    }
+    onInputChange?.({
+      target: e.target,
+      formData: newData,
+      isValid: e.isValid
+    })
   }
 
   const handleSubmit = e => {
     e.preventDefault()
-    if (onSubmit) onSubmit(e, localFormData)
+    onSubmit?.(e, formData)
   }
+
+  // Validación diferenciada para login/registro
+  const isFormValid =
+    activeForm === 'login'
+      ? formData.email.trim() && formData.password.trim()
+      : Object.values(formData).every(field => field.trim())
 
   return (
     <div className={styles.overlayContainer} onClick={onCancel}>
@@ -77,7 +70,7 @@ const AuthCard = ({
                 placeholder='Usuario'
                 type='text'
                 name='username'
-                value={localFormData.username}
+                value={formData.username}
                 onChange={handleInputChange}
                 required
                 className={styles.nativeInput}
@@ -88,7 +81,7 @@ const AuthCard = ({
           <EmailInput
             label='Correo electrónico'
             name='email'
-            value={localFormData.email}
+            value={formData.email}
             onChange={handleInputChange}
             required
           />
@@ -96,7 +89,7 @@ const AuthCard = ({
           <PasswordToggle
             label='Contraseña'
             name='password'
-            value={localFormData.password}
+            value={formData.password}
             onChange={handleInputChange}
             required
           />
@@ -106,7 +99,7 @@ const AuthCard = ({
               variant='primary'
               htmlType='submit'
               ariaLabel='Enviar formulario'
-              disabled={Object.values(localFormData).some(v => v === '')} // Ejemplo de validación
+              disabled={!isFormValid}
             >
               {activeForm === 'login' ? 'Iniciar sesión' : 'Registrarse'}
             </Button>

@@ -1,26 +1,30 @@
 /* NavLinks.module.css */
 .navContainer {
-    display: flex;
-    justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .navList {
-    display: flex;
-    gap: 1.2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0 1rem;
-    align-items: center;
+  display: flex;
+  gap: 1.2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 1rem;
+  align-items: center;
 }
 
-.navList li button {
-    color: var(--color1);
-    background-color: transparent;
-    border: 2px solid var(--color1);
+/* Clase corregida */
+.secondaryButton {
+  composes: button secondary from '../../atoms/Button/Button.module.css';
 }
 
 @media (max-width: 768px) {
-    .navList {
-        display: none;
-    }
+  .navList {
+    display: none;
+  }
+
+  .secondaryButton {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+  }
 }
