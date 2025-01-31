@@ -1,16 +1,14 @@
+import useAuth from '@/context/AuthContext/useAuth' // Hook de autenticación
 import { useState } from 'react'
 import Button from '../../atoms/Button'
-import AuthCard from '../../organisms/AuthCard'
+import AuthCard from '../../organisms/AuthCard' // Componente del modal de autenticación
 import styles from './NavLinks.module.css'
 
 const NavLinks = () => {
+  const { isLoggedIn, user, login, logout } = useAuth() // De esta forma puedo acceder al contexto de useAuth
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
-  })
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' })
 
   const handleAuthModal = formType => {
     setActiveForm(formType)
@@ -26,27 +24,31 @@ const NavLinks = () => {
   return (
     <nav className={styles.navContainer}>
       <ul className={styles.navList}>
-        <li>
-          <Button
-            variant='secondary'
-            ariaLabel='Acceder a Registrarse'
-            className={styles.secondaryButton}
-            onClick={() => handleAuthModal('register')}
-          >
-            Registrarse
-          </Button>
-        </li>
-
-        <li>
-          <Button
-            variant='secondary'
-            ariaLabel='Acceder a Iniciar sesión'
-            className={styles.secondaryButton}
-            onClick={() => handleAuthModal('login')}
-          >
-            Iniciar sesión
-          </Button>
-        </li>
+        {!isLoggedIn ? (
+          <>
+            <li>
+              <Button variant='secondary' onClick={() => handleAuthModal('register')}>
+                Registrarse
+              </Button>
+            </li>
+            <li>
+              <Button variant='secondary' onClick={() => handleAuthModal('login')}>
+                Inicia sesión
+              </Button>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Button variant='secondary'>{user?.username || 'Usuario'}</Button>
+            </li>
+            <li>
+              <Button variant='secondary' onClick={logout}>
+                Cierra tu sesión
+              </Button>
+            </li>
+          </>
+        )}
       </ul>
 
       {showAuthModal && (
@@ -56,11 +58,6 @@ const NavLinks = () => {
           onInputChange={e => setFormData(e.formData)}
           onCancel={handleCloseModal}
           onSwitchForm={() => setActiveForm(prev => (prev === 'login' ? 'register' : 'login'))}
-          onSubmit={(e, formData) => {
-            e.preventDefault()
-            console.log('Datos enviados:', formData)
-            handleCloseModal()
-          }}
           key={activeForm}
         />
       )}
