@@ -21,7 +21,9 @@ export default [
       sourceType: 'module',
       globals: {
         React: 'readonly',
-        process: 'readonly'
+        process: 'readonly',
+        localStorage: 'readonly', // ✅ Añadido para evitar errores con localStorage
+        console: 'readonly' // ✅ Añadido para evitar errores con console
       },
       parserOptions: {
         ecmaFeatures: {
@@ -36,8 +38,8 @@ export default [
       'react/react-in-jsx-scope': 'off',
 
       // Mejores prácticas
-      'no-unused-vars': 'warn',
-      'no-console': 'warn',
+      'no-unused-vars': 'warn', // Advertencia para variables no utilizadas
+      'no-console': ['warn', { allow: ['warn', 'error'] }], // ✅ Permitir console.warn y console.error
 
       // Compatibilidad con Prettier
       'prettier/prettier': [

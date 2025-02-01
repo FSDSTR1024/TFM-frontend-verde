@@ -1,13 +1,13 @@
 /* Navbar.module.css */
 .navbar {
-    padding: 0 2rem;
-    box-shadow: 0 2px 8px rgba(var(--color1-rgb), 0.1);
-    z-index: 10;
-    background: white;
+  padding: 0 2rem;
+  box-shadow: 0 2px 8px rgba(var(--color1-rgb), 0.1);
+  z-index: 10;
+  background: white;
 }
 
 @media (max-width: 768px) {
-    .navbar {
-        padding: 1rem;
-    }
+  .navbar {
+    padding: 1rem;
+  }
 }

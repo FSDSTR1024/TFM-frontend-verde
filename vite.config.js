@@ -1,47 +1,54 @@
-import react from '@vitejs/plugin-react'
+// Definición de __filename y __dirname para entornos ESM
+import { fileURLToPath } from 'url'
 import path from 'path'
+import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
+// Convertir la URL del módulo actual en rutas de archivo
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Configuración de Vite
 export default defineConfig({
   plugins: [
     react({
-      jsxImportSource: '@emotion/react', // Usa Emotion para JSX
+      jsxImportSource: '@emotion/react',
       babel: {
-        plugins: ['@emotion/babel-plugin'] // Habilita el plugin de Emotion
+        plugins: ['@emotion/babel-plugin']
       },
-      jsxRuntime: 'automatic' // Usa el nuevo JSX Runtime de React
+      jsxRuntime: 'automatic'
     })
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'), // Alias para src/
-      '@components': path.resolve(__dirname, './src/components'), // Alias para componentes
+      '@components': path.resolve(__dirname, './src/components'), // Alias para components
       '@assets': path.resolve(__dirname, './src/assets') // Alias para assets
     }
   },
   css: {
     modules: {
-      localsConvention: 'camelCaseOnly' // Usa camelCase para nombres de clases
+      localsConvention: 'camelCaseOnly'
     },
-    postcss: false // Deshabilita PostCSS explícitamente
+    postcss: false
   },
   server: {
-    port: 3001, // Puerto del servidor de desarrollo
-    open: true, // Abre el navegador automáticamente
+    port: 3001,
+    open: true,
     hmr: {
-      overlay: false // Desactiva el overlay de errores de Vite (opcional)
+      overlay: false
     }
   },
   optimizeDeps: {
-    include: ['@emotion/react', '@emotion/styled'], // Optimiza Emotion
+    include: ['@emotion/react', '@emotion/styled'],
     esbuildOptions: {
       define: {
-        global: 'globalThis' // Define globalThis para compatibilidad
+        global: 'globalThis'
       }
     }
   },
   build: {
-    outDir: 'dist', // Carpeta de salida para el build
-    sourcemap: true // Genera sourcemaps para debugging
+    outDir: 'dist',
+    sourcemap: true
   }
 })
