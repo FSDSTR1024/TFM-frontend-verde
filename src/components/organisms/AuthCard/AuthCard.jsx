@@ -54,9 +54,10 @@ const AuthCard = ({
     // Limpia cualquier mensaje de error anterior antes de intentar un nuevo envío
 
     try {
+      const API_PREFIX = '/auth' // Definimos el prefijo para la API
       // Determina si el usuario está en modo "login" o "register" para definir la URL del endpoint
-      const endpoint = activeForm === 'login' ? '/login' : '/register'
-      // Si 'activeForm' es 'login', se enviará a '/login', de lo contrario lo hará a '/register'
+      const endpoint = activeForm === 'login' ? `${API_PREFIX}/login` : `${API_PREFIX}/register`
+      // Si 'activeForm' es 'login', se enviará a '/auth/login', de lo contrario lo hará a '/auth/register'
 
       const response = await api.post(endpoint, formData)
       // 'formData' contiene los datos del formulario, mientras que 'await' espera la respuesta del servidor antes de continuar
