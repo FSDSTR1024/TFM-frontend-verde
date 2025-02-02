@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
-import api from '../../services/api/axios' // Importamos la instancia de Axios pero esta dará fallos porque aún no está definida
+import api from '@/services/api/axios' // Importamos la instancia de Axios pero esta dará fallos porque aún no está definida
 import useAuth from '@/context/AuthContext/useAuth'
 import Button from '../../atoms/Button'
 import { EmailInput } from '../../atoms/Input'
