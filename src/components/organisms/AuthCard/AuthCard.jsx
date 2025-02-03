@@ -90,9 +90,9 @@ const AuthCard = ({
         // 1. Se verifica que el campo de email y contraseña NO estén vacíos
         // 2. 'trim()' elimina los espacios en blanco innecesarios
         Object.values(formData).every(field => field.trim())
-  // Cuando estamos dentro del formulario de 'register'
-  // 1. Se verifica que todos los campos NO estén vacíos
-  // 2. 'trim()' elimina los espacios en blanco innecesarios
+        // Cuando estamos dentro del formulario de 'register'
+        // 1. Se verifica que todos los campos NO estén vacíos
+        // 2. 'trim()' elimina los espacios en blanco innecesarios
 
   return (
     <div className={styles.overlayContainer} onClick={onCancel}>

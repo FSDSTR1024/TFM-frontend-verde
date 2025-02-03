@@ -72,7 +72,7 @@ api.interceptors.response.use(
           403: '/acceso-denegado' // Redirige a una página de acceso denegado si no tiene permisos
         }
 
-        // ✅ Evitamos redirecciones en bucle si ya estamos en la página de destino
+        // Evitamos redirecciones en bucle si ya estamos en la página de destino
         if (window.location.pathname !== redirectMap[status]) {
           window.location.href = redirectMap[status]
         }
