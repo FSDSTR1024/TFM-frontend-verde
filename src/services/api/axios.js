@@ -5,17 +5,18 @@ import axios from 'axios'
 // ===================================================
 /**
  * Crea una instancia preconfigurada de Axios para comunicarse con el backend
- * - BaseURL: Establece la URL base para todas las solicitudes
+ * - baseURL: Establece la URL base para todas las solicitudes
  * - withCredentials: Habilita el envío automático de cookies (necesario para sesiones)
- * - Timeout: Establece un límite de tiempo para las solicitudes (en milisegundos)
- * - Headers: Define el tipo de contenido por defecto para las solicitudes
+ * - timeout: Establece un límite de tiempo para las solicitudes (en milisegundos)
+ * - headers: Define el tipo de contenido por defecto para las solicitudes
  */
 const api = axios.create({
-  baseURL: 'http://localhost:3000', //  URL base del backend
-  withCredentials: true, //  Envía cookies automáticamente en cada petición (para JWT)
-  timeout: 10000, //  Tiempo máximo de espera para las solicitudes (10 segundos)
+  baseURL: 'http://localhost:3000', // URL base del backend
+  withCredentials: true, // Envía cookies automáticamente en cada solicitud (para JWT)
+  timeout: 10000, // Tiempo máximo de espera para las solicitudes (10 segundos)
   headers: {
-    'Content-Type': 'application/json' //  Formato JSON para todas las solicitudes
+    'Content-Type': 'application/json', // Formato JSON para todas las solicitudes
+    Accept: 'application/json' // Asegura que el servidor responda en JSON
   }
 })
 
@@ -30,13 +31,13 @@ const api = axios.create({
 api.interceptors.request.use(
   config => {
     if (process.env.NODE_ENV === 'development') {
-      console.warn(` Enviando solicitud a: ${config.url}`) //  Registro de solicitudes en modo desarrollo
+      console.info(`[Axios] Enviando solicitud: ${config.method.toUpperCase()} ${config.url}`)
     }
-    return config // Retornamos la configuración sin modificar
+    return config
   },
   error => {
-    console.error('❌ Error en la configuración de la solicitud:', error) //  Manejamos errores de configuración de solicitud
-    return Promise.reject(error) //  Propagamos el error para que pueda ser capturado más adelante
+    console.error('[Axios Error] Error en la configuración de la solicitud:', error)
+    return Promise.reject(error)
   }
 )
 
@@ -51,13 +52,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   response => {
     if (process.env.NODE_ENV === 'development') {
-      console.warn(` Respuesta recibida de: ${response.config.url}`) //  Registro de respuestas en modo desarrollo
+      console.info(
+        `[Axios] Respuesta recibida de: ${response.config.url} (Status: ${response.status})`
+      )
     }
-    return response //  Retornamos la respuesta sin modificar si todo está correcto
+    return response
   },
   error => {
     if (error.response) {
-      const { status } = error.response
+      const { status, config, data } = error.response
+
+      console.warn(`[Axios Error] Código de estado ${status} para ${config.url}`)
 
       // ================================
       // Manejo de Errores de Autenticación
@@ -74,6 +79,7 @@ api.interceptors.response.use(
 
         // Evitamos redirecciones en bucle si ya estamos en la página de destino
         if (window.location.pathname !== redirectMap[status]) {
+          console.warn(`[Axios] Redirigiendo a: ${redirectMap[status]}`)
           window.location.href = redirectMap[status]
         }
       }
@@ -86,11 +92,16 @@ api.interceptors.response.use(
        * mostramos un mensaje de error genérico en la consola
        */
       if (status >= 500) {
-        console.error(' Error interno del servidor') // Error interno del servidor
+        console.error(
+          '[Axios Error] Error interno del servidor:',
+          data.message || 'Inténtalo de nuevo más tarde.'
+        )
       }
+    } else {
+      console.error('[Axios Error] Error de red o el servidor no responde:', error.message)
     }
 
-    return Promise.reject(error) // Propagamos el error para manejo específico en cada llamada
+    return Promise.reject(error)
   }
 )
 

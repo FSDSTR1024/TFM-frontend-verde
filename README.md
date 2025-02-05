@@ -68,3 +68,98 @@
 - La estructura modular facilita la escalabilidad y el mantenimiento del código.
 - Se recomienda revisar los commits para entender la progresión del proyecto.
 - **Storybook** mejora la eficiencia en el desarrollo y la documentación de componentes.
+
+
+# Documentación de Cambios: Frontend
+
+## Problema Inicial
+
+El problema principal en el frontend era que, después de que el usuario iniciaba sesión, al recargar la página, la aplicación no verificaba si el token JWT seguía siendo válido. Esto causaba que el usuario se cerrara sesión automáticamente.
+
+---
+
+## Cambios Realizados en el Frontend
+
+### 1. Actualización de `AuthProvider.jsx`
+
+Se añadió la lógica para verificar el token al cargar la aplicación:
+
+```
+import { useEffect, useState } from 'react';
+import api from '@/services/api/axios';
+import { AuthContext } from './AuthContext';
+
+const AuthProvider = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await api.get('/auth/validate-token', { withCredentials: true });
+        setUser(response.data.user);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error('Token inválido o expirado:', error);
+        setIsLoggedIn(false);
+      } finally {
+        setChecking(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const login = async (formData) => {
+    try {
+      const response = await api.post('/auth/login', formData, { withCredentials: true });
+      setUser(response.data.user);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error('Error en el login:', error);
+    }
+  };
+
+  const logout = () => {
+    api.post('/auth/sign-out', {}, { withCredentials: true });
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
+  return (
+    <AuthContext.Provider value={{ isLoggedIn, user, checking, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthProvider;
+```
+
+### 2. Configuración de Axios
+
+Se ajustó la configuración de Axios para asegurarse de que las cookies se envíen automáticamente en cada solicitud:
+
+```
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:3000',
+  withCredentials: true, // Envía cookies automáticamente
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+});
+
+export default api;
+```
+
+---
+
+## Conclusiones del Frontend
+
+- **Antes:** El token JWT no se validaba automáticamente después de recargar la página, lo que obligaba al usuario a iniciar sesión nuevamente.
+- **Ahora:** Con la validación automática en `AuthProvider.jsx` y la configuración correcta de Axios, la sesión del usuario se mantiene activa de forma segura, incluso después de recargar la página.
+
