@@ -21,7 +21,7 @@ const indices = {
   asia: [
     { symbol: "FAE", name: "Nikkei 225" },
     { symbol: "FDR", name: "Hang Seng" },
-    { symbol: "NVDA", name: "Shanghai Composite" },
+    { symbol: "NVDA", name: "Shanghai C" },
   ],
 };
 
@@ -107,7 +107,7 @@ const MarketIndicesSelector = () => {
               {/* Columna de icono según la tendencia */}
               <div className="icon">
                  {/* Aqui se grafican las flechas, de acuerdo a la evolucion del indice */}
-                <img src={index.change > 0 ? "/flecha_arriba.svg" : index.change < 0 ? "/flecha_abajo.svg" : "/sin_cambio.svg"} alt="trend" />
+                <img src={index.change > 0 ? "/images/flecha_arriba.svg" : index.change < 0 ? "/images/flecha_abajo.svg" : "/images/sin_cambio.svg"} alt="trend" />
               </div>
               {/* Columna con el nombre y valor del índice */}
               <div className="index-info">
