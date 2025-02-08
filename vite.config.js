@@ -4,13 +4,17 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  css: {
-    postcss: './postcss.config.js', // Asegura que Vite reconozca PostCSS
-  },
   resolve: {
     alias: {
-      '@assets': path.resolve(__dirname, 'src/assets').replace(/\\/g, '/'), // 🔥 Corrige problemas en Windows
+      '@': path.resolve(__dirname, 'src'),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@assets': path.resolve(__dirname, 'src/assets'),
+      '@context': path.resolve(__dirname, 'src/context'),
+      '@services': path.resolve(__dirname, 'src/services'),
     },
+  },
+  css: {
+    postcss: './postcss.config.js',
   },
 })
 
