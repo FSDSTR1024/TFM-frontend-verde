@@ -16,30 +16,9 @@ const api = axios.create({
   timeout: 10000, // Tiempo máximo de espera para las solicitudes (10 segundos)
   headers: {
     'Content-Type': 'application/json', // Formato JSON para todas las solicitudes
-    Accept: 'application/json' // Asegura que el servidor responda en JSON
-  }
-})
-
-// ===================================================
-// Interceptor de Solicitudes (Request)
-// ===================================================
-/**
- * Intercepta todas las solicitudes antes de ser enviadas al servidor
- * - Permite registrar información de depuración en modo desarrollo
- * - Aquí se podría agregar lógica adicional antes de enviar la solicitud
- */
-api.interceptors.request.use(
-  config => {
-    if (process.env.NODE_ENV === 'development') {
-      console.info(`[Axios] Enviando solicitud: ${config.method.toUpperCase()} ${config.url}`)
-    }
-    return config
+    Accept: 'application/json', // Asegura que el servidor responda en JSON
   },
-  error => {
-    console.error('[Axios Error] Error en la configuración de la solicitud:', error)
-    return Promise.reject(error)
-  }
-)
+})
 
 // ===================================================
 // Interceptor de Respuestas (Response)
@@ -50,55 +29,31 @@ api.interceptors.request.use(
  * - Realiza redirecciones automáticas si es necesario
  */
 api.interceptors.response.use(
-  response => {
-    if (process.env.NODE_ENV === 'development') {
-      console.info(
-        `[Axios] Respuesta recibida de: ${response.config.url} (Status: ${response.status})`
-      )
-    }
-    return response
-  },
-  error => {
+  (response) => response,
+  (error) => {
     if (error.response) {
-      const { status, config, data } = error.response
+      const { status, config } = error.response
 
-      console.warn(`[Axios Error] Código de estado ${status} para ${config.url}`)
+      console.warn(
+        `[Axios Error] Código de estado ${status} para ${config.url}`
+      )
 
       // ================================
-      // Manejo de Errores de Autenticación
+      // Manejo de Errores de Autenticación (401, 403)
       // ================================
       /**
        * Redirige automáticamente al usuario si la sesión ha expirado (401)
        * o si no tiene permisos para acceder a un recurso (403)
        */
       if ([401, 403].includes(status) && typeof window !== 'undefined') {
-        const redirectMap = {
-          401: '/login?reason=session_expired', // Redirige al login si la sesión ha expirado
-          403: '/acceso-denegado' // Redirige a una página de acceso denegado si no tiene permisos
-        }
+        const currentPath = window.location.pathname
 
-        // Evitamos redirecciones en bucle si ya estamos en la página de destino
-        if (window.location.pathname !== redirectMap[status]) {
-          console.warn(`[Axios] Redirigiendo a: ${redirectMap[status]}`)
-          window.location.href = redirectMap[status]
+        // Evita redirección en bucle si ya estamos en /login
+        if (currentPath !== '/login') {
+          console.warn(`[Axios] Redirigiendo a: /login?reason=session_expired`)
+          window.location.href = '/login?reason=session_expired'
         }
       }
-
-      // ================================
-      // Manejo de Errores del Servidor (5xx)
-      // ================================
-      /**
-       * Si el error es del servidor (códigos 500 o superiores),
-       * mostramos un mensaje de error genérico en la consola
-       */
-      if (status >= 500) {
-        console.error(
-          '[Axios Error] Error interno del servidor:',
-          data.message || 'Inténtalo de nuevo más tarde.'
-        )
-      }
-    } else {
-      console.error('[Axios Error] Error de red o el servidor no responde:', error.message)
     }
 
     return Promise.reject(error)

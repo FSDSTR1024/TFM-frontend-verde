@@ -26,7 +26,7 @@ const AuthProvider = ({ children }) => {
     const validateToken = async () => {
       try {
         const response = await api.get('/auth/validate-token', {
-          withCredentials: true // Asegura el envío de cookies para validar el token
+          withCredentials: true, // Asegura el envío de cookies para validar el token
         })
 
         setUser(response.data) // Establece la información del usuario si el token es válido
@@ -50,7 +50,7 @@ const AuthProvider = ({ children }) => {
    *
    * @param {Object} userData - Información del usuario autenticado (token, username, email).
    */
-  const login = userData => {
+  const login = (userData) => {
     setUser(userData) // Guarda la información del usuario en el estado
     setIsLoggedIn(true) // Cambia el estado de autenticación a verdadero
   }
