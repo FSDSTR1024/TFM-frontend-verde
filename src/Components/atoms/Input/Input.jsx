@@ -1,5 +1,8 @@
 import { forwardRef, useEffect, useState } from 'react'
 
+// ==========================================================
+// Validadores de Entrada
+// ==========================================================
 const emailValidator = (value) => ({
   isValid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
   message: 'Formato de email inválido',
@@ -10,6 +13,9 @@ const passwordValidator = (value) => ({
   message: 'Mínimo 8 caracteres, 1 mayúscula y 1 número',
 })
 
+// ==========================================================
+// Componente de Input Reutilizable
+// ==========================================================
 const Input = forwardRef(
   (
     { type = 'text', label, name, validation, onChange, value = '', ...props },
@@ -20,6 +26,9 @@ const Input = forwardRef(
     const [isFocused, setIsFocused] = useState(false)
     const [hasFirstChar, setHasFirstChar] = useState(false)
 
+    //----------------------------------
+    // Validación del Input
+    //----------------------------------
     const validateInput = (currentValue) => {
       if (!validation) return true
       const { isValid, message } = validation(currentValue)
@@ -27,10 +36,16 @@ const Input = forwardRef(
       return isValid
     }
 
+    //----------------------------------
+    // Efecto para Validar en Tiempo Real
+    //----------------------------------
     useEffect(() => {
       if (isTouched) validateInput(value)
     }, [value, isTouched])
 
+    //----------------------------------
+    // Manejo de Cambio en el Input
+    //----------------------------------
     const handleChange = (e) => {
       const currentValue = e.target.value
 
@@ -48,6 +63,9 @@ const Input = forwardRef(
       }
     }
 
+    //----------------------------------
+    // Manejo de Foco y Blur
+    //----------------------------------
     const handleFocus = () => setIsFocused(true)
     const handleBlur = () => {
       setIsFocused(false)
@@ -65,10 +83,11 @@ const Input = forwardRef(
           aria-invalid={!!error}
           aria-describedby={`${name}-error`}
           className={`
-            w-full min-w-[250px] px-4 py-2 border-2 rounded-md bg-primary-light text-primary-dark
-            transition-all duration-200 border-secondary-dark outline-none focus:outline-2 focus:outline-primary-dark
-            focus:outline-offset-2 focus:shadow-[0_2px_8px_rgba(33,52,53,0.1)]
-            ${error ? 'border-error-color' : ''}
+            w-full min-w-[250px] px-4 py-2 border-2 rounded-md text-primary-dark
+            transition-all duration-200 border-secondary-dark outline-none
+            focus:outline-2 focus:outline-primary-dark focus:outline-offset-2
+            focus:shadow-[0_2px_8px_rgba(33,52,53,0.1)]
+            ${error ? 'border-error-color' : 'bg-primary-light'}
           `}
           onChange={handleChange}
           onFocus={handleFocus}
