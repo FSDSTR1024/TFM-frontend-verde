@@ -72,18 +72,18 @@ const NavLinks = ({ mobile, onClose }) => {
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                ariaLabel={`Perfil de ${user?.username || 'Usuario'}`}
+                onClick={logout}
+                ariaLabel="Cerrar sesión"
               >
-                {user?.username || 'Usuario'}
+                Cerrar sesión
               </Button>
             </li>
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={logout}
-                ariaLabel="Cerrar sesión"
+                ariaLabel={`Perfil de ${user?.username || 'Usuario'}`}
               >
-                Cerrar sesión
+                {user?.username || 'Usuario'}
               </Button>
             </li>
           </>
