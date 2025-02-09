@@ -2,6 +2,7 @@ import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth' // Hook de autenticación para acceder al estado global
 import Button from '../../atoms/Button'
 import AuthCard from '../../organisms/AuthCard' // Componente del modal de autenticación
+import UserDropdown from '../UserDropdown'
 
 const NavLinks = ({ mobile, onClose }) => {
   const { isLoggedIn, user, logout } = useAuth() // Accedemos al estado global de autenticación
@@ -78,16 +79,10 @@ const NavLinks = ({ mobile, onClose }) => {
                 Cerrar sesión
               </Button>
             </li>
+            {/* Se cambia el botón de usuario por el dropdown */}
             <li>
-              <Button
-                variant={mobile ? 'primary' : 'secondary'}
-                ariaLabel={`Perfil de ${user?.username || 'Usuario'}`}
-              >
-                {user?.username || 'Usuario'}
-              </Button>
+              <UserDropdown />
             </li>
-
-            {/* Aquí irá la lógica de la imagen de perfil */}
           </>
         )}
       </ul>

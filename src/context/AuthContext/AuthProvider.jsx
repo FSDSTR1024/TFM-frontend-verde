@@ -48,7 +48,7 @@ const AuthProvider = ({ children }) => {
   /**
    * Inicia sesión y almacena la información del usuario en el contexto global.
    *
-   * @param {Object} userData - Información del usuario autenticado (token, username, email).
+   * @param {Object} userData - Información del usuario autenticado (token, username, email, image).
    */
   const login = (userData) => {
     setUser(userData) // Guarda la información del usuario en el estado
