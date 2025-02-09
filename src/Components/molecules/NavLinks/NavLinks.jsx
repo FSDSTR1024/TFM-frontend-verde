@@ -86,6 +86,8 @@ const NavLinks = ({ mobile, onClose }) => {
                 {user?.username || 'Usuario'}
               </Button>
             </li>
+
+            {/* Aquí irá la lógica de la imagen de perfil */}
           </>
         )}
       </ul>
