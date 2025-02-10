@@ -1,0 +1,12 @@
+.Portfolio {
+    display: flex;
+    flex-direction: column; /* Apila los elementos verticalmente */
+    align-items: center; /* Centra horizontalmente */
+    justify-content: center; /* Centra verticalmente */
+   /*  min-height: 100vh; Asegura que el contenedor tenga altura suficiente */
+    text-align: center; /* Alinea el contenido si hay texto */
+      }
+
+      .btn-accent{
+    background-color:#638a63;
+}

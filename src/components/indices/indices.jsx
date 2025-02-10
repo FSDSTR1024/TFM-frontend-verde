@@ -11,7 +11,7 @@ const indices = {
   europe: [
     { symbol: "MSFT", name: "DAX" },
     { symbol: "QQQ", name: "IBEX 35" },
-    { symbol: "IBM", name: "Euro Stoxx 50" },
+    { symbol: "IBM", name: "Euro Stoxx" },
   ],
   us: [
     { symbol: "MTS", name: "S&P 500" },
@@ -89,6 +89,7 @@ const MarketIndicesSelector = () => {
           <button
             key={region}
             className={`button ${activeRegion === region ? "active" : ""}`}
+            style={{ color: activeRegion === region ? "black" : "gray" }} 
             onClick={() => setActiveRegion(region)}
           >
             {region === "europe" ? "Europa" : region === "us" ? "EE.UU." : "Asia"}
@@ -170,7 +171,7 @@ const MarketIndicesSelector = () => {
           font-weight: bold;
         }
         .change.positive, .change-percent.positive {
-          color: #28a745;
+          color: #638a63;
         }
         .change.negative, .change-percent.negative {
           color: #dc3545;
