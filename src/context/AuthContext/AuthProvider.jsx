@@ -25,21 +25,42 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const validateToken = async () => {
       try {
+        const token = localStorage.getItem('token')
+
+        if (!token) {
+          console.warn('No hay token en localStorage, redirigiendo al login.')
+          setIsLoggedIn(false)
+          setChecking(false)
+          return
+        }
+
+        // Decodificar el token manualmente antes de enviarlo
+        const decodedToken = JSON.parse(atob(token.split('.')[1]))
+        const tokenExpDate = new Date(decodedToken.exp * 1000)
+
+        if (tokenExpDate < new Date()) {
+          console.warn('El token ha expirado, redirigiendo al login.')
+          setIsLoggedIn(false)
+          setChecking(false)
+          return
+        }
+
         const response = await api.get('/auth/validate-token', {
-          withCredentials: true, // Asegura el envío de cookies para validar el token
+          headers: { Authorization: `Bearer ${token}` }, // Se envía el token en los headers
+          withCredentials: true,
         })
 
         setUser(response.data) // Establece la información del usuario si el token es válido
-        setIsLoggedIn(true) // Cambia el estado de autenticación a verdadero
+        setIsLoggedIn(true)
       } catch (error) {
         console.error('Token inválido o expirado:', error)
-        setIsLoggedIn(false) // Cambia el estado de autenticación a falso si el token no es válido
+        setIsLoggedIn(false)
       } finally {
-        setChecking(false) // Finaliza el estado de verificación
+        setChecking(false)
       }
     }
 
-    validateToken() // Llama a la función para validar el token al cargar la aplicación
+    validateToken()
   }, [])
 
   // ================================
@@ -64,10 +85,13 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await api.post('/auth/sign-out', {}, { withCredentials: true }) // Solicitud para limpiar la cookie del servidor
-      setUser(null) // Limpia la información del usuario en el estado
+      localStorage.removeItem('token') // debemos eliminar el token del localStorage
+      setUser(null) // Limpia el usuario en el estado
       setIsLoggedIn(false) // Cambia el estado de autenticación a falso
+
+      window.location.href = '/login'
     } catch (error) {
-      console.error('Error al cerrar sesión:', error)
+      console.error('Error al cerrar la sesión:', error)
     }
   }
 
