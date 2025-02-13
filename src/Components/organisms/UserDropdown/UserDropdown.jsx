@@ -1,58 +1,63 @@
-import { useState, useRef, useEffect } from 'react'
-import { User, CreditCard, ChartCandlestick, LogOut } from 'lucide-react'
+import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth'
-import Button from '@/components/atoms/Button'
+import ProfileForm from './ProfileForm'
 
-const UserDropdown = () => {
-  const { user, logout } = useAuth() // Accedemos a la info del usuario y función de logout
-  const [isOpen, setIsOpen] = useState(false) // Estado para controlar la visibilidad del dropdown
-  const dropdownRef = useRef(null) // Referencia para manejar eventos fuera del dropdown
+const UserDropdown = ({ onClose }) => {
+  const { user } = useAuth() // Es aquí donde se obtienen los datos de usuario del contexto global
 
-  // ----------------------------------
-  // Cierra el dropdown si se hace clic fuera
-  // ----------------------------------
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
-      }
-    }
+  const [showProfileForm, setShowProfileForm] = useState(false)
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+  // Lógica de la función que se activa al hacer click en 'Perfil'
+  const handleEditProfile = () => {
+    setShowProfileForm(true) // El estado es 'true' para así mostrar el formulario
+  }
+
+  // Lógica de la función que se activa al enviar el formulario
+  const handleSubmitProfileForm = (formData) => {
+    console.log('Datos enviados del formulario:', formData)
+    setShowProfileForm(false) // Se cierra el formulario tras "guardar los cambios"
+  }
+
+  // Lógica de la función para cancelar el formulario
+  const handleCancelProfileForm = () => {
+    setShowProfileForm(false)
+  }
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Botón de usuario que activa el dropdown */}
-      <Button
-        variant="secondary"
-        onClick={() => setIsOpen(!isOpen)}
-        ariaLabel={`Perfil de ${user?.username || 'Usuario'}`}
-      >
-        {user?.username || 'Usuario'}
-      </Button>
-
-      {/* Contenido del dropdown */}
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-secondary-dark rounded-md shadow-lg z-50">
-          <ul className="py-2">
-            <li className="px-4 py-2 hover:bg-primary-light flex items-center gap-2 cursor-pointer">
-              <User size={16} />
-              <span>Perfil</span>
-            </li>
-            <li className="px-4 py-2 hover:bg-primary-light flex items-center gap-2 cursor-pointer">
-              <CreditCard size={16} />
-              <span>Cartera</span>
-            </li>
-            <li className="px-4 py-2 hover:bg-primary-light flex items-center gap-2 cursor-pointer">
-              <ChartCandlestick size={16} />
-              <span>Órdenes</span>
-            </li>
-          </ul>
-        </div>
+    <div className="absolute right-0 mt-2 w-48 bg-primary-light border border-secondary-dark rounded-lg shadow-lg z-10">
+      {showProfileForm ? (
+        <ProfileForm
+          userProfile={user}
+          onSubmit={handleSubmitProfileForm}
+          onCancel={handleCancelProfileForm}
+        />
+      ) : (
+        <ul className="py-2">
+          <li
+            className="px-4 py-2 hover:bg-hover-state cursor-pointer text-primary-dark"
+            onClick={handleEditProfile}
+            role="button"
+            tabIndex="0"
+          >
+            Perfil
+          </li>
+          <li
+            className="px-4 py-2 hover:bg-hover-state cursor-pointer text-primary-dark"
+            onClick={onClose} // Cierra el menú al hacer clic (opcional)
+            role="button"
+            tabIndex="0"
+          >
+            Cartera
+          </li>
+          <li
+            className="px-4 py-2 hover:bg-hover-state cursor-pointer text-primary-dark"
+            onClick={onClose} // Cierra el menú al hacer clic
+            role="button"
+            tabIndex="0"
+          >
+            Órdenes
+          </li>
+        </ul>
       )}
     </div>
   )
