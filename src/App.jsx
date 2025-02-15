@@ -9,7 +9,7 @@ const App = () => (
       <Route
         path="*"
         element={
-          <div className="text-center mt-10 text-lg font-medium">
+          <div className="text-center mt-10 text-lg from-neutral-700 text-primary-light">
             Página no encontrada
           </div>
         }
