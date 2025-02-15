@@ -38,13 +38,13 @@ const ProfileForm = ({ userProfile, onSubmit, onCancel }) => {
 
   return (
     <form
-      className="flex flex-col gap-4-primary-light p-4 rounded-lg border border-secondary-dark"
+      className="flex flex-col space-y-7 p-6 rounded-lg border border-secondary-dark bg-hover-state"
       onSubmit={(e) => {
         e.preventDefault()
         onSubmit(formData)
       }}
     >
-      <h2 className="text-lg font-semibold text-primary-dark">
+      <h2 className="text-xl font-semibold text-primary-dark text-center mb-4">
         {' '}
         Editar Perfil
       </h2>
@@ -68,7 +68,7 @@ const ProfileForm = ({ userProfile, onSubmit, onCancel }) => {
       />
 
       {/* Checkbox para aceptar el cambio de contraseña */}
-      <div className="flex items-center-gap-2">
+      <div className="flex items-center-gap-2 mb-4">
         <input
           type="checkbox"
           id="changePassword"

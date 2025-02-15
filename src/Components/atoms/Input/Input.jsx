@@ -18,7 +18,16 @@ const passwordValidator = (value) => ({
 // ==========================================================
 const Input = forwardRef(
   (
-    { type = 'text', label, name, validation, onChange, value = '', ...props },
+    {
+      type = 'text',
+      label,
+      name,
+      validation,
+      onChange,
+      value,
+      id = '',
+      ...props
+    },
     ref
   ) => {
     const [error, setError] = useState('')
@@ -76,7 +85,7 @@ const Input = forwardRef(
       <div className="relative w-full max-w-[400px] my-2">
         <input
           ref={ref}
-          id={name}
+          id={id || name}
           type={type}
           name={name}
           value={value}
@@ -98,7 +107,7 @@ const Input = forwardRef(
           {...props}
         />
         <label
-          htmlFor={name}
+          htmlFor={id || name}
           className={`
             absolute left-4 top-1/2 -translate-y-1/2 text-secondary-dark transition-all
             ${isFocused || value !== '' ? 'transform -translate-y-[170%] scale-90 bg-primary-light px-1' : ''}
