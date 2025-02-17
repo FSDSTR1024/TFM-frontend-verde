@@ -62,7 +62,7 @@ const UserDropdown = ({ onClose }) => {
         >
           <ul className="bg-primary-dark divide-y divide-secondary-dark/60 rounded-lg">
             <li
-              className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition"
+              className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-t-lg"
               onClick={handleEditProfile}
             >
               Perfil
@@ -70,7 +70,7 @@ const UserDropdown = ({ onClose }) => {
             <li className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition">
               Cartera
             </li>
-            <li className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition">
+            <li className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-b-lg">
               Órdenes
             </li>
           </ul>

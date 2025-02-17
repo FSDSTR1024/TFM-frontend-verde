@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import api from '@/services/api/axios'
 import useAuth from '@/context/AuthContext/useAuth'
 import Button from '../../atoms/Button'
@@ -17,13 +18,11 @@ const AuthCard = ({
 }) => {
   const { login } = useAuth()
   const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
-  //----------------------------------
-  //----------------------------------
+  // ==========================================================
   // Captura de cambios en los inputs
-  //----------------------------------
-  //----------------------------------
-
+  // ==========================================================
   const handleInputChange = (e) => {
     const { name, value } = e.target
     const newData = {
@@ -38,17 +37,15 @@ const AuthCard = ({
     })
   }
 
-  //----------------------------------
-  //----------------------------------
+  // ==========================================================
   // Enviar el formulario al backend
-  //----------------------------------
-  //----------------------------------
-
+  // ==========================================================
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
 
     try {
+      // Determinamos a que endpoint del backend haremos la solicitud
       const API_PREFIX = '/auth'
       const endpoint =
         activeForm === 'login'
@@ -60,6 +57,8 @@ const AuthCard = ({
 
       login(response.data)
       onCancel()
+
+      navigate('/dashboard')
     } catch (error) {
       console.error(
         'Error en la autenticación:',
@@ -70,12 +69,9 @@ const AuthCard = ({
     }
   }
 
-  //----------------------------------
-  //----------------------------------
+  // ==========================================================
   // Validación del formulario
-  //----------------------------------
-  //----------------------------------
-
+  // ==========================================================
   const isFormValid =
     activeForm === 'login'
       ? formData.email.trim() && formData.password.trim()
@@ -120,13 +116,13 @@ const AuthCard = ({
               value={formData.username}
               onChange={handleInputChange}
               required
-              placeholder="Usuario"
             />
           )}
 
           <EmailInput
             label="Correo electrónico"
             name="email"
+            type="text"
             value={formData.email}
             onChange={handleInputChange}
             required
@@ -135,6 +131,7 @@ const AuthCard = ({
           <PasswordToggle
             label="Contraseña"
             name="password"
+            type="text"
             value={formData.password}
             onChange={handleInputChange}
             required
