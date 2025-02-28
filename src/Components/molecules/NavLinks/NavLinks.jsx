@@ -2,7 +2,7 @@ import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth' // Hook de autenticación para acceder al estado global
 import Button from '../../atoms/Button'
 import AuthCard from '../../organisms/AuthCard' // Componente del modal de autenticación
-import UserDropdown from '../UserDropdown'
+import UserDropdown from '../../organisms/UserDropdown/UserDropdown'
 
 const NavLinks = ({ mobile, onClose }) => {
   const { isLoggedIn, user, logout } = useAuth() // Accedemos al estado global de autenticación

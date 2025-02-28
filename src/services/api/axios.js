@@ -4,12 +4,12 @@ import axios from 'axios'
 // Configuración inicial de la instancia de Axios
 // ===================================================
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000', // ✅ Variable de entorno para producción
-  withCredentials: true, // ✅ Permite el envío automático de cookies en cada solicitud (necesario para autenticación)
-  timeout: 10000, // ✅ Límite de espera de 10 segundos por solicitud
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  withCredentials: true,
+  timeout: 10000,
   headers: {
-    'Content-Type': 'application/json', // ✅ Especifica JSON como formato de solicitud
-    Accept: 'application/json', // ✅ Asegura que el backend responda en formato JSON
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
 })
 
