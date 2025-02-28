@@ -3,33 +3,21 @@ import axios from 'axios'
 // ===================================================
 // Configuración inicial de la instancia de Axios
 // ===================================================
-/**
- * Crea una instancia preconfigurada de Axios para comunicarse con el backend
- * - baseURL: Establece la URL base para todas las solicitudes
- * - withCredentials: Habilita el envío automático de cookies (necesario para sesiones)
- * - timeout: Establece un límite de tiempo para las solicitudes (en milisegundos)
- * - headers: Define el tipo de contenido por defecto para las solicitudes
- */
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // URL base del backend
-  withCredentials: true, // Envía cookies automáticamente en cada solicitud (para JWT)
-  timeout: 10000, // Tiempo máximo de espera para las solicitudes (10 segundos)
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000', // ✅ Variable de entorno para producción
+  withCredentials: true, // ✅ Permite el envío automático de cookies en cada solicitud (necesario para autenticación)
+  timeout: 10000, // ✅ Límite de espera de 10 segundos por solicitud
   headers: {
-    'Content-Type': 'application/json', // Formato JSON para todas las solicitudes
-    Accept: 'application/json', // Asegura que el servidor responda en JSON
+    'Content-Type': 'application/json', // ✅ Especifica JSON como formato de solicitud
+    Accept: 'application/json', // ✅ Asegura que el backend responda en formato JSON
   },
 })
 
 // ===================================================
 // Interceptor de Respuestas (Response)
 // ===================================================
-/**
- * Intercepta todas las respuestas del servidor
- * - Maneja errores globales como 401 (no autorizado), 403 (prohibido) y 500 (error interno del servidor)
- * - Realiza redirecciones automáticas si es necesario
- */
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response, // Si la respuesta es exitosa, simplemente la devuelve
   (error) => {
     if (error.response) {
       const { status, config } = error.response
@@ -41,22 +29,25 @@ api.interceptors.response.use(
       // ================================
       // Manejo de Errores de Autenticación (401, 403)
       // ================================
-      /**
-       * Redirige automáticamente al usuario si la sesión ha expirado (401)
-       * o si no tiene permisos para acceder a un recurso (403)
-       */
       if ([401, 403].includes(status) && typeof window !== 'undefined') {
         const currentPath = window.location.pathname
-
-        // Evita redirección en bucle si ya estamos en /login
         if (currentPath !== '/login') {
           console.warn(`[Axios] Redirigiendo a: /login?reason=session_expired`)
           window.location.href = '/login?reason=session_expired'
         }
       }
+
+      // Manejo de otros errores comunes
+      if (status === 500) {
+        console.error('Error interno del servidor. Inténtelo más tarde.')
+      } else if (status === 404) {
+        console.warn('Recurso no encontrado.')
+      } else if (status === 429) {
+        console.warn('Demasiadas solicitudes. Inténtalo más tarde.')
+      }
     }
 
-    return Promise.reject(error)
+    return Promise.reject(error) // Rechaza la promesa para que los errores sean manejados donde se llame la API
   }
 )
 
