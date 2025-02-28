@@ -23,44 +23,22 @@ const AuthProvider = ({ children }) => {
    * Valida automáticamente el token JWT almacenado en cookies cada vez que se recarga la página.
    */
   useEffect(() => {
-    const validateToken = async () => {
+    const validateSession = async () => {
       try {
-        const token = localStorage.getItem('token')
-
-        if (!token) {
-          console.warn('No hay token en localStorage, redirigiendo al login.')
-          setIsLoggedIn(false)
-          setChecking(false)
-          return
-        }
-
-        // Decodificar el token manualmente antes de enviarlo
-        const decodedToken = JSON.parse(atob(token.split('.')[1]))
-        const tokenExpDate = new Date(decodedToken.exp * 1000)
-
-        if (tokenExpDate < new Date()) {
-          console.warn('El token ha expirado, redirigiendo al login.')
-          setIsLoggedIn(false)
-          setChecking(false)
-          return
-        }
-
-        const response = await api.get('/auth/validate-token', {
-          headers: { Authorization: `Bearer ${token}` }, // Se envía el token en los headers
-          withCredentials: true,
+        const response = await api.get('/auth/session', {
+          withCredentials: true, // De esta forma enviamos automáticamente las cookies al backend
         })
 
-        setUser(response.data) // Establece la información del usuario si el token es válido
+        setUser(response.data)
         setIsLoggedIn(true)
       } catch (error) {
-        console.error('Token inválido o expirado:', error)
         setIsLoggedIn(false)
       } finally {
         setChecking(false)
       }
-    }
 
-    validateToken()
+      validateSession()
+    }
   }, [])
 
   // ================================
@@ -99,7 +77,7 @@ const AuthProvider = ({ children }) => {
   // Proveedor del Contexto de Autenticación
   // ================================
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, checking, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, checking }}>
       {children}
     </AuthContext.Provider>
   )
