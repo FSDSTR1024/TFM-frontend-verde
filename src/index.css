@@ -2,3 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================== */
+/* Configuración Global de Estilos */
+/* ============================== */
+
+/* Aplicar la tipografía general a todo el proyecto */
+body {
+  font-family: 'Playfair Display', serif;
+  color: theme('colors.black');
+  background-color: theme('colors.primary-dark');
+}
+
+/* ============================== */
+/* Reset controlado de inputs     */
+/* ============================== */
+
+/* Evitar que el navegador cambie fondo y texto en inputs inválidos */
+input:invalid,
+textarea:invalid,
+select:invalid {
+  background-color: inherit;
+  color: inherit;
+  box-shadow: none;
+  border-color: theme('colors.secondary-dark');
+}
+
+/* Estilizar solo inputs y selects (botones quedan excluidos) */
+input,
+textarea,
+select {
+  box-sizing: border-box;
+  font-family: inherit;
+  background-color: inherit;
+  color: theme('colors.black');
+  border-width: 1px;
+  border-style: solid;
+  border-color: theme('colors.secondary-dark');
+  padding: 0.5rem;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Personalizar autofill (para Chrome/Safari) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: theme('colors.primary-dark') !important;
+  -webkit-box-shadow: 0 0 0 1000px theme('colors.primary-light') inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Ajustes visuales al enfocar */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: theme('colors.hover-state');
+  box-shadow: 0 0 0 2px rgba(var(--primary-dark-rgb), 0.3);
+}
+
+/* ============================== */
+/* Ajustes adicionales            */
+/* ============================== */
+
+/* Enlaces coherentes con el tema */
+a {
+  color: theme('colors.hover-state');
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
