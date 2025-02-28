@@ -1,55 +1,93 @@
-import { useState, useRef, useEffect } from 'react'
-import { User, CreditCard, ChartCandlestick, LogOut } from 'lucide-react'
+// =========================================
+// Componente UserDropdown (Menú de Usuario)
+// =========================================
+
+import { useEffect, useState } from 'react'
+import { UserRound } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
 import useAuth from '@/context/AuthContext/useAuth'
-import Button from '@/components/atoms/Button'
+import Button from '../../atoms/Button'
 
-const UserDropdown = () => {
-  const { user, logout } = useAuth() // Accedemos a la info del usuario y función de logout
-  const [isOpen, setIsOpen] = useState(false) // Estado para controlar la visibilidad del dropdown
-  const dropdownRef = useRef(null) // Referencia para manejar eventos fuera del dropdown
+const UserDropdown = ({ onClose }) => {
+  const { user } = useAuth() // Obtener información del usuario del contexto global
 
-  // ----------------------------------
-  // Cierra el dropdown si se hace clic fuera
-  // ----------------------------------
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
-      }
+  const [showDropdown, setShowDropdown] = useState(false) // Estado del menú desplegable
+  const navigate = useNavigate() // Hook para la navegación
+
+  // =========================================
+  // Cierra el Dropdown si se hace clic fuera
+  // =========================================
+  const handleClickOutside = (event) => {
+    if (!event.target.closest('.dropdown-container')) {
+      setShowDropdown(false)
     }
+  }
 
+  useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
 
+  // =========================================
+  // Alternar Visibilidad del Dropdown
+  // =========================================
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev)
+  }
+
+  // =========================================
+  // Redirigir a la Página de Perfil
+  // =========================================
+  const handleNavigateToProfile = () => {
+    navigate('/profile') // Redirigir a ProfilePage
+    setShowDropdown(false) // Cerrar dropdown
+    onClose?.() // Cerrar otros contenedores si es necesario
+  }
+
+  // =========================================
+  // Renderizado del Componente
+  // =========================================
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Botón de usuario que activa el dropdown */}
+    <div className="relative dropdown-container">
+      {/* Botón con imagen de usuario */}
       <Button
         variant="secondary"
-        onClick={() => setIsOpen(!isOpen)}
-        ariaLabel={`Perfil de ${user?.username || 'Usuario'}`}
+        onClick={toggleDropdown}
+        ariaLabel={`Menú de usuario de ${user?.username || 'Invitado'}`}
+        className="w-12 h-12 rounded-full p-0 flex items-center justify-center overflow-hidden border-2 border-secondary-dark"
       >
-        {user?.username || 'Usuario'}
+        {user?.profileImage ? (
+          <img
+            src={user.profileImage}
+            alt="Foto de perfil"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <UserRound className="text-secondary-dark w-8 h-8" />
+        )}
       </Button>
 
-      {/* Contenido del dropdown */}
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-secondary-dark rounded-md shadow-lg z-50">
-          <ul className="py-2">
-            <li className="px-4 py-2 hover:bg-primary-light flex items-center gap-2 cursor-pointer">
-              <User size={16} />
-              <span>Perfil</span>
+      {/* Dropdown flotante */}
+      {showDropdown && (
+        <div
+          className="absolute right-0 mt-2 w-48 bg-primary-dark text-primary-light
+            border border-secondary-dark rounded-lg shadow-lg z-20"
+        >
+          <ul className="bg-primary-dark divide-y divide-secondary-dark/60 rounded-lg">
+            <li
+              className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-t-lg"
+              onClick={handleNavigateToProfile}
+            >
+              Perfil
             </li>
-            <li className="px-4 py-2 hover:bg-primary-light flex items-center gap-2 cursor-pointer">
-              <CreditCard size={16} />
-              <span>Cartera</span>
+            <li className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition">
+              Cartera
             </li>
-            <li className="px-4 py-2 hover:bg-primary-light flex items-center gap-2 cursor-pointer">
-              <ChartCandlestick size={16} />
-              <span>Órdenes</span>
+            <li className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-b-lg">
+              Órdenes
             </li>
           </ul>
         </div>
