@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth'
+import api from '@/services/api/axios'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
@@ -10,18 +11,38 @@ import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector
 const ProfilePage = () => {
   const { user, setUser } = useAuth()
 
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false)
+  const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
   const [formData, setFormData] = useState({
     username: user?.username || '',
     email: user?.email || '',
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: '',
     profileImage: user?.profileImage || null,
   })
 
-  const [changePassword, setChangePassword] = useState(false)
-  const [showAvatarSelector, setShowAvatarSelector] = useState(false)
-  const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
+  // =======================
+  // Selección de Avatar Predeterminado
+  // =======================
+  const handleAvatarSelect = async (avatarUrl) => {
+    try {
+      const response = await api.put(
+        '/user/profile',
+        { profileImage: avatarUrl },
+        {
+          withCredentials: true, //  Se asegura que se envíe la cookie de sesión
+        }
+      )
+
+      setUser(response.data)
+      setFormData((prev) => ({
+        ...prev,
+        profileImage: avatarUrl,
+      }))
+      setPreviewImage(avatarUrl)
+    } catch (error) {
+      console.error('Error al actualizar el avatar', error)
+    }
+    setShowAvatarSelector(false)
+  }
 
   // =======================
   // Función para cambios en inputs
@@ -49,49 +70,18 @@ const ProfilePage = () => {
   }
 
   // =======================
-  // Selección de Avatar Predeterminado
-  // =======================
-  const handleAvatarSelect = (avatarUrl) => {
-    setFormData((prev) => ({
-      ...prev,
-      profileImage: avatarUrl,
-    }))
-    setPreviewImage(avatarUrl)
-    setShowAvatarSelector(false)
-  }
-
-  // =======================
-  // Activar cambio de contraseña
-  // =======================
-  const toggleChangePassword = () => {
-    setChangePassword(!changePassword)
-    if (!changePassword) {
-      setFormData((prev) => ({
-        ...prev,
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: '',
-      }))
-    }
-  }
-
-  // =======================
   // Enviar el formulario
   // =======================
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Datos enviados:', formData)
 
-    // ACTUALIZAR CONTEXTO GLOBAL
-    setUser((prevUser) => ({
-      ...prevUser,
-      username: formData.username,
-      email: formData.email,
-      profileImage:
-        typeof formData.profileImage === 'string'
-          ? formData.profileImage
-          : prevUser.profileImage,
-    }))
+    api
+      .put('/user/profile', formData, { withCredentials: true })
+      .then((response) => {
+        setUser(response.data)
+      })
+      .catch((error) => console.error('Error al actualizar perfil:', error))
   }
 
   // =======================
@@ -103,7 +93,7 @@ const ProfilePage = () => {
         Editar Perfil
       </h2>
 
-      {/* Vista previa del avatar */}
+      {/* Vista previa del avatar*/}
       {previewImage && (
         <img
           src={previewImage}
@@ -112,37 +102,20 @@ const ProfilePage = () => {
         />
       )}
 
-      {/* Botones para Imagen y Avatar */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
-        {/* Subir Foto Personalizada (Corregido) */}
-        <div className="relative">
-          <Button
-            variant="primary"
-            type="button"
-            ariaLabel="Subir foto personalizada"
-            onClick={() => document.getElementById('uploadImageInput').click()}
-          >
-            Subir Foto Personalizada
-          </Button>
-          <input
-            id="uploadImageInput"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageChange}
+      <div>
+        <h2>Editar Perfil</h2>
+        <button onClick={() => setShowAvatarSelector(true)}>
+          Seleccionar Avatar
+        </button>
+        {showAvatarSelector && (
+          <AvatarSelector
+            onSaveAvatar={handleAvatarSelect}
+            onClose={() => setShowAvatarSelector(false)}
           />
-        </div>
-
-        <Button
-          variant="primary"
-          type="button"
-          onClick={() => setShowAvatarSelector(true)}
-        >
-          Seleccionar Avatar Predeterminado
-        </Button>
+        )}
       </div>
 
-      {/* Formulario */}
+      {/* formulario */}
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow"
@@ -163,47 +136,6 @@ const ProfilePage = () => {
           required
         />
 
-        {/* Cambio de contraseña */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={changePassword}
-            onChange={toggleChangePassword}
-            id="changePassword"
-          />
-          <label htmlFor="changePassword" className="text-primary-dark">
-            ¿Cambiar Contraseña?
-          </label>
-        </div>
-
-        {changePassword && (
-          <>
-            <Input
-              label="Contraseña Actual"
-              name="currentPassword"
-              type="password"
-              value={formData.currentPassword}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Nueva Contraseña"
-              name="newPassword"
-              type="password"
-              value={formData.newPassword}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Confirmar Nueva Contraseña"
-              name="confirmNewPassword"
-              type="password"
-              value={formData.confirmNewPassword}
-              onChange={handleChange}
-            />
-          </>
-        )}
-
         {/* Botones de acción */}
         <div className="flex justify-end gap-3">
           <Button variant="secondary" type="button">
@@ -215,14 +147,6 @@ const ProfilePage = () => {
           </Button>
         </div>
       </form>
-
-      {/* Modal para seleccionar Avatar */}
-      {showAvatarSelector && (
-        <AvatarSelector
-          onSaveAvatar={handleAvatarSelect}
-          onClose={() => setShowAvatarSelector(false)}
-        />
-      )}
     </div>
   )
 }
