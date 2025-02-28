@@ -3,81 +3,71 @@
 // =========================================
 
 import { useEffect, useState } from 'react'
-import api from '@/services/api/axios' // Importación de la instancia de Axios configurada
+import api from '@/services/api/axios' // Instancia de Axios configurada
 import { AuthContext } from './AuthContext' // Contexto global de autenticación
 
-/**
- * Proveedor de Autenticación que gestiona el estado global del usuario.
- *
- * @param {Object} children - Componentes secundarios que tendrán acceso al contexto.
- */
 const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // Estado para verificar si el usuario está autenticado
-  const [user, setUser] = useState(null) // Información del usuario autenticado
-  const [checking, setChecking] = useState(true) // Estado para verificar si la autenticación está en proceso
+  const [isLoggedIn, setIsLoggedIn] = useState(false) // Estado de autenticación
+  const [user, setUser] = useState(null) // Información del usuario
+  const [checking, setChecking] = useState(true) // Estado de carga
 
   // ================================
-  // Validación del Token al Recargar la Página
+  //  Validación de sesión con el backend
   // ================================
-  /**
-   * Valida automáticamente el token JWT almacenado en cookies cada vez que se recarga la página.
-   */
   useEffect(() => {
     const validateSession = async () => {
       try {
         const response = await api.get('/auth/session', {
-          withCredentials: true, // De esta forma enviamos automáticamente las cookies al backend
+          withCredentials: true, // Enviar cookies automáticamente
         })
 
         setUser(response.data)
         setIsLoggedIn(true)
       } catch (error) {
+        console.error('Sesión inválida o expirada:', error)
         setIsLoggedIn(false)
       } finally {
         setChecking(false)
       }
-
-      validateSession()
     }
+
+    validateSession()
   }, [])
 
   // ================================
   // Función de Inicio de Sesión (Login)
   // ================================
-  /**
-   * Inicia sesión y almacena la información del usuario en el contexto global.
-   *
-   * @param {Object} userData - Información del usuario autenticado (token, username, email, image).
-   */
-  const login = (userData) => {
-    setUser(userData) // Guarda la información del usuario en el estado
-    setIsLoggedIn(true) // Cambia el estado de autenticación a verdadero
+  const login = async (credentials) => {
+    try {
+      const response = await api.post('/auth/login', credentials, {
+        withCredentials: true, // Recibir cookies seguras
+      })
+
+      setUser(response.data)
+      setIsLoggedIn(true)
+    } catch (error) {
+      console.error('Error en la autenticación:', error)
+      throw new Error('Credenciales incorrectas o error en el servidor')
+    }
   }
 
   // ================================
   // Función de Cierre de Sesión (Logout)
   // ================================
-  /**
-   * Cierra la sesión del usuario eliminando el token de autenticación.
-   */
   const logout = async () => {
     try {
-      await api.post('/auth/sign-out', {}, { withCredentials: true }) // Solicitud para limpiar la cookie del servidor
-      localStorage.removeItem('token') // debemos eliminar el token del localStorage
-      setUser(null) // Limpia el usuario en el estado
-      setIsLoggedIn(false) // Cambia el estado de autenticación a falso
+      await api.post('/auth/logout', {}, { withCredentials: true })
 
-      window.location.href = '/login'
+      setUser(null)
+      setIsLoggedIn(false)
+      window.location.href = '/login' // Redirigir al login tras cerrar sesión
     } catch (error) {
-      console.error('Error al cerrar la sesión:', error)
+      console.error('Error al cerrar sesión:', error)
     }
   }
 
-  // ================================
-  // Proveedor del Contexto de Autenticación
-  // ================================
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, checking }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, checking, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
