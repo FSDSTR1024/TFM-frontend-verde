@@ -51,8 +51,15 @@ const AuthCard = ({
           ? `${API_PREFIX}/login`
           : `${API_PREFIX}/register`
 
-      const response = await api.post(endpoint, formData)
-      localStorage.setItem('token', response.data.token)
+      const response = await api.post(
+        endpoint,
+        {
+          email: formData.email,
+          username: formData.username || '', // Asegurar que siempre se envíe un valor
+          password: formData.password,
+        },
+        { withCredentials: true }
+      )
 
       login(response.data)
       onCancel()
@@ -138,9 +145,6 @@ const AuthCard = ({
             <p className="text-error-color text-sm text-center">{error}</p>
           )}
 
-          {/* ===================== */}
-          {/* Botones de Acción */}
-          {/* ===================== */}
           <div className="flex flex-col gap-3 mt-auto">
             <Button
               variant="primary"
@@ -149,17 +153,6 @@ const AuthCard = ({
               disabled={!isFormValid}
             >
               {activeForm === 'login' ? 'Iniciar sesión' : 'Registrarse'}
-            </Button>
-
-            <Button
-              variant="tertiary"
-              htmlType="button"
-              onClick={onSwitchForm}
-              ariaLabel="Cambiar modo de autenticación"
-            >
-              {activeForm === 'login'
-                ? 'Regístrate'
-                : '¿Ya tienes cuenta? Iniciar sesión'}
             </Button>
           </div>
         </form>

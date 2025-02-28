@@ -1,7 +1,3 @@
-// =========================================
-// Contexto de Autenticación para el Frontend
-// =========================================
-
 import { useEffect, useState } from 'react'
 import api from '@/services/api/axios' // Instancia de Axios configurada
 import { AuthContext } from './AuthContext' // Contexto global de autenticación
@@ -12,12 +8,12 @@ const AuthProvider = ({ children }) => {
   const [checking, setChecking] = useState(true) // Estado de carga
 
   // ================================
-  //  Validación de sesión con el backend
+  //  Validación de sesión con el backend (Solo con cookies seguras)
   // ================================
   useEffect(() => {
     const validateSession = async () => {
       try {
-        const response = await api.get('/auth/session', {
+        const response = await api.get('/auth/validate-token', {
           withCredentials: true, // Enviar cookies automáticamente
         })
 
@@ -40,7 +36,7 @@ const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await api.post('/auth/login', credentials, {
-        withCredentials: true, // Recibir cookies seguras
+        withCredentials: true, // Asegurar que se reciban las cookies de sesión
       })
 
       setUser(response.data)
@@ -56,7 +52,7 @@ const AuthProvider = ({ children }) => {
   // ================================
   const logout = async () => {
     try {
-      await api.post('/auth/logout', {}, { withCredentials: true })
+      await api.post('/auth/sign-out', {}, { withCredentials: true })
 
       setUser(null)
       setIsLoggedIn(false)
