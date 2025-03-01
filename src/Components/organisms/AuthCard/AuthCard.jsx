@@ -37,7 +37,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         withCredentials: true,
       })
 
-      login(response.data, navigate) // ✅ Pasamos navigate a login
+      login(response.data, navigate) //  Pasamos navigate a login
       onClose()
     } catch (error) {
       console.error(
@@ -57,13 +57,13 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     <div
       id="authModalBackground"
       className="fixed inset-0 bg-primary-dark/50 flex justify-center items-center z-50"
-      onClick={(e) => e.target.id === 'authModalBackground' && onClose()} // ✅ Cierra modal al hacer clic fuera
+      onClick={(e) => e.target.id === 'authModalBackground' && onClose()} // ierra modal al hacer clic fuera
     >
       <section
         className="relative bg-primary-light border-2 border-primary-dark rounded-lg p-6 w-full max-w-md min-h-[540px] shadow-lg flex flex-col"
         role="dialog"
         aria-labelledby="auth-title"
-        onClick={(e) => e.stopPropagation()} // ✅ Evita cerrar al hacer clic dentro
+        onClick={(e) => e.stopPropagation()} // Evita cerrar al hacer clic dentro
       >
         <button
           className="absolute top-2 right-2 text-primary-dark hover:text-hover-state transition"
@@ -126,6 +126,27 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
             >
               {activeForm === 'login' ? 'Iniciar sesión' : 'Registrarse'}
             </Button>
+
+            {/* Botón de cambio de formulario */}
+            {activeForm === 'login' ? (
+              <Button
+                variant="tertiary"
+                htmlType="button"
+                onClick={() => setActiveForm('register')}
+                ariaLabel="Cambiar a formulario de registro"
+              >
+                ¿Aún no tienes cuenta? Regístrate
+              </Button>
+            ) : (
+              <Button
+                variant="tertiary"
+                htmlType="button"
+                onClick={() => setActiveForm('login')}
+                ariaLabel="Cambiar a formulario de inicio de sesión"
+              >
+                ¿Ya tienes cuenta? Inicia sesión
+              </Button>
+            )}
           </div>
         </form>
       </section>

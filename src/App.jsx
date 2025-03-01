@@ -3,9 +3,11 @@ import { useState, useContext } from 'react'
 import { AuthContext } from './context/AuthContext/AuthContext'
 import Navbar from './components/organisms/Navbar/Navbar'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
-import AuthCard from './components/organisms/AuthCard/AuthCard'
+import AuthCard from './Components/organisms/AuthCard/AuthCard'
 
+// =========================================
 // Componente para manejar rutas protegidas
+// =========================================
 const PrivateRoute = ({ element }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
 
@@ -18,13 +20,16 @@ const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
 
+  // ==============================================
   // Abrir modal desde cualquier lugar de la app
+  // ==============================================
   const openAuthModal = (formType) => {
     setActiveForm(formType)
     setIsAuthModalOpen(true)
   }
-
+  // ======================================================================
   // Cerrar modal cuando el usuario se autentique o lo cierre manualmente
+  // ======================================================================
   const handleCloseModal = () => {
     setIsAuthModalOpen(false)
   }
