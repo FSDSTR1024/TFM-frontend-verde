@@ -6,62 +6,47 @@ import UserDropdown from '../../organisms/UserDropdown/UserDropdown'
 
 const NavLinks = ({ mobile, onClose }) => {
   const { isLoggedIn, user, logout } = useAuth() // Accedemos al estado global de autenticación
-  const [showAuthModal, setShowAuthModal] = useState(false) // Estado para mostrar/ocultar el modal de autenticación
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false) // Estado para mostrar/ocultar el modal de autenticación
   const [activeForm, setActiveForm] = useState('login') // Estado para definir si el formulario activo es de login o registro
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-  }) // Estado para manejar los datos del formulario
 
   //----------------------------------
   // Manejo del modal de autenticación
   //----------------------------------
-  const handleAuthModal = (formType) => {
+  const openAuthModal = (formType) => {
     setActiveForm(formType) // Define si el modal es de login o registro
-    setShowAuthModal(true) // Muestra el modal
+    setIsAuthModalOpen(true) // Muestra el modal
   }
 
   //----------------------------------
   // Cerrar el Modal de Autenticación
   //----------------------------------
   const handleCloseModal = () => {
-    setShowAuthModal(false) // Oculta el modal
+    setIsAuthModalOpen(false) // Oculta el modal
     setActiveForm('login') // Reinicia el formulario a 'login' por defecto
-    setFormData({ username: '', email: '', password: '' }) // Limpia los datos del formulario
     if (onClose) onClose() // Si existe la función 'onClose', la ejecutamos
-  }
-
-  //----------------------------------
-  // Manejo de cambios en los Inputs
-  //----------------------------------
-  const handleInputChange = (e) => {
-    const { name, value } = e.target // Extraemos el nombre y valor del input
-    setFormData((prevData) => ({
-      ...prevData, // Mantenemos los valores anteriores
-      [name]: value, // Actualizamos solo el campo que cambió
-    }))
   }
 
   return (
     <nav>
       <ul className="flex flex-col lg:flex-row gap-4 lg:gap-6 list-none m-0 items-center">
-        {/* Renderiza los botones de autenticación según el estado de login */}
         {!isLoggedIn ? (
           <>
+            {/* Botón de Registrarse */}
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={() => handleAuthModal('register')}
+                onClick={() => openAuthModal('register')}
                 ariaLabel="Registrarse"
               >
                 Registrarse
               </Button>
             </li>
+
+            {/* Botón de Iniciar Sesión */}
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={() => handleAuthModal('login')}
+                onClick={() => openAuthModal('login')}
                 ariaLabel="Iniciar sesión"
               >
                 Iniciar sesión
@@ -70,6 +55,7 @@ const NavLinks = ({ mobile, onClose }) => {
           </>
         ) : (
           <>
+            {/* Botón de Cerrar Sesión */}
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
@@ -79,7 +65,8 @@ const NavLinks = ({ mobile, onClose }) => {
                 Cerrar sesión
               </Button>
             </li>
-            {/* Se cambia el botón de usuario por el dropdown */}
+
+            {/* Dropdown de Usuario */}
             <li>
               <UserDropdown />
             </li>
@@ -88,15 +75,11 @@ const NavLinks = ({ mobile, onClose }) => {
       </ul>
 
       {/* Modal de Autenticación */}
-      {showAuthModal && (
+      {isAuthModalOpen && (
         <AuthCard
           activeForm={activeForm} // Define si el formulario es de login o registro
-          formData={formData} // Pasa los datos del formulario
-          onInputChange={handleInputChange} // Maneja cambios en los inputs
-          onCancel={handleCloseModal} // Maneja el cierre del modal
-          onSwitchForm={() =>
-            setActiveForm((prev) => (prev === 'login' ? 'register' : 'login'))
-          } // Alterna entre login y registro
+          setActiveForm={setActiveForm} // Permite alternar entre login y registro
+          onClose={handleCloseModal} // Maneja el cierre del modal
         />
       )}
     </nav>

@@ -1,62 +1,64 @@
 import { useEffect, useState } from 'react'
-import api from '@/services/api/axios' // Instancia de Axios configurada
-import { AuthContext } from './AuthContext' // Contexto global de autenticación
+import api from '@/services/api/axios'
+import { AuthContext } from './AuthContext'
 
 const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // Estado de autenticación
-  const [user, setUser] = useState(null) // Información del usuario
-  const [checking, setChecking] = useState(true) // Estado de carga
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState(null)
+  const [checking, setChecking] = useState(true)
 
-  // ================================
-  //  Validación de sesión con el backend (Solo con cookies seguras)
-  // ================================
   useEffect(() => {
+    let isMounted = true
+
     const validateSession = async () => {
       try {
         const response = await api.get('/auth/validate-token', {
-          withCredentials: true, // Enviar cookies automáticamente
+          withCredentials: true,
         })
 
-        setUser(response.data)
-        setIsLoggedIn(true)
+        if (isMounted) {
+          setUser(response.data)
+          setIsLoggedIn(true)
+        }
       } catch (error) {
-        console.error('Sesión inválida o expirada:', error)
-        setIsLoggedIn(false)
+        if (isMounted) {
+          setIsLoggedIn(false)
+        }
       } finally {
-        setChecking(false)
+        if (isMounted) {
+          setChecking(false)
+        }
       }
     }
 
     validateSession()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
-  // ================================
-  // Función de Inicio de Sesión (Login)
-  // ================================
-  const login = async (credentials) => {
+  const login = async (credentials, navigate) => {
     try {
       const response = await api.post('/auth/login', credentials, {
-        withCredentials: true, // Asegurar que se reciban las cookies de sesión
+        withCredentials: true,
       })
 
       setUser(response.data)
       setIsLoggedIn(true)
+      navigate('/profile', { replace: true }) // ✅ Redirigir tras el login
     } catch (error) {
-      console.error('Error en la autenticación:', error)
       throw new Error('Credenciales incorrectas o error en el servidor')
     }
   }
 
-  // ================================
-  // Función de Cierre de Sesión (Logout)
-  // ================================
-  const logout = async () => {
+  const logout = async (navigate) => {
     try {
       await api.post('/auth/sign-out', {}, { withCredentials: true })
 
       setUser(null)
       setIsLoggedIn(false)
-      window.location.href = '/login' // Redirigir al login tras cerrar sesión
+      navigate('/login', { replace: true }) // ✅ Redirigir tras el logout
     } catch (error) {
       console.error('Error al cerrar sesión:', error)
     }

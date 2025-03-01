@@ -1,81 +1,52 @@
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { X } from 'lucide-react'
 import api from '@/services/api/axios'
 import useAuth from '@/context/AuthContext/useAuth'
-import Button from '../../atoms/Button'
-import { EmailInput } from '../../atoms/Input'
-import Input from '../../atoms/Input'
-import Logo from '../../atoms/Logo'
-import PasswordToggle from '../../atoms/PasswordToggle/PasswordToggle'
+import { X } from 'lucide-react'
+import Button from '@/components/atoms/Button'
+import { EmailInput } from '@/components/atoms/Input'
+import Input from '@/components/atoms/Input'
+import Logo from '@/components/atoms/Logo'
+import PasswordToggle from '@/components/atoms/PasswordToggle/PasswordToggle'
 
-const AuthCard = ({
-  activeForm,
-  formData = { username: '', email: '', password: '' },
-  onInputChange,
-  onSwitchForm,
-  onCancel,
-}) => {
+const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
   const { login } = useAuth()
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  })
   const [error, setError] = useState(null)
-
-  // ===================================
-  // Captura de cambios en los inputs
-  // ===================================
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    const newData = {
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    }
-
-    onInputChange?.({
-      target: e.target,
-      formData: newData,
-      isValid: e.isValid,
-    })
+    }))
   }
-
-  // ===================================
-  // Enviar el formulario al backend
-  // ===================================
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
 
     try {
-      const API_PREFIX = '/auth'
-      const endpoint =
-        activeForm === 'login'
-          ? `${API_PREFIX}/login`
-          : `${API_PREFIX}/register`
+      const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
+      const response = await api.post(endpoint, formData, {
+        withCredentials: true,
+      })
 
-      const response = await api.post(
-        endpoint,
-        {
-          email: formData.email,
-          username: formData.username || '', // Asegurar que siempre se envíe un valor
-          password: formData.password,
-        },
-        { withCredentials: true }
-      )
-
-      login(response.data)
-      onCancel()
+      login(response.data, navigate) // ✅ Pasamos navigate a login
+      onClose()
     } catch (error) {
       console.error(
         'Error en la autenticación:',
         error.response?.data || error.message
       )
-
       setError(error.response?.data?.message || 'Error en la autenticación')
     }
   }
-
-  // ==================================
-  // Validación del formulario
-  // ==================================
 
   const isFormValid =
     activeForm === 'login'
@@ -84,18 +55,19 @@ const AuthCard = ({
 
   return (
     <div
+      id="authModalBackground"
       className="fixed inset-0 bg-primary-dark/50 flex justify-center items-center z-50"
-      onClick={onCancel}
+      onClick={(e) => e.target.id === 'authModalBackground' && onClose()} // ✅ Cierra modal al hacer clic fuera
     >
       <section
         className="relative bg-primary-light border-2 border-primary-dark rounded-lg p-6 w-full max-w-md min-h-[540px] shadow-lg flex flex-col"
         role="dialog"
         aria-labelledby="auth-title"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()} // ✅ Evita cerrar al hacer clic dentro
       >
         <button
           className="absolute top-2 right-2 text-primary-dark hover:text-hover-state transition"
-          onClick={onCancel}
+          onClick={onClose}
           aria-label="Cerrar"
         >
           <X size={20} />
