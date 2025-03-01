@@ -22,32 +22,29 @@ const AuthProvider = ({ children }) => {
 
     const validateSession = async () => {
       try {
-        const response = await api.get('/auth/validate-token', {
-          withCredentials: true,
-        })
-
+        const response = await api.get('/auth/validate-token')
         if (isMounted) {
           setUser(response.data)
           setIsLoggedIn(true)
         }
       } catch (error) {
         if (isMounted) {
+          setUser(null)
           setIsLoggedIn(false)
         }
       } finally {
         if (isMounted) {
-          setChecking(false) // Finaliza la validación de sesión
+          setChecking(false)
         }
       }
     }
 
-    validateSession()
+    if (checking) validateSession() // Solo ejecutar si checking es true
 
     return () => {
-      isMounted = false // Previene actualizaciones en estado desmontado
+      isMounted = false
     }
-  }, [])
-
+  }, [checking]) // Dependencia en checking
   // =========================================
   // Función para iniciar sesión
   // =========================================

@@ -11,9 +11,18 @@ import AuthCard from './Components/organisms/AuthCard/AuthCard'
 const PrivateRoute = ({ element }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
 
-  if (checking) return <div>Cargando...</div>
+  // Si aún se está verificando la autenticación, muestra un mensaje de carga
+  if (checking) {
+    return <div>Cargando...</div>
+  }
 
-  return isLoggedIn ? element : <Navigate to="/" />
+  // Si el usuario no está autenticado, redirige a la página de inicio
+  if (!isLoggedIn) {
+    return <Navigate to="/" />
+  }
+
+  // Si el usuario está autenticado, renderiza el componente solicitado
+  return element
 }
 
 const App = () => {
@@ -27,6 +36,7 @@ const App = () => {
     setActiveForm(formType)
     setIsAuthModalOpen(true)
   }
+
   // ======================================================================
   // Cerrar modal cuando el usuario se autentique o lo cierre manualmente
   // ======================================================================

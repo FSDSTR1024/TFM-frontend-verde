@@ -17,10 +17,9 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      const { status, config } = error.response
-
-      if ([401, 403].includes(status) && typeof window !== 'undefined') {
+    if ([401, 403].includes(error.response?.status)) {
+      // Evitar redirección si ya está en login
+      if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login?reason=session_expired'
       }
     }
