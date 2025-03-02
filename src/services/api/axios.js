@@ -18,9 +18,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if ([401, 403].includes(error.response?.status)) {
-      // Evitar redirección si ya está en login
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login?reason=session_expired'
+      // Evitar redirección si YA está en login
+      const currentPath = window.location.pathname
+      if (!currentPath.includes('/login')) {
+        window.location.href = `/login?reason=session_expired`
       }
     }
     return Promise.reject(error)

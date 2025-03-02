@@ -1,52 +1,55 @@
 import { useState } from 'react'
-import useAuth from '@/context/AuthContext/useAuth' // Hook de autenticación para acceder al estado global
+import useAuth from '@/context/AuthContext/useAuth'
 import Button from '../../atoms/Button'
-import AuthCard from '../../organisms/AuthCard' // Componente del modal de autenticación
-import UserDropdown from '../../organisms/UserDropdown/UserDropdown'
+import AuthCard from '../../organisms/AuthCard'
+import UserDropdown from '../../organisms/UserDropdown'
 
 const NavLinks = ({ mobile, onClose }) => {
-  const { isLoggedIn, user, logout } = useAuth() // Accedemos al estado global de autenticación
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false) // Estado para mostrar/ocultar el modal de autenticación
-  const [activeForm, setActiveForm] = useState('login') // Estado para definir si el formulario activo es de login o registro
+  const { isLoggedIn, logout } = useAuth() // ✅ Estado GLOBAL directo
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [activeForm, setActiveForm] = useState('login')
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  })
 
   //----------------------------------
   // Manejo del modal de autenticación
   //----------------------------------
-  const openAuthModal = (formType) => {
-    setActiveForm(formType) // Define si el modal es de login o registro
-    setIsAuthModalOpen(true) // Muestra el modal
+  const handleAuthModal = (formType) => {
+    setActiveForm(formType)
+    setIsAuthModalOpen(true)
   }
 
   //----------------------------------
   // Cerrar el Modal de Autenticación
   //----------------------------------
   const handleCloseModal = () => {
-    setIsAuthModalOpen(false) // Oculta el modal
-    setActiveForm('login') // Reinicia el formulario a 'login' por defecto
-    if (onClose) onClose() // Si existe la función 'onClose', la ejecutamos
+    setIsAuthModalOpen(false)
+    setActiveForm('login')
+    setFormData({ username: '', email: '', password: '' })
+    if (onClose) onClose()
   }
 
   return (
     <nav>
       <ul className="flex flex-col lg:flex-row gap-4 lg:gap-6 list-none m-0 items-center">
-        {!isLoggedIn ? (
+        {!isLoggedIn ? ( // ✅ Usar isLoggedIn SIN estado local
           <>
-            {/* Botón de Registrarse */}
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={() => openAuthModal('register')}
+                onClick={() => handleAuthModal('register')}
                 ariaLabel="Registrarse"
               >
                 Registrarse
               </Button>
             </li>
-
-            {/* Botón de Iniciar Sesión */}
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={() => openAuthModal('login')}
+                onClick={() => handleAuthModal('login')}
                 ariaLabel="Iniciar sesión"
               >
                 Iniciar sesión
@@ -55,7 +58,6 @@ const NavLinks = ({ mobile, onClose }) => {
           </>
         ) : (
           <>
-            {/* Botón de Cerrar Sesión */}
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
@@ -65,8 +67,6 @@ const NavLinks = ({ mobile, onClose }) => {
                 Cerrar sesión
               </Button>
             </li>
-
-            {/* Dropdown de Usuario */}
             <li>
               <UserDropdown />
             </li>
@@ -77,9 +77,14 @@ const NavLinks = ({ mobile, onClose }) => {
       {/* Modal de Autenticación */}
       {isAuthModalOpen && (
         <AuthCard
-          activeForm={activeForm} // Define si el formulario es de login o registro
-          setActiveForm={setActiveForm} // Permite alternar entre login y registro
-          onClose={handleCloseModal} // Maneja el cierre del modal
+          activeForm={activeForm}
+          setActiveForm={setActiveForm}
+          onClose={handleCloseModal}
+          formData={formData}
+          onInputChange={(e) => {
+            const { name, value } = e.target
+            setFormData((prev) => ({ ...prev, [name]: value }))
+          }}
         />
       )}
     </nav>
