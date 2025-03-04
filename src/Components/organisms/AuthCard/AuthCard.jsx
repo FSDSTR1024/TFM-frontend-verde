@@ -32,11 +32,12 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     setError(null)
 
     const formDatatoSend = { ...formData }
+    console.log('formDatatoSend', formDatatoSend)
     if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
 
     // Lo siguiente es valdir que email y password no estén vacios antes de enviar
-    if (!formDatatoSend.email || !formDatatoSend.password){
-      setError("Todos los campos son obligatorios")
+    if (!formDatatoSend.email || !formDatatoSend.password) {
+      setError('Todos los campos son obligatorios')
       return
     }
 
@@ -51,7 +52,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
 
       console.log('Respuesta del servidor:', response.data)
 
-      login(response.data, navigate) //  Pasamos navigate a login
+      login(formDatatoSend, navigate) //  Pasamos navigate a login
       onClose()
     } catch (error) {
       console.error(

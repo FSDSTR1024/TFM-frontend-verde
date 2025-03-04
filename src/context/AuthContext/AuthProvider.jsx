@@ -4,33 +4,36 @@ import { AuthContext } from './AuthContext'
 
 const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user, setUser] = useState(null)
+  const [authToken, setAuthToken] = useState(null)
   const [checking, setChecking] = useState(true)
 
   // ==============================
-  // Validar sesión desde cookies
+  // Validar sesión con el token en memoria
   // ==============================
   const validateSession = async () => {
+    if (!authToken) {
+      console.warn('No hay token en memoria, no se puede validar la sesión.')
+      setIsLoggedIn(false)
+      setChecking(false)
+      return
+    }
+
     try {
       const response = await api.get('/auth/validate-token', {
+        headers: { Authorization: `Bearer ${authToken}` },
         withCredentials: true,
       })
 
-      console.log('Sesión válida', error.response?.data || error.message) // Eliminar después de desarrollo.
-      setUser(response.data)
+      console.log('Sesión válida', response.data)
       setIsLoggedIn(true)
     } catch (error) {
-      console.warn('Sesión no valida', error.response?.data || error.message)
-      setUser(null)
+      console.warn('Sesión no válida', error.response?.data || error.message)
       setIsLoggedIn(false)
     } finally {
       setChecking(false)
     }
   }
 
-  useEffect(() => {
-    validateSession() // verificamos sesión al cargar la app
-  }, [])
   // ==============================
   // Implementar Refresh Token
   // ==============================
@@ -41,9 +44,8 @@ const AuthProvider = ({ children }) => {
           try {
             await api.post('/auth/refresh-token', {}, { withCredentials: true })
           } catch (error) {
-            console.error('Error al renovar el token:', error) // Borrar esta depuración cuando hayamos solucionado el problema
+            console.error('Error al renovar el token:', error)
             setIsLoggedIn(false)
-            setUser(null)
           }
         },
         55 * 60 * 1000
@@ -54,49 +56,34 @@ const AuthProvider = ({ children }) => {
   }, [isLoggedIn])
 
   // ==============================
-  // Función register
-  // ==============================
-  const register = useCallback(async (credentials, navigate) => {
-    try {
-      const response = await api.post('/auth/register', credentials, {
-        withCredentials: true,
-      })
-
-      // PRIMERO actualiza el estado con los datos del usuario
-      setUser(response.data.user)
-      setIsLoggedIn(true)
-
-      // LUEGO navega al perfil del usuario
-      navigate('/profile', { replace: true })
-    } catch (error) {
-      console.error('Error en register:', error)
-    }
-  }, [])
-
-  // ==============================
   // Función login
   // ==============================
   const login = useCallback(async (credentials, navigate) => {
     try {
+      console.log('Intentando iniciar sesión con:', credentials)
+
+      if (!credentials?.email || !credentials?.password) {
+        console.error('❌ Error: Email o password no proporcionados.')
+        return
+      }
+
       const response = await api.post('/auth/login', credentials, {
         withCredentials: true,
       })
 
-      // PRIMERO actualiza el estado
-      console.log('Usuario logueado', response.data.user) // Eliminarlo después de encontrar el error
+      console.log('Usuario logueado:', response.data)
 
-      // Debemos asegurarnos de que axios utilice el nuevo token en futuras solicitudes antes de cualquier otra acción
+      // 🔹 Guardar el token en el estado del contexto
+      setAuthToken(response.data.token)
+
+      // 🔹 Asignar el token a Axios inmediatamente
       api.defaults.headers.common['Authorization'] =
-        `Bearer ${response.data.accessToken}`
+        `Bearer ${response.data.token}`
 
-      // Validar sesión inmediatamente despuésdel login
+      // 🔹 Validar sesión después del login
       await validateSession()
 
-      // Después acualizamos el estado del usuario
-      setUser(response.data.user)
       setIsLoggedIn(true)
-
-      // LUEGO navega
       navigate('/profile', { replace: true })
     } catch (error) {
       console.error('Error en login:', error)
@@ -109,27 +96,21 @@ const AuthProvider = ({ children }) => {
   const logout = useCallback(async (navigate) => {
     try {
       await api.post('/auth/logout', {}, { withCredentials: true })
-
-      // PRIMERO actualiza el estado
-      console.log('Cierre de sesión exitoso.')
-
-      // Limpiar token en axios
-      delete api.defaults.headers.common['Authorization']
-
-      // Limpiar estado global de los usuarios
-      setUser(null)
-      setIsLoggedIn(false)
-
-      // LUEGO navega
-      navigate('/login', { replace: true })
     } catch (error) {
       console.error('Error en logout:', error)
     }
+
+    // 🔹 Eliminar el token en memoria
+    setAuthToken(null)
+    delete api.defaults.headers.common['Authorization']
+
+    setIsLoggedIn(false)
+    navigate('/login', { replace: true })
   }, [])
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, user, checking, register, login, logout }}
+      value={{ isLoggedIn, checking, authToken, login, logout }}
     >
       {children}
     </AuthContext.Provider>
