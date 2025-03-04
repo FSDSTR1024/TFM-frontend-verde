@@ -52,14 +52,19 @@ const ProfilePage = () => {
     }
 
     if (name === 'username' && !validateUsername(value)) {
-      updatedErrors.username = 'Debe tener entre 3 y 20 caracteres (letras, números o guion bajo).'
+      updatedErrors.username =
+        'Debe tener entre 3 y 20 caracteres (letras, números o guion bajo).'
     } else {
       delete updatedErrors.username
     }
 
-    if ((name === 'newPassword' || name === 'confirmNewPassword') && changePassword) {
+    if (
+      (name === 'newPassword' || name === 'confirmNewPassword') &&
+      changePassword
+    ) {
       if (!validatePasswords()) {
-        updatedErrors.passwords = 'Las contraseñas no coinciden o son demasiado cortas (mínimo 6 caracteres).'
+        updatedErrors.passwords =
+          'Las contraseñas no coinciden o son demasiado cortas (mínimo 6 caracteres).'
       } else {
         delete updatedErrors.passwords
       }
@@ -95,7 +100,12 @@ const ProfilePage = () => {
   const toggleChangePassword = () => {
     setChangePassword(!changePassword)
     if (!changePassword) {
-      setFormData((prev) => ({ ...prev, currentPassword: '', newPassword: '', confirmNewPassword: '' }))
+      setFormData((prev) => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      }))
     }
   }
 
@@ -117,7 +127,10 @@ const ProfilePage = () => {
       ...prevUser,
       username: formData.username,
       email: formData.email,
-      profileImage: typeof formData.profileImage === 'string' ? formData.profileImage : prevUser.profileImage,
+      profileImage:
+        typeof formData.profileImage === 'string'
+          ? formData.profileImage
+          : prevUser.profileImage,
     }))
   }
 
@@ -125,59 +138,137 @@ const ProfilePage = () => {
   // Renderizado del Componente
   // ================================
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-10 bg-primary-light">
-      <h2 className="text-3xl font-bold text-primary-dark mb-6">Editar Perfil</h2>
+    <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light">
+      <h2 className="text-3xl font-bold text-primary-dark mb-6">
+        Editar Perfil
+      </h2>
 
       {/* Vista previa del avatar */}
       {previewImage && (
-        <img src={previewImage} alt="Foto de perfil" className="w-32 h-32 rounded-full border-4 border-secondary-dark object-cover mb-8" />
+        <img
+          src={previewImage}
+          alt="Foto de perfil"
+          className="w-32 h-32 rounded-full border-4 border-secondary-dark object-cover mb-8"
+        />
       )}
 
       {/* Botones para Imagen y Avatar */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <div className="relative">
-          <Button variant="primary" type="button" ariaLabel="Subir foto personalizada" onClick={() => document.getElementById('uploadImageInput').click()}>
+          <Button
+            variant="primary"
+            type="button"
+            ariaLabel="Subir foto personalizada"
+            onClick={() => document.getElementById('uploadImageInput').click()}
+          >
             Subir Foto Personalizada
           </Button>
-          <input id="uploadImageInput" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+          <input
+            id="uploadImageInput"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
         </div>
 
-        <Button variant="primary" type="button" onClick={() => setShowAvatarSelector(true)}>
+        <Button
+          variant="primary"
+          type="button"
+          onClick={() => setShowAvatarSelector(true)}
+        >
           Seleccionar Avatar Predeterminado
         </Button>
       </div>
 
       {/* Formulario */}
-      <form onSubmit={handleSubmit} className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow">
-        <Input label="Nombre de Usuario" name="username" value={formData.username} onChange={handleChange} />
-        {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow"
+      >
+        <Input
+          label="Nombre de Usuario"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+        />
+        {errors.username && (
+          <p className="text-red-500 text-sm">{errors.username}</p>
+        )}
 
-        <Input label="Correo Electrónico" name="email" type="email" value={formData.email} onChange={handleChange} required />
+        <Input
+          label="Correo Electrónico"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
         {/* Cambio de contraseña */}
         <div className="flex items-center gap-2">
-          <input type="checkbox" checked={changePassword} onChange={toggleChangePassword} id="changePassword" />
-          <label htmlFor="changePassword" className="text-primary-dark">¿Cambiar Contraseña?</label>
+          <input
+            type="checkbox"
+            checked={changePassword}
+            onChange={toggleChangePassword}
+            id="changePassword"
+          />
+          <label htmlFor="changePassword" className="text-primary-dark">
+            ¿Cambiar Contraseña?
+          </label>
         </div>
 
         {changePassword && (
           <>
-            <Input label="Contraseña Actual" name="currentPassword" type="password" value={formData.currentPassword} onChange={handleChange} />
-            <Input label="Nueva Contraseña" name="newPassword" type="password" value={formData.newPassword} onChange={handleChange} />
-            <Input label="Confirmar Nueva Contraseña" name="confirmNewPassword" type="password" value={formData.confirmNewPassword} onChange={handleChange} />
-            {errors.passwords && <p className="text-red-500 text-sm">{errors.passwords}</p>}
+            <Input
+              label="Contraseña Actual"
+              name="currentPassword"
+              type="password"
+              value={formData.currentPassword}
+              onChange={handleChange}
+            />
+            <Input
+              label="Nueva Contraseña"
+              name="newPassword"
+              type="password"
+              value={formData.newPassword}
+              onChange={handleChange}
+            />
+            <Input
+              label="Confirmar Nueva Contraseña"
+              name="confirmNewPassword"
+              type="password"
+              value={formData.confirmNewPassword}
+              onChange={handleChange}
+            />
+            {errors.passwords && (
+              <p className="text-red-500 text-sm">{errors.passwords}</p>
+            )}
           </>
         )}
 
         {/* Botones de acción */}
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" type="button">Cancelar</Button>
-          <Button variant="primary" type="submit" disabled={Object.keys(errors).length > 0}>Guardar Cambios</Button>
+          <Button variant="secondary" type="button">
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={Object.keys(errors).length > 0}
+          >
+            Guardar Cambios
+          </Button>
         </div>
       </form>
 
-      {showAvatarSelector && <AvatarSelector onSaveAvatar={handleAvatarSelect} onClose={() => setShowAvatarSelector(false)} />}
+      {showAvatarSelector && (
+        <AvatarSelector
+          onSaveAvatar={handleAvatarSelect}
+          onClose={() => setShowAvatarSelector(false)}
+        />
+      )}
     </div>
   )
 }

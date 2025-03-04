@@ -73,19 +73,19 @@ const UserDropdown = ({ onDropdownToggle }) => {
             {isLoggedIn ? (
               <>
                 <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-t-lg"
+                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
                   onClick={() => navigate('/profile')}
                 >
                   Perfil
                 </li>
                 <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition"
+                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
                   onClick={() => navigate('/wallet')}
                 >
                   Cartera
                 </li>
                 <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-b-lg"
+                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
                   onClick={() => navigate('/orders')}
                 >
                   Órdenes
@@ -94,13 +94,13 @@ const UserDropdown = ({ onDropdownToggle }) => {
             ) : (
               <>
                 <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-t-lg"
+                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
                   onClick={() => navigate('/login')}
                 >
                   Iniciar Sesión
                 </li>
                 <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-b-lg"
+                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
                   onClick={() => navigate('/register')}
                 >
                   Registrarse

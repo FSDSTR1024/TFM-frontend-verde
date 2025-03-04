@@ -1,14 +1,12 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { useState, useContext, useCallback } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { AuthContext } from './context/AuthContext/AuthContext'
 import Navbar from './components/organisms/Navbar/Navbar'
 import Footer from './components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import AuthCard from './components/organisms/AuthCard/AuthCard'
+import DashboardPage from './pages/DashboardPage'
 
-// =========================================
-// Componente para manejar rutas protegidas
-// =========================================
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
 
@@ -20,54 +18,37 @@ const PrivateRoute = ({ children }) => {
     )
   }
 
-  return isLoggedIn ? (
-    children
-  ) : (
-    <div className="text-center mt-10">
-      <p className="text-lg font-medium">Redirigiendo al inicio...</p>
-      <Navigate to="/" replace={true} />
-    </div>
-  )
+  return isLoggedIn ? children : <Navigate to="/" replace={true} />
 }
 
 const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
-  const [dropdownHeight, setDropdownHeight] = useState(0) // 🔹 ESTADO PARA CONTROLAR EL MARGEN
+  const [dropdownHeight, setDropdownHeight] = useState(0) // Nueva variable de estado
 
-  // ==============================================
-  // Abrir modal desde cualquier lugar de la app
-  // ==============================================
   const openAuthModal = useCallback((formType) => {
     setActiveForm(formType)
     setIsAuthModalOpen(true)
   }, [])
 
-  // ======================================================================
-  // Cerrar modal cuando el usuario se autentique o lo cierre manualmente
-  // ======================================================================
   const handleCloseModal = useCallback(() => {
     setIsAuthModalOpen(false)
   }, [])
 
   return (
     <BrowserRouter>
-      {/* Estructura correcta con Header, Main y Footer */}
       <div className="flex flex-col min-h-screen">
+        {/* Se pasa la función para actualizar la altura del dropdown */}
         <Navbar
           openAuthModal={openAuthModal}
           setDropdownHeight={setDropdownHeight}
         />
 
         <main
-          className="flex-grow transition-all duration-200"
-          style={{ marginTop: dropdownHeight }}
+          className={`flex-grow pt-[68px] lg:pt-[68px] ${dropdownHeight > 0 ? 'mt-10' : ''}`}
         >
           <Routes>
-            {/* Rutas públicas */}
             <Route path="/" element={<div>Inicio</div>} />
-
-            {/* Rutas protegidas */}
             <Route
               path="/profile"
               element={
@@ -76,8 +57,14 @@ const App = () => {
                 </PrivateRoute>
               }
             />
-
-            {/* Página 404 */}
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <DashboardPage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="*"
               element={
@@ -92,7 +79,6 @@ const App = () => {
         <Footer />
       </div>
 
-      {/* Modal de autenticación global */}
       {isAuthModalOpen && (
         <AuthCard
           activeForm={activeForm}
