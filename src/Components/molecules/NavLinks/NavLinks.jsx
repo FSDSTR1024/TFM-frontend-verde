@@ -5,7 +5,7 @@ import AuthCard from '../../organisms/AuthCard'
 import UserDropdown from '../../organisms/UserDropdown'
 
 const NavLinks = ({ mobile, onClose }) => {
-  const { isLoggedIn, logout } = useAuth() // ✅ Estado GLOBAL directo
+  const { isLoggedIn, logout } = useAuth() // Estado GLOBAL directo
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [formData, setFormData] = useState({
@@ -32,10 +32,12 @@ const NavLinks = ({ mobile, onClose }) => {
     if (onClose) onClose()
   }
 
+  console.log("Estado de isLoggedIn en NavLinks:", isLoggedIn);
+
   return (
     <nav>
       <ul className="flex flex-col lg:flex-row gap-4 lg:gap-6 list-none m-0 items-center">
-        {!isLoggedIn ? ( // ✅ Usar isLoggedIn SIN estado local
+        {!isLoggedIn ? ( // Usar isLoggedIn SIN estado local
           <>
             <li>
               <Button

@@ -14,7 +14,7 @@ const UserDropdown = () => {
   // Alternar Visibilidad del Dropdown
   // ============================
   const toggleDropdown = () => {
-    console.log('🟢 Clic en el botón del dropdown.')
+    console.log('Clic en el botón del dropdown.')
     setShowDropdown((prev) => !prev)
   }
 
@@ -24,7 +24,7 @@ const UserDropdown = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
-        console.log('🔴 Clic fuera del dropdown. Cerrando menú.')
+        console.log('Clic fuera del dropdown. Cerrando menú.')
         setShowDropdown(false)
       }
     }
