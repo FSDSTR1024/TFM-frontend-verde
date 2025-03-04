@@ -2,7 +2,7 @@ import Logo from '@components/atoms/Logo'
 import NavLinks from '@components/molecules/NavLinks'
 
 const Header = () => (
-  <header className="relative w-full min-h-[120px] lg:min-h-[140px] flex items-center bg-white px-4 lg:px-8 border-b border-gray-100">
+  <header className="w-full bg-white shadow-md px-4 lg:px-8 h-[60px] lg:h-[68px] flex items-center justify-between">
     {' '}
     {/* Contenedor logo con padding integrado */}
     <div className="h-full flex items-center lg:flex-1">

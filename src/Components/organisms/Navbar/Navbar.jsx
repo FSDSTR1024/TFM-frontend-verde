@@ -2,21 +2,20 @@ import { useState } from 'react'
 import Logo from '@/components/atoms/Logo'
 import NavLinks from '@/components/molecules/NavLinks'
 
-const Navbar = () => {
+const Navbar = ({ openAuthModal, setDropdownHeight }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   return (
     <header className="relative w-full h-[60px] lg:h-[68px] bg-white px-4 lg:px-8 shadow-md flex items-center justify-between">
       {/* Logo con ajuste de posición vertical */}
       <div className="lg:flex-1 h-full flex items-center lg:pt-1">
-        {' '}
         <Logo />
       </div>
 
-      {/* Menú Desktop - Espaciado ajustado */}
+      {/* Menú Desktop */}
       <div className="hidden lg:flex items-center gap-6 mr-4">
-        {' '}
-        <NavLinks />
+        <NavLinks setDropdownHeight={setDropdownHeight} />{' '}
+        {/* ✅ Pasamos la prop en lugar de renderizar aquí */}
       </div>
 
       {/* Botón Mobile */}

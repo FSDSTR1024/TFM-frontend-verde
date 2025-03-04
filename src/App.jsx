@@ -2,8 +2,9 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { useState, useContext, useCallback } from 'react'
 import { AuthContext } from './context/AuthContext/AuthContext'
 import Navbar from './components/organisms/Navbar/Navbar'
+import Footer from './components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
-import AuthCard from './Components/organisms/AuthCard/AuthCard'
+import AuthCard from './components/organisms/AuthCard/AuthCard'
 
 // =========================================
 // Componente para manejar rutas protegidas
@@ -32,6 +33,7 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
+  const [dropdownHeight, setDropdownHeight] = useState(0) // 🔹 ESTADO PARA CONTROLAR EL MARGEN
 
   // ==============================================
   // Abrir modal desde cualquier lugar de la app
@@ -50,33 +52,45 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      {/* Navbar recibe la función para abrir el modal */}
-      <Navbar openAuthModal={openAuthModal} />
-
-      <Routes>
-        {/* Rutas públicas */}
-        <Route path="/" element={<div>Inicio</div>} />
-
-        {/* Rutas protegidas */}
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <ProfilePage />
-            </PrivateRoute>
-          }
+      {/* Estructura correcta con Header, Main y Footer */}
+      <div className="flex flex-col min-h-screen">
+        <Navbar
+          openAuthModal={openAuthModal}
+          setDropdownHeight={setDropdownHeight}
         />
 
-        {/* Página 404 */}
-        <Route
-          path="*"
-          element={
-            <div className="text-center mt-10 text-lg font-medium">
-              Página no encontrada
-            </div>
-          }
-        />
-      </Routes>
+        <main
+          className="flex-grow transition-all duration-200"
+          style={{ marginTop: dropdownHeight }}
+        >
+          <Routes>
+            {/* Rutas públicas */}
+            <Route path="/" element={<div>Inicio</div>} />
+
+            {/* Rutas protegidas */}
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Página 404 */}
+            <Route
+              path="*"
+              element={
+                <div className="text-center mt-10 text-lg font-medium">
+                  Página no encontrada
+                </div>
+              }
+            />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
 
       {/* Modal de autenticación global */}
       {isAuthModalOpen && (

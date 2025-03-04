@@ -1,21 +1,33 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { UserRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import useAuth from '@/context/AuthContext/useAuth'
 import Button from '../../atoms/Button'
 
-const UserDropdown = () => {
+const UserDropdown = ({ onDropdownToggle }) => {
   const { isLoggedIn } = useAuth()
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
+  const dropdownRef = useRef(null)
 
   // ============================
   // Alternar Visibilidad del Dropdown
   // ============================
   const toggleDropdown = () => {
-    console.log('Clic en el botón del dropdown.')
-    setShowDropdown((prev) => !prev)
+    setShowDropdown((prev) => {
+      const newState = !prev
+      if (onDropdownToggle) {
+        // 🔹 Solo ajustar el margen si es vista móvil
+        const dropdownHeight = newState
+          ? dropdownRef.current?.offsetHeight || 0
+          : 0
+        if (window.innerWidth < 1024) {
+          onDropdownToggle(dropdownHeight)
+        }
+      }
+      return newState
+    })
   }
 
   // ============================
@@ -24,8 +36,10 @@ const UserDropdown = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
-        console.log('Clic fuera del dropdown. Cerrando menú.')
         setShowDropdown(false)
+        if (onDropdownToggle && window.innerWidth < 1024) {
+          onDropdownToggle(0) // 🔹 Resetear margen en móviles al cerrar
+        }
       }
     }
 
@@ -34,20 +48,7 @@ const UserDropdown = () => {
     }
 
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showDropdown])
-
-  // ============================
-  // Navegar y cerrar el menú
-  // ============================
-  const handleNavigate = (path) => {
-    navigate(path)
-    setShowDropdown(false)
-  }
-
-  // ============================
-  // Renderizado del Componente
-  // ============================
-  console.log('Estado de showDropdown:', showDropdown)
+  }, [showDropdown, onDropdownToggle])
 
   return (
     <div className="relative dropdown-container">
@@ -64,6 +65,7 @@ const UserDropdown = () => {
       {/* Dropdown flotante */}
       {showDropdown && (
         <div
+          ref={dropdownRef}
           className="absolute top-full right-0 mt-2 w-48 bg-primary-dark text-primary-light
             border border-secondary-dark rounded-lg shadow-lg z-50"
         >
@@ -72,19 +74,19 @@ const UserDropdown = () => {
               <>
                 <li
                   className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-t-lg"
-                  onClick={() => handleNavigate('/profile')}
+                  onClick={() => navigate('/profile')}
                 >
                   Perfil
                 </li>
                 <li
                   className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition"
-                  onClick={() => handleNavigate('/wallet')}
+                  onClick={() => navigate('/wallet')}
                 >
                   Cartera
                 </li>
                 <li
                   className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-b-lg"
-                  onClick={() => handleNavigate('/orders')}
+                  onClick={() => navigate('/orders')}
                 >
                   Órdenes
                 </li>
@@ -93,13 +95,13 @@ const UserDropdown = () => {
               <>
                 <li
                   className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-t-lg"
-                  onClick={() => handleNavigate('/login')}
+                  onClick={() => navigate('/login')}
                 >
                   Iniciar Sesión
                 </li>
                 <li
                   className="px-4 py-3 cursor-pointer hover:bg-hover-state hover:text-primary-light transition rounded-b-lg"
-                  onClick={() => handleNavigate('/register')}
+                  onClick={() => navigate('/register')}
                 >
                   Registrarse
                 </li>
