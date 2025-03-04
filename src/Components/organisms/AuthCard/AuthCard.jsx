@@ -31,11 +31,25 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     e.preventDefault()
     setError(null)
 
+    const formDatatoSend = { ...formData }
+    if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
+
+    // Lo siguiente es valdir que email y password no estén vacios antes de enviar
+    if (!formDatatoSend.email || !formDatatoSend.password){
+      setError("Todos los campos son obligatorios")
+      return
+    }
+
+    console.log('Enviando datos:', formDatatoSend) // verifica si los datos son correctos antes de enviarlos
+
     try {
       const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
-      const response = await api.post(endpoint, formData, {
+
+      const response = await api.post(endpoint, formDatatoSend, {
         withCredentials: true,
       })
+
+      console.log('Respuesta del servidor:', response.data)
 
       login(response.data, navigate) //  Pasamos navigate a login
       onClose()

@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
-import { useState, useContext } from 'react'
+import { useState, useContext, useCallback } from 'react'
 import { AuthContext } from './context/AuthContext/AuthContext'
 import Navbar from './components/organisms/Navbar/Navbar'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
@@ -8,21 +8,25 @@ import AuthCard from './Components/organisms/AuthCard/AuthCard'
 // =========================================
 // Componente para manejar rutas protegidas
 // =========================================
-const PrivateRoute = ({ element }) => {
+const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
 
-  // Si aún se está verificando la autenticación, muestra un mensaje de carga
   if (checking) {
-    return <div>Cargando...</div>
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="animate-spin border-t-4 border-primary-dark h-10 w-10 rounded-full"></span>
+      </div>
+    )
   }
 
-  // Si el usuario no está autenticado, redirige a la página de inicio
-  if (!isLoggedIn) {
-    return <Navigate to="/" />
-  }
-
-  // Si el usuario está autenticado, renderiza el componente solicitado
-  return element
+  return isLoggedIn ? (
+    children
+  ) : (
+    <div className="text-center mt-10">
+      <p className="text-lg font-medium">Redirigiendo al inicio...</p>
+      <Navigate to="/" replace={true} />
+    </div>
+  )
 }
 
 const App = () => {
@@ -32,17 +36,17 @@ const App = () => {
   // ==============================================
   // Abrir modal desde cualquier lugar de la app
   // ==============================================
-  const openAuthModal = (formType) => {
+  const openAuthModal = useCallback((formType) => {
     setActiveForm(formType)
     setIsAuthModalOpen(true)
-  }
+  }, [])
 
   // ======================================================================
   // Cerrar modal cuando el usuario se autentique o lo cierre manualmente
   // ======================================================================
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsAuthModalOpen(false)
-  }
+  }, [])
 
   return (
     <BrowserRouter>
@@ -56,7 +60,11 @@ const App = () => {
         {/* Rutas protegidas */}
         <Route
           path="/profile"
-          element={<PrivateRoute element={<ProfilePage />} />}
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
         />
 
         {/* Página 404 */}
