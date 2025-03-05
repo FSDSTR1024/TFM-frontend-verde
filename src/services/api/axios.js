@@ -20,10 +20,12 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if ([401, 403].includes(error.response?.status)) {
-      console.warn(" Error 401/403: intentando renovar el token...")
+      console.warn(' Error 401/403: intentando renovar el token...')
 
       if (isRefreshing) {
-        console.warn("Ya se está renovando el token. Se cancela la solicitud duplicada")
+        console.warn(
+          'Ya se está renovando el token. Se cancela la solicitud duplicada'
+        )
         return Promise.reject(error)
       }
 
@@ -38,8 +40,7 @@ api.interceptors.response.use(
         )
 
         // Si la renovación es exitosa, actualizar el Access Token y reintentar la solicitud original
-        api.defaults.headers.common['Authorization'] =
-          `Bearer ${refreshResponse.data.accessToken}`
+        document.cookie = `token=${refreshResponse.data.accessToken}; path=/; secure; httpOnly;`
         error.config.headers['Authorization'] =
           `Bearer ${refreshResponse.data.accessToken}`
 
@@ -52,7 +53,7 @@ api.interceptors.response.use(
         // Si la renovación falla, redirigir al login
         const currentPath = window.location.pathname
         if (!currentPath.includes('/login')) {
-          console.warn( "Redirigiendo al login debido a sesión expirada.")
+          console.warn('Redirigiendo al login debido a sesión expirada.')
           window.location.href = `/login?reason=session_expired`
         }
       }

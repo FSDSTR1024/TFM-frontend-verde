@@ -108,7 +108,6 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
               value={formData.username}
               onChange={handleInputChange}
               required
-              placeholder="Usuario"
             />
           )}
 

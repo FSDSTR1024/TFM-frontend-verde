@@ -8,26 +8,21 @@ const AuthProvider = ({ children }) => {
   const [checking, setChecking] = useState(true)
 
   // ==============================
-  // Validar sesión con el token en memoria
+  // ✅ Definir la función `validateStoredSession`
   // ==============================
-  const validateSession = async () => {
-    if (!authToken) {
-      console.warn('No hay token en memoria, no se puede validar la sesión.')
-      setIsLoggedIn(false)
-      setChecking(false)
-      return
-    }
-
+  const validateStoredSession = async () => {
     try {
       const response = await api.get('/auth/validate-token', {
-        headers: { Authorization: `Bearer ${authToken}` },
-        withCredentials: true,
+        withCredentials: true, // 🔹 La cookie se enviará automáticamente
       })
 
-      console.log('Sesión válida', response.data)
+      console.log('✅ Sesión válida:', response.data)
       setIsLoggedIn(true)
     } catch (error) {
-      console.warn('Sesión no válida', error.response?.data || error.message)
+      console.warn(
+        '❌ Sesión no válida:',
+        error.response?.data || error.message
+      )
       setIsLoggedIn(false)
     } finally {
       setChecking(false)
@@ -35,7 +30,14 @@ const AuthProvider = ({ children }) => {
   }
 
   // ==============================
-  // Implementar Refresh Token
+  // ✅ Ejecutar `validateStoredSession` al cargar la página
+  // ==============================
+  useEffect(() => {
+    validateStoredSession()
+  }, [])
+
+  // ==============================
+  // 🔄 Implementar Refresh Token cada 55 minutos
   // ==============================
   useEffect(() => {
     if (isLoggedIn) {
@@ -49,14 +51,14 @@ const AuthProvider = ({ children }) => {
           }
         },
         55 * 60 * 1000
-      ) // Se ejecuta cada 55 minutos (5 minutos antes de que expire el token)
+      )
 
       return () => clearInterval(interval)
     }
   }, [isLoggedIn])
 
   // ==============================
-  // Función login
+  // ✅ Función login
   // ==============================
   const login = useCallback(async (credentials, navigate) => {
     try {
@@ -73,25 +75,17 @@ const AuthProvider = ({ children }) => {
 
       console.log('Usuario logueado:', response.data)
 
-      // 🔹 Guardar el token en el estado del contexto
-      setAuthToken(response.data.token)
+      // 🔹 Validar sesión después del login (AQUÍ ESTABA EL ERROR)
+      await validateStoredSession()
 
-      // 🔹 Asignar el token a Axios inmediatamente
-      api.defaults.headers.common['Authorization'] =
-        `Bearer ${response.data.token}`
-
-      // 🔹 Validar sesión después del login
-      await validateSession()
-
-      setIsLoggedIn(true)
-      navigate('/profile', { replace: true })
+      navigate('/dashboard', { replace: true })
     } catch (error) {
       console.error('Error en login:', error)
     }
   }, [])
 
   // ==============================
-  // Función logout
+  // ✅ Función logout
   // ==============================
   const logout = useCallback(async (navigate) => {
     try {
@@ -100,18 +94,12 @@ const AuthProvider = ({ children }) => {
       console.error('Error en logout:', error)
     }
 
-    // 🔹 Eliminar el token en memoria
-    setAuthToken(null)
-    delete api.defaults.headers.common['Authorization']
-
     setIsLoggedIn(false)
     navigate('/login', { replace: true })
   }, [])
 
   return (
-    <AuthContext.Provider
-      value={{ isLoggedIn, checking, authToken, login, logout }}
-    >
+    <AuthContext.Provider value={{ isLoggedIn, checking, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

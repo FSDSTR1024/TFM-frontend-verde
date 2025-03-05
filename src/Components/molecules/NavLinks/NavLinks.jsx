@@ -32,8 +32,6 @@ const NavLinks = ({ mobile, onClose }) => {
     if (onClose) onClose()
   }
 
-  console.log("Estado de isLoggedIn en NavLinks:", isLoggedIn);
-
   return (
     <nav>
       <ul className="flex flex-col lg:flex-row gap-4 lg:gap-6 list-none m-0 items-center">
