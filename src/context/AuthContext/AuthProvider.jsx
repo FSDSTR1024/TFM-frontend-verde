@@ -8,12 +8,12 @@ const AuthProvider = ({ children }) => {
   const [checking, setChecking] = useState(true)
 
   // ==============================
-  // ✅ Definir la función `validateStoredSession`
+  // Definir la función `validateStoredSession`
   // ==============================
   const validateStoredSession = async () => {
     try {
       const response = await api.get('/auth/validate-token', {
-        withCredentials: true, // 🔹 La cookie se enviará automáticamente
+        withCredentials: true, // La cookie se enviará automáticamente
       })
 
       console.log('✅ Sesión válida:', response.data)
@@ -30,14 +30,14 @@ const AuthProvider = ({ children }) => {
   }
 
   // ==============================
-  // ✅ Ejecutar `validateStoredSession` al cargar la página
+  // jecutar `validateStoredSession` al cargar la página
   // ==============================
   useEffect(() => {
     validateStoredSession()
   }, [])
 
   // ==============================
-  // 🔄 Implementar Refresh Token cada 55 minutos
+  // Implementar Refresh Token cada 55 minutos
   // ==============================
   useEffect(() => {
     if (isLoggedIn) {
@@ -58,7 +58,7 @@ const AuthProvider = ({ children }) => {
   }, [isLoggedIn])
 
   // ==============================
-  // ✅ Función login
+  // Función login
   // ==============================
   const login = useCallback(async (credentials, navigate) => {
     try {
@@ -75,7 +75,7 @@ const AuthProvider = ({ children }) => {
 
       console.log('Usuario logueado:', response.data)
 
-      // 🔹 Validar sesión después del login (AQUÍ ESTABA EL ERROR)
+      // Validar sesión después del login (AQUÍ ESTABA EL ERROR)
       await validateStoredSession()
 
       navigate('/dashboard', { replace: true })
@@ -85,7 +85,7 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   // ==============================
-  // ✅ Función logout
+  // Función logout
   // ==============================
   const logout = useCallback(async (navigate) => {
     try {
