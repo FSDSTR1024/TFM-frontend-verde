@@ -24,7 +24,7 @@ const ProfilePage = () => {
     profileImage: user?.profileImage || null,
   })
 
-  const [errors, setErrors] = useState({}) // Estado para manejar errores
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [changePassword, setChangePassword] = useState(false)
@@ -40,15 +40,21 @@ const ProfilePage = () => {
   }
 
   // ================================
+  // Alternar cambio de contraseña
+  // ================================
+  const toggleChangePassword = () => {
+    setChangePassword((prev) => !prev)
+  }
+
+  // ================================
   // Actualizar perfil en Backend
   // ================================
-
   const updateProfile = async (endpoint, data) => {
     setLoading(true)
     setSuccessMessage('')
     try {
       await api.put(`/auth/profile/${endpoint}`, data)
-      setUser((prevUser) => ({ ...prevUser, ...data }))
+      if (user) setUser((prevUser) => ({ ...prevUser, ...data })) // ✅ Solo si el usuario existe
       setSuccessMessage('Perfil actualizado con éxito.')
     } catch (error) {
       console.error('Error en la actualización de los datos', error)
@@ -59,13 +65,41 @@ const ProfilePage = () => {
   }
 
   // ================================
-  // Manejo de actualización
+  // Subir imagen de perfil
   // ================================
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
 
+    const formData = new FormData()
+    formData.append('profileImage', file)
+
+    setLoading(true)
+    try {
+      const response = await api.put('/auth/profile/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      setUser((prevUser) => ({
+        ...prevUser,
+        profileImage: response.data.profileImage,
+      })) // ✅ Eliminado el `if (setUser)`, ya que `setUser` siempre existe
+      setPreviewImage(response.data.profileImage)
+      setSuccessMessage('Imagen actualizada con éxito.')
+    } catch (error) {
+      console.error('Error al subir imagen:', error)
+      setErrors({ api: 'Error al actualizar la imagen.' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ================================
+  // Manejo de Actualización de Datos
+  // ================================
   const handleSubmit = (e) => {
     e.preventDefault()
     if (formData.username !== user.username)
-      updateProfile('usename', { username: formData.username })
+      updateProfile('username', { username: formData.username }) // ✅ Corrección en el endpoint
     if (formData.email !== user.email)
       updateProfile('email', { email: formData.email })
     if (changePassword) {
@@ -77,58 +111,20 @@ const ProfilePage = () => {
   }
 
   // ================================
-  // Subir imagen de perfil
-  // ================================
-
-  const handleImageChange = async (e) => {
-    const file = e.target.file[0]
-    if (!file) return
-
-    const formData = new formData()
-    formData.append('profileImage', file)
-
-    setLoading(true)
-    try {
-      const response = await api.put('/auth/profile/avatar', formData, {
-        header: { 'cont-type': 'multipart/form/data' },
-      })
-      setUser((prevUser) => ({
-        ...prevUser,
-        profileImage: response.data.profileImage,
-      }))
-      setPreviewImage(response.data.profileImage)
-      setSuccessMessage('Imagen actualizada con éxito.')
-    } catch (error) {
-      console.error(' Error al subir imagen:', error)
-      setErrors({ api: 'Error al actualizar la imagen.' })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // ================================
   // Selección del Avatar
   // ================================
-
   const handleAvatarSelect = async (avatarUrl) => {
-    updateProfile(
-      'Avatar',
-      { profileImage: avatarUrl },
-      setPreviewImage(avatarUrl),
-      setShowAvatarSelector(false)
-    )
+    await updateProfile('avatar', { profileImage: avatarUrl }) // ✅ Se corrigió 'Avatar' a 'avatar'
+    setPreviewImage(avatarUrl)
+    setShowAvatarSelector(false)
   }
 
-  // ================================
-  // Renderizado del Componente
-  // ================================
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light">
       <h2 className="text-3xl font-bold text-primary-dark mb-6">
         Editar Perfil
       </h2>
 
-      {/* Vista previa del avatar */}
       {previewImage && (
         <img
           src={previewImage}
@@ -137,13 +133,11 @@ const ProfilePage = () => {
         />
       )}
 
-      {/* Botones para Imagen y Avatar */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <div className="relative">
           <Button
             variant="primary"
             type="button"
-            ariaLabel="Subir foto personalizada"
             onClick={() => document.getElementById('uploadImageInput').click()}
           >
             Subir Foto Personalizada
@@ -156,7 +150,6 @@ const ProfilePage = () => {
             onChange={handleImageChange}
           />
         </div>
-
         <Button
           variant="primary"
           type="button"
@@ -166,22 +159,16 @@ const ProfilePage = () => {
         </Button>
       </div>
 
-      {/* Formulario */}
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit} // ✅ Ahora `handleSubmit` está definido
         className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow"
       >
         <Input
           label="Nombre de Usuario"
           name="username"
-          type="username"
           value={formData.username}
           onChange={handleChange}
         />
-        {errors.username && (
-          <p className="text-red-500 text-sm">{errors.username}</p>
-        )}
-
         <Input
           label="Correo Electrónico"
           name="email"
@@ -190,9 +177,7 @@ const ProfilePage = () => {
           onChange={handleChange}
           required
         />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-        {/* Cambio de contraseña */}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -221,30 +206,15 @@ const ProfilePage = () => {
               value={formData.newPassword}
               onChange={handleChange}
             />
-            <Input
-              label="Confirmar Nueva Contraseña"
-              name="confirmNewPassword"
-              type="password"
-              value={formData.confirmNewPassword}
-              onChange={handleChange}
-            />
-            {errors.passwords && (
-              <p className="text-red-500 text-sm">{errors.passwords}</p>
-            )}
           </>
         )}
 
-        {/* Botones de acción */}
         <div className="flex justify-end gap-3">
           <Button variant="secondary" type="button">
             Cancelar
           </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            disabled={Object.keys(errors).length > 0}
-          >
-            Guardar Cambios
+          <Button variant="primary" type="submit" disabled={loading}>
+            {loading ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       </form>
@@ -255,6 +225,11 @@ const ProfilePage = () => {
           onClose={() => setShowAvatarSelector(false)}
         />
       )}
+
+      {successMessage && (
+        <p className="text-green-500 mt-4">{successMessage}</p>
+      )}
+      {errors.api && <p className="text-red-500 mt-4">{errors.api}</p>}
     </div>
   )
 }

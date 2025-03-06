@@ -4,34 +4,34 @@ import { AuthContext } from './AuthContext'
 
 const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [authToken, setAuthToken] = useState(null)
   const [checking, setChecking] = useState(true)
+  const [user, setUser] = useState(null) // ✅ Agregado
 
   // ==============================
-  // Definir la función `validateStoredSession`
+  // Validar sesión almacenada
   // ==============================
   const validateStoredSession = async () => {
     try {
       const response = await api.get('/auth/validate-token', {
-        withCredentials: true, // La cookie se envía automáticamente
+        withCredentials: true,
       })
 
       console.log('✅ Sesión válida:', response.data)
+      setUser(response.data.user) // ✅ Guardamos datos del usuario
       setIsLoggedIn(true)
     } catch (error) {
       console.warn(
         '❌ Sesión no válida:',
         error.response?.data || error.message
       )
+      setUser(null)
       setIsLoggedIn(false)
     } finally {
       setChecking(false)
     }
   }
 
-  // ==============================
-  // jecutar `validateStoredSession` al cargar la página
-  // ==============================
+  // Ejecutar `validateStoredSession` al cargar la página
   useEffect(() => {
     validateStoredSession()
   }, [])
@@ -44,9 +44,15 @@ const AuthProvider = ({ children }) => {
       const interval = setInterval(
         async () => {
           try {
-            await api.post('/auth/refresh-token', {}, { withCredentials: true })
+            const response = await api.post(
+              '/auth/refresh-token',
+              {},
+              { withCredentials: true }
+            )
+            setUser(response.data.user) // ✅ Actualizamos el usuario tras refresh
           } catch (error) {
             console.error('Error al renovar el token:', error)
+            setUser(null)
             setIsLoggedIn(false)
           }
         },
@@ -58,7 +64,7 @@ const AuthProvider = ({ children }) => {
   }, [isLoggedIn])
 
   // ==============================
-  // Función login
+  // Función de login
   // ==============================
   const login = useCallback(async (credentials, navigate) => {
     try {
@@ -85,7 +91,7 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   // ==============================
-  // Función logout
+  // Función de logout
   // ==============================
   const logout = useCallback(async (navigate) => {
     try {
@@ -94,12 +100,15 @@ const AuthProvider = ({ children }) => {
       console.error('Error en logout:', error)
     }
 
+    setUser(null)
     setIsLoggedIn(false)
     navigate('/login', { replace: true })
   }, [])
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, checking, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, checking, user, setUser, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   )
