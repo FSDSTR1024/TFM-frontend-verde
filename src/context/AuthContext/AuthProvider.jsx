@@ -5,7 +5,7 @@ import { AuthContext } from './AuthContext'
 const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [checking, setChecking] = useState(true)
-  const [user, setUser] = useState(null) // ✅ Agregado
+  const [user, setUser] = useState(null)
 
   // ==============================
   // Validar sesión almacenada
@@ -16,18 +16,16 @@ const AuthProvider = ({ children }) => {
         withCredentials: true,
       })
 
-      console.log('✅ Sesión válida:', response.data)
-      setUser(response.data.user) // ✅ Guardamos datos del usuario
+      console.log('Sesión válida:', response.data)
+      setUser(response.data.user)
       setIsLoggedIn(true)
     } catch (error) {
-      console.warn(
-        '❌ Sesión no válida:',
-        error.response?.data || error.message
-      )
-      setUser(null)
-      setIsLoggedIn(false)
+      console.warn('Sesión no válida:', error.response?.data || error.message)
+
+      // Si el token es inválido o hay un error, cerramos sesión automáticamente
+      logout()
     } finally {
-      setChecking(false)
+      setChecking(false) // Finalizamos la validación de sesión
     }
   }
 
@@ -49,7 +47,7 @@ const AuthProvider = ({ children }) => {
               {},
               { withCredentials: true }
             )
-            setUser(response.data.user) // ✅ Actualizamos el usuario tras refresh
+            setUser(response.data.user) // Actualizamos el usuario tras refresh
           } catch (error) {
             console.error('Error al renovar el token:', error)
             setUser(null)
@@ -71,7 +69,7 @@ const AuthProvider = ({ children }) => {
       console.log('Intentando iniciar sesión con:', credentials)
 
       if (!credentials?.email || !credentials?.password) {
-        console.error('❌ Error: Email o password no proporcionados.')
+        console.error('Error: Email o password no proporcionados.')
         return
       }
 
@@ -98,11 +96,15 @@ const AuthProvider = ({ children }) => {
       await api.post('/auth/logout', {}, { withCredentials: true })
     } catch (error) {
       console.error('Error en logout:', error)
+    } finally {
+      // Aseguramos que la cookie se elimine correctamente
+      document.cookie = 'Token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
+      document.cookie =
+        'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
+      setUser(null)
+      setIsLoggedIn(false)
+      navigate('/login', { replace: true })
     }
-
-    setUser(null)
-    setIsLoggedIn(false)
-    navigate('/login', { replace: true })
   }, [])
 
   return (

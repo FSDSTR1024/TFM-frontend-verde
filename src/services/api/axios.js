@@ -51,11 +51,19 @@ api.interceptors.response.use(
         isRefreshing = false // Aseguramos que el flag se reinicie en caso de error
 
         // Si la renovación falla, redirigir al login
-        // Quitar del inicio y añadir cuando expire el token 
+        // Quitar del inicio y añadir cuando expire el token
+        // Si la renovación del token falla, determinar si la sesión realmente expiró antes de redirigir
         const currentPath = window.location.pathname
-        if (!currentPath.includes('/login')) {
-          console.warn('Redirigiendo al login debido a sesión expirada.')
-          window.location.href = `/login?reason=session_expired`
+
+        // Verificamos si el error es específicamente un "token expirado"
+        if (
+          error.response?.status === 401 &&
+          error.response?.data?.message === 'Token expirado'
+        ) {
+          if (!currentPath.includes('/login')) {
+            console.warn('Redirigiendo al login debido a sesión expirada.')
+            window.location.href = `/login?reason=session_expired`
+          }
         }
       }
     }
