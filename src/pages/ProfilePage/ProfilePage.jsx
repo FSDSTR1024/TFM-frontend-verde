@@ -95,7 +95,7 @@ const ProfilePage = () => {
 
       const updatedImage = response.data.profileImage
 
-      // ✅ Actualizar la imagen en AuthContext para que se refleje en toda la UI
+      // Actualizar la imagen en AuthContext para que se refleje en toda la UI
       setUser((prevUser) => ({
         ...prevUser,
         profileImage: updatedImage,
