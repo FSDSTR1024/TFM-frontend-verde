@@ -38,7 +38,7 @@ const UserDropdown = ({ onDropdownToggle }) => {
       if (!event.target.closest('.dropdown-container')) {
         setShowDropdown(false)
         if (onDropdownToggle && window.innerWidth < 1024) {
-          onDropdownToggle(0) // 🔹 Resetear margen en móviles al cerrar
+          onDropdownToggle(0) // Resetear margen en móviles al cerrar
         }
       }
     }

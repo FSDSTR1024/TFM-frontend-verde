@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
   const validateStoredSession = async () => {
     try {
       const response = await api.get('/auth/validate-token', {
-        withCredentials: true, // La cookie se enviará automáticamente
+        withCredentials: true, // La cookie se envía automáticamente
       })
 
       console.log('✅ Sesión válida:', response.data)
@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   // ==============================
-  // Implementar Refresh Token cada 55 minutos
+  // Refresh Token cada 55 minutos
   // ==============================
   useEffect(() => {
     if (isLoggedIn) {
@@ -75,7 +75,7 @@ const AuthProvider = ({ children }) => {
 
       console.log('Usuario logueado:', response.data)
 
-      // Validar sesión después del login (AQUÍ ESTABA EL ERROR)
+      // Validar sesión después del login
       await validateStoredSession()
 
       navigate('/dashboard', { replace: true })

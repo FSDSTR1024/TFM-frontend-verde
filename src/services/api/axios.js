@@ -51,6 +51,7 @@ api.interceptors.response.use(
         isRefreshing = false // Aseguramos que el flag se reinicie en caso de error
 
         // Si la renovación falla, redirigir al login
+        // Quitar del inicio y añadir cuando expire el token 
         const currentPath = window.location.pathname
         if (!currentPath.includes('/login')) {
           console.warn('Redirigiendo al login debido a sesión expirada.')

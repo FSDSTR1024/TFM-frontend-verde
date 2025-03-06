@@ -4,6 +4,7 @@
 
 import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth'
+import api from '@/services/api/axios'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
@@ -24,114 +25,98 @@ const ProfilePage = () => {
   })
 
   const [errors, setErrors] = useState({}) // Estado para manejar errores
+  const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
   const [changePassword, setChangePassword] = useState(false)
   const [showAvatarSelector, setShowAvatarSelector] = useState(false)
   const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
-
-  // ================================
-  // Validaciones
-  // ================================
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const validateUsername = (username) => /^[a-zA-Z0-9_]{3,20}$/.test(username)
-  const validatePasswords = () =>
-    formData.newPassword.length >= 6 &&
-    formData.newPassword === formData.confirmNewPassword
 
   // ================================
   // Manejo de Inputs
   // ================================
   const handleChange = (e) => {
     const { name, value } = e.target
-
-    let updatedErrors = { ...errors }
-
-    if (name === 'email' && !validateEmail(value)) {
-      updatedErrors.email = 'Formato de email inválido.'
-    } else {
-      delete updatedErrors.email
-    }
-
-    if (name === 'username' && !validateUsername(value)) {
-      updatedErrors.username =
-        'Debe tener entre 3 y 20 caracteres (letras, números o guion bajo).'
-    } else {
-      delete updatedErrors.username
-    }
-
-    if (
-      (name === 'newPassword' || name === 'confirmNewPassword') &&
-      changePassword
-    ) {
-      if (!validatePasswords()) {
-        updatedErrors.passwords =
-          'Las contraseñas no coinciden o son demasiado cortas (mínimo 6 caracteres).'
-      } else {
-        delete updatedErrors.passwords
-      }
-    }
-
-    setErrors(updatedErrors)
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   // ================================
-  // Subir Imagen Personalizada
+  // Actualizar perfil en Backend
   // ================================
-  const handleImageChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setFormData((prev) => ({ ...prev, profileImage: file }))
-      setPreviewImage(URL.createObjectURL(file))
+
+  const updateProfile = async (endpoint, data) => {
+    setLoading(true)
+    setSuccessMessage('')
+    try {
+      await api.put(`/auth/profile/${endpoint}`, data)
+      setUser((prevUser) => ({ ...prevUser, ...data }))
+      setSuccessMessage('Perfil actualizado con éxito.')
+    } catch (error) {
+      console.error('Error en la actualización de los datos', error)
+      setErrors({ api: error.response?.data?.message || 'Error desconocido' })
+    } finally {
+      setLoading(false)
     }
   }
 
   // ================================
-  // Selección de Avatar Predeterminado
+  // Manejo de actualización
   // ================================
-  const handleAvatarSelect = (avatarUrl) => {
-    setFormData((prev) => ({ ...prev, profileImage: avatarUrl }))
-    setPreviewImage(avatarUrl)
-    setShowAvatarSelector(false)
-  }
 
-  // ================================
-  // Activar Cambio de Contraseña
-  // ================================
-  const toggleChangePassword = () => {
-    setChangePassword(!changePassword)
-    if (!changePassword) {
-      setFormData((prev) => ({
-        ...prev,
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: '',
-      }))
-    }
-  }
-
-  // ================================
-  // Enviar Formulario
-  // ================================
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Datos enviados:', formData)
-
-    // Si hay errores, no permitir el envío
-    if (Object.keys(errors).length > 0) {
-      console.error('Errores en el formulario:', errors)
-      return
+    if (formData.username !== user.username)
+      updateProfile('usename', { username: formData.username })
+    if (formData.email !== user.email)
+      updateProfile('email', { email: formData.email })
+    if (changePassword) {
+      updateProfile('password', {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      })
     }
+  }
 
-    // Simular actualización en el contexto global
-    setUser((prevUser) => ({
-      ...prevUser,
-      username: formData.username,
-      email: formData.email,
-      profileImage:
-        typeof formData.profileImage === 'string'
-          ? formData.profileImage
-          : prevUser.profileImage,
-    }))
+  // ================================
+  // Subir imagen de perfil
+  // ================================
+
+  const handleImageChange = async (e) => {
+    const file = e.target.file[0]
+    if (!file) return
+
+    const formData = new formData()
+    formData.append('profileImage', file)
+
+    setLoading(true)
+    try {
+      const response = await api.put('/auth/profile/avatar', formData, {
+        header: { 'cont-type': 'multipart/form/data' },
+      })
+      setUser((prevUser) => ({
+        ...prevUser,
+        profileImage: response.data.profileImage,
+      }))
+      setPreviewImage(response.data.profileImage)
+      setSuccessMessage('Imagen actualizada con éxito.')
+    } catch (error) {
+      console.error(' Error al subir imagen:', error)
+      setErrors({ api: 'Error al actualizar la imagen.' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ================================
+  // Selección del Avatar
+  // ================================
+
+  const handleAvatarSelect = async (avatarUrl) => {
+    updateProfile(
+      'Avatar',
+      { profileImage: avatarUrl },
+      setPreviewImage(avatarUrl),
+      setShowAvatarSelector(false)
+    )
   }
 
   // ================================
@@ -189,6 +174,7 @@ const ProfilePage = () => {
         <Input
           label="Nombre de Usuario"
           name="username"
+          type="username"
           value={formData.username}
           onChange={handleChange}
         />
