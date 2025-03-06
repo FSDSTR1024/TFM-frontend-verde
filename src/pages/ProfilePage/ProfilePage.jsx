@@ -47,43 +47,61 @@ const ProfilePage = () => {
   }
 
   // ================================
-  // Actualizar perfil en Backend
+  // Validar nueva contraseña antes de enviarla
   // ================================
-  const updateProfile = async (endpoint, data) => {
-    setLoading(true)
-    setSuccessMessage('')
-    try {
-      await api.put(`/auth/profile/${endpoint}`, data)
-      if (user) setUser((prevUser) => ({ ...prevUser, ...data })) // ✅ Solo si el usuario existe
-      setSuccessMessage('Perfil actualizado con éxito.')
-    } catch (error) {
-      console.error('Error en la actualización de los datos', error)
-      setErrors({ api: error.response?.data?.message || 'Error desconocido' })
-    } finally {
-      setLoading(false)
+  const validatePasswords = () => {
+    if (
+      formData.newPassword &&
+      formData.newPassword !== formData.confirmNewPassword
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmNewPassword: 'Las contraseñas no coinciden',
+      }))
+      return false
     }
+    return true
   }
 
   // ================================
-  // Subir imagen de perfil
+  // Restaurar valores originales
+  // ================================
+  const handleCancel = () => {
+    setFormData({
+      username: user?.username || '',
+      email: user?.email || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+      profileImage: user?.profileImage || null,
+    })
+  }
+
+  // ================================
+  // Subir imagen de perfil a Cloudinary y actualizar AuthContext
   // ================================
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
 
-    const formData = new FormData()
-    formData.append('profileImage', file)
+    const formDataImage = new FormData()
+    formDataImage.append('profileImage', file)
 
     setLoading(true)
     try {
-      const response = await api.put('/auth/profile/avatar', formData, {
+      const response = await api.put('/auth/profile/avatar', formDataImage, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
+
+      const updatedImage = response.data.profileImage
+
+      // ✅ Actualizar la imagen en AuthContext para que se refleje en toda la UI
       setUser((prevUser) => ({
         ...prevUser,
-        profileImage: response.data.profileImage,
-      })) // ✅ Eliminado el `if (setUser)`, ya que `setUser` siempre existe
-      setPreviewImage(response.data.profileImage)
+        profileImage: updatedImage,
+      }))
+
+      setPreviewImage(updatedImage)
       setSuccessMessage('Imagen actualizada con éxito.')
     } catch (error) {
       console.error('Error al subir imagen:', error)
@@ -94,29 +112,24 @@ const ProfilePage = () => {
   }
 
   // ================================
-  // Manejo de Actualización de Datos
+  // Actualizar perfil en Backend
   // ================================
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (formData.username !== user.username)
-      updateProfile('username', { username: formData.username }) // ✅ Corrección en el endpoint
-    if (formData.email !== user.email)
-      updateProfile('email', { email: formData.email })
-    if (changePassword) {
-      updateProfile('password', {
-        currentPassword: formData.currentPassword,
-        newPassword: formData.newPassword,
-      })
-    }
-  }
+  const updateProfile = async (endpoint, data) => {
+    if (endpoint === 'password' && !validatePasswords()) return
+    setLoading(true)
+    setSuccessMessage('')
+    try {
+      await api.put(`/auth/profile/${endpoint}`, data)
 
-  // ================================
-  // Selección del Avatar
-  // ================================
-  const handleAvatarSelect = async (avatarUrl) => {
-    await updateProfile('avatar', { profileImage: avatarUrl }) // ✅ Se corrigió 'Avatar' a 'avatar'
-    setPreviewImage(avatarUrl)
-    setShowAvatarSelector(false)
+      // Persistir datos en el estado global (AuthContext)
+      if (user) setUser((prevUser) => ({ ...prevUser, ...data }))
+
+      setSuccessMessage('Perfil actualizado exitosamente')
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -125,6 +138,7 @@ const ProfilePage = () => {
         Editar Perfil
       </h2>
 
+      {/* Vista previa de la imagen */}
       {previewImage && (
         <img
           src={previewImage}
@@ -159,10 +173,7 @@ const ProfilePage = () => {
         </Button>
       </div>
 
-      <form
-        onSubmit={handleSubmit} // ✅ Ahora `handleSubmit` está definido
-        className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow"
-      >
+      <form className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow">
         <Input
           label="Nombre de Usuario"
           name="username"
@@ -206,14 +217,29 @@ const ProfilePage = () => {
               value={formData.newPassword}
               onChange={handleChange}
             />
+            <Input
+              label="Confirmar Nueva Contraseña"
+              name="confirmNewPassword"
+              type="password"
+              value={formData.confirmNewPassword}
+              onChange={handleChange}
+            />
+            {errors.confirmNewPassword && (
+              <p className="text-red-500">{errors.confirmNewPassword}</p>
+            )}
           </>
         )}
 
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" type="button">
+          <Button variant="secondary" type="button" onClick={handleCancel}>
             Cancelar
           </Button>
-          <Button variant="primary" type="submit" disabled={loading}>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={loading}
+            onClick={() => updateProfile('general', formData)}
+          >
             {loading ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
@@ -221,7 +247,9 @@ const ProfilePage = () => {
 
       {showAvatarSelector && (
         <AvatarSelector
-          onSaveAvatar={handleAvatarSelect}
+          onSaveAvatar={(avatarUrl) =>
+            updateProfile('avatar', { profileImage: avatarUrl })
+          }
           onClose={() => setShowAvatarSelector(false)}
         />
       )}
