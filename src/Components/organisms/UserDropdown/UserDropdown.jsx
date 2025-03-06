@@ -1,53 +1,43 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu, Transition } from '@headlessui/react'
-import { UserRound } from 'lucide-react'
-
+import { UserRound, Wallet, Newspaper, LogIn, UserPlus } from 'lucide-react'
 import useAuth from '@/context/AuthContext/useAuth'
-import Button from '@/components/atoms/Button'
 
-const UserDropdown = ({ onDropdownToggle }) => {
+const UserDropdown = () => {
   const { user, isLoggedIn } = useAuth()
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const dropdownRef = useRef(null)
-  const isAnimating = useRef(false) // 🔹 Evita la activación doble por clics rápidos
+  const isAnimating = useRef(false)
 
   // ============================
   // Alternar Visibilidad del Dropdown
   // ============================
   const toggleDropdown = (e) => {
-    e.stopPropagation() //  Evita que el evento burbujee y cierre el menú inmediatamente
-
-    if (isAnimating.current) return // Evita que la animación interfiera con clics rápidos, algo muy común en la interación con la UI
+    e.stopPropagation()
+    if (isClosing || isAnimating.current) return
     isAnimating.current = true
 
     setShowDropdown((prev) => !prev)
 
     setTimeout(() => {
-      isAnimating.current = false // Permite clics nuevamente después de la animación
-    }, 200) // Duración de la animación en ms, con esto conseguimos que no se rompa la animación
-
-    if (onDropdownToggle) {
-      const dropdownHeight = showDropdown
-        ? 0
-        : dropdownRef.current?.offsetHeight || 0
-      if (window.innerWidth < 1024) {
-        onDropdownToggle(dropdownHeight)
-      }
-    }
+      isAnimating.current = false
+    }, 200)
   }
 
   // ============================
-  // Cerrar el Dropdown al hacer clic fuera
+  // Cerrar el Dropdown al hacer clic fuera con animación controlada
   // ============================
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false)
-        if (onDropdownToggle && window.innerWidth < 1024) {
-          onDropdownToggle(0)
-        }
+        setIsClosing(true)
+        setTimeout(() => {
+          setShowDropdown(false)
+          setIsClosing(false)
+        }, 300)
       }
     }
 
@@ -58,16 +48,16 @@ const UserDropdown = ({ onDropdownToggle }) => {
     }
 
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showDropdown, onDropdownToggle])
+  }, [showDropdown])
 
   return (
     <Menu as="div" className="relative dropdown-container">
-      {/* Botón del menú */}
+      {/* Botón de usuario con efecto Glassmorphism */}
       <Menu.Button
         onClick={toggleDropdown}
-        className="w-12 h-12 rounded-full p-0 flex items-center justify-center overflow-hidden border-2 border-secondary-dark bg-white shadow"
+        className="w-14 h-14 rounded-full flex items-center justify-center border-2 border-secondary-dark bg-white shadow-xl
+                   hover:scale-105 transition-all duration-200 ease-out hover:shadow-2xl backdrop-blur-lg"
       >
-        {/*  Mostrar imagen del usuario si existe, de lo contrario mostrar un ícono */}
         {user?.profileImage ? (
           <img
             src={user.profileImage}
@@ -75,60 +65,105 @@ const UserDropdown = ({ onDropdownToggle }) => {
             className="w-full h-full rounded-full object-cover"
           />
         ) : (
-          <UserRound className="text-secondary-dark w-8 h-8" />
+          <UserRound className="text-secondary-dark w-9 h-9" />
         )}
       </Menu.Button>
 
       <Transition
         as="div"
         show={showDropdown}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
+        enter="transition ease-out-expo duration-300"
+        enterFrom="transform opacity-0 scale-95 blur-md -translate-y-6"
+        enterTo="transform opacity-100 scale-100 blur-none translate-y-0"
+        leave="transition ease-in-out duration-300"
+        leaveFrom="transform opacity-100 scale-100 translate-y-0"
+        leaveTo="transform opacity-0 scale-95 blur-md -translate-y-4"
       >
         <div
           ref={dropdownRef}
-          className="absolute top-full right-0 mt-2 w-48 bg-primary-dark text-primary-light border border-secondary-dark rounded-lg shadow-lg z-50"
+          className="absolute top-full right-0 md:right-0 md:left-auto left-1/2 -translate-x-1/2 mt-3 w-56 bg-primary-dark/80
+                     text-primary-light border border-secondary-dark rounded-xl shadow-2xl z-50 backdrop-blur-lg
+                     p-5 flex flex-col items-start space-y-3"
         >
-          <ul className="bg-primary-dark divide-y divide-secondary-dark/60 rounded-lg">
+          <ul className="w-full space-y-3">
             {isLoggedIn ? (
               <>
-                <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
-                  onClick={() => navigate('/profile')}
+                <Transition.Child
+                  enter="transition ease-out duration-500 delay-100"
+                  enterFrom="opacity-0 -translate-x-2"
+                  enterTo="opacity-100 translate-x-0"
                 >
-                  Perfil
-                </li>
-                <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
-                  onClick={() => navigate('/wallet')}
+                  <li
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
+                               hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
+                    onClick={() => navigate('/profile')}
+                  >
+                    <UserRound className="w-5 h-5 text-primary-light" />
+                    Perfil
+                  </li>
+                </Transition.Child>
+
+                <Transition.Child
+                  enter="transition ease-out duration-500 delay-200"
+                  enterFrom="opacity-0 -translate-x-2"
+                  enterTo="opacity-100 translate-x-0"
                 >
-                  Cartera
-                </li>
-                <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
-                  onClick={() => navigate('/orders')}
+                  <li
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
+                               hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
+                    onClick={() => navigate('/wallet')}
+                  >
+                    <Wallet className="w-5 h-5 text-primary-light" />
+                    Cartera
+                  </li>
+                </Transition.Child>
+
+                <Transition.Child
+                  enter="transition ease-out duration-500 delay-300"
+                  enterFrom="opacity-0 -translate-x-2"
+                  enterTo="opacity-100 translate-x-0"
                 >
-                  Órdenes
-                </li>
+                  <li
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
+                               hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
+                    onClick={() => navigate('/news')}
+                  >
+                    <Newspaper className="w-5 h-5 text-primary-light" />
+                    Noticias
+                  </li>
+                </Transition.Child>
               </>
             ) : (
               <>
-                <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
-                  onClick={() => navigate('/login')}
+                <Transition.Child
+                  enter="transition ease-out duration-500 delay-100"
+                  enterFrom="opacity-0 -translate-x-2"
+                  enterTo="opacity-100 translate-x-0"
                 >
-                  Iniciar Sesión
-                </li>
-                <li
-                  className="px-4 py-3 cursor-pointer hover:bg-hover-state transition"
-                  onClick={() => navigate('/register')}
+                  <li
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
+                               hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
+                    onClick={() => navigate('/login')}
+                  >
+                    <LogIn className="w-5 h-5 text-primary-light" />
+                    Iniciar Sesión
+                  </li>
+                </Transition.Child>
+
+                <Transition.Child
+                  enter="transition ease-out duration-500 delay-200"
+                  enterFrom="opacity-0 -translate-x-2"
+                  enterTo="opacity-100 translate-x-0"
                 >
-                  Registrarse
-                </li>
+                  <li
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
+                               hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
+                    onClick={() => navigate('/register')}
+                  >
+                    <UserPlus className="w-5 h-5 text-primary-light" />
+                    Registrarse
+                  </li>
+                </Transition.Child>
               </>
             )}
           </ul>
