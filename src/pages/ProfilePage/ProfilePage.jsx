@@ -117,15 +117,34 @@ const ProfilePage = () => {
     if (!file) return
 
     const formDataImage = new FormData()
-    formDataImage.append('profileImage', file)
+    formDataImage.append('file', file) // Se usa 'file' como clave igual que se hace en postman
+    formDataImage.append('upload_preset', 'user_profile') // Usa "upload_preset" como clave para configurar el preset de cloudinary
 
     setLoading(true)
     try {
-      const response = await api.put('/auth/profile/avatar', formDataImage, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      // Subir la imagen directamente a Cloudinary
+      const response = await api.post(
+        'https://api.cloudinary.com/v1_1/dwsnf2wlr/image/upload',
+        formDataImage,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: false, // Evitar enviar cookies
+          timeout: 30000, // Damos más timepo de guardado para la imagen en equipos y redes muy lentas
+        }
+      )
 
-      const updatedImage = response.data.profileImage
+      const updatedImage = response.data.secure_url
+      if (!updatedImage) {
+        throw new Error(
+          'No se pudo obtener la URL de la imagen desde Cloudinary.'
+        )
+      }
+      console.log('Imagen de perfil actualizada:', updatedImage)
+
+      // Enviar la URL al backend para actualizar el perfil del usuario
+      await api.put('/auth/profile/avatar', { profileImage: updatedImage })
+
+      // Actualizar el estado global y la vista previa
       setUser((prevUser) => ({
         ...prevUser,
         profileImage: updatedImage,
@@ -134,65 +153,68 @@ const ProfilePage = () => {
 
       await validateStoredSession()
       showSuccessMessage('Imagen actualizada con éxito.')
-      console.log('Imagen de perfil actualizada:', updatedImage) // Registro en consola
     } catch (error) {
-      setErrors({ api: 'Error al actualizar la imagen.' })
+      if (error.response && error.response.data) {
+        console.error('Error de Cloudinary:', error.response.data)
+      }
+      setErrors({ api: error.message || 'Error al actualizar la imagen.' })
+      console.error('Error en handleImageChange:', error)
     } finally {
       setLoading(false)
     }
   }
 
   // ================================
-  // Actualizar perfil en Backend
+  // Actualizar perfil en Backend (Perfil Completo)
   // ================================
   const updateProfile = async (data) => {
     setLoading(true)
     setSuccessMessage('')
 
-    // Validar contraseñas antes de enviarlas
+    // Validar contraseñas si se intenta cambiar
     if (data.newPassword && !validatePasswords()) {
       setLoading(false)
       return
     }
 
     try {
+      // Actualizar nombre de usuario, correo y contraseña si se proporcionan
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
-        console.log('Nombre de usuario actualizado:', data.username) // Registro en consola
+        console.log('Nombre de usuario actualizado:', data.username)
       }
       if (data.email) {
         await api.put('/auth/profile/email', { email: data.email })
-        console.log('Correo electrónico actualizado:', data.email) // Registro en consola
+        console.log('Correo electrónico actualizado:', data.email)
       }
       if (data.newPassword) {
-        // Asegurarte de que las contraseñas sean enviadas solo si las validaciones son correctas
         await api.put('/auth/profile/password', {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,
           confirmNewPassword: data.confirmNewPassword,
         })
-        console.log('Contraseña actualizada') // Registro en consola
+        console.log('Contraseña actualizada')
       }
+      // Si se proporciona un archivo para imagen, se llama a handleImageChange
       if (data.profileImage) {
+        // data.profileImage debe ser un objeto File
         await handleImageChange({ target: { files: [data.profileImage] } })
       }
 
-      // Actualizamos el estado global con los nuevos datos del usuario
+      // Actualizar el estado global del usuario con los nuevos datos
       setUser((prevUser) => ({ ...prevUser, ...data }))
-      // Sincronizamos el estado global con el backend
       await validateStoredSession()
-      // Mostramos el mensaje de éxito
       showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
       setErrors({ api: 'Error al actualizar perfil.' })
-      console.error('Error al actualizar perfil:', error)
+      console.error('Error en updateProfile:', error)
     } finally {
       setLoading(false)
     }
   }
 
   // ================================
-  // Actualizar previewImage al cambiar el usuario
+  // Sincronizar previewImage con el estado global del usuario
   // ================================
   useEffect(() => {
     setPreviewImage(user?.profileImage || null)
