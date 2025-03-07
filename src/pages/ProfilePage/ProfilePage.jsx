@@ -1,11 +1,10 @@
-import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth'
 import api from '@/services/api/axios'
 import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react' // 🔹 Se agregó useEffect
 
 const ProfilePage = () => {
   const { user, setUser, validateStoredSession } = useAuth()
@@ -32,16 +31,16 @@ const ProfilePage = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // ================================
-  // Función para mostrar mensaje de exito
+  // Función para mostrar mensaje de éxito
   // ================================
   const showSuccessMessage = (message) => {
-    setErrors({}) // Limpiamos los errores
+    setErrors({})
     setSuccessMessage(message)
     setShowSuccessModal(true)
 
     setTimeout(() => {
       setShowSuccessModal(false)
-    }, 3000) // Mostramos el mensaje y después de 3 segundos se oculta
+    }, 3000)
   }
 
   // ================================
@@ -97,6 +96,8 @@ const ProfilePage = () => {
     const file = e.target.files[0]
     if (!file) return
 
+    console.log('Archivo seleccionado:', file)
+
     const formDataImage = new FormData()
     formDataImage.append('profileImage', file)
 
@@ -107,8 +108,8 @@ const ProfilePage = () => {
       })
 
       const updatedImage = response.data.profileImage
+      console.log('Imagen subida con éxito:', updatedImage)
 
-      // Actualizamos la imagen en AuthContext para que se refleje en toda la UI
       setUser((prevUser) => ({
         ...prevUser,
         profileImage: updatedImage,
@@ -116,8 +117,8 @@ const ProfilePage = () => {
 
       setPreviewImage(updatedImage)
 
-      await validateStoredSession() // Se sincroniza la sesión con el estado global
-      showSuccessMessage('Imagen actualizada con éxito.') // Mostramos el modal de confirmación de actualización exitosa
+      await validateStoredSession()
+      showSuccessMessage('Imagen actualizada con éxito.')
     } catch (error) {
       console.error('Error al subir imagen:', error)
       setErrors({ api: 'Error al actualizar la imagen.' })
@@ -129,16 +130,31 @@ const ProfilePage = () => {
   // ================================
   // Actualizar perfil en Backend
   // ================================
-  const updateProfile = async (endpoint, data) => {
-    if (endpoint === 'password' && !validatePasswords()) return
+  const updateProfile = async (data) => {
+    // 🔹 Ahora está correctamente definido
     setLoading(true)
+    setSuccessMessage('')
+
     try {
-      await api.put(`/auth/profile/${endpoint}`, data)
+      if (data.username) {
+        await api.put('/auth/profile/username', { username: data.username })
+      }
+      if (data.email) {
+        await api.put('/auth/profile/email', { email: data.email })
+      }
+      if (data.newPassword) {
+        await api.put('/auth/profile/password', {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        })
+      }
+      if (data.profileImage) {
+        await handleImageChange({ target: { files: [data.profileImage] } })
+      }
 
-      // Persistir datos en el estado global (AuthContext)
-      if (user) setUser((prevUser) => ({ ...prevUser, ...data }))
+      setUser((prevUser) => ({ ...prevUser, ...data }))
+      await validateStoredSession()
 
-      await validateStoredSession() // Actualiza la sesión almacenada
       showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
       console.error('Error al actualizar perfil:', error)
@@ -147,17 +163,22 @@ const ProfilePage = () => {
     }
   }
 
+  // ================================
+  // Actualizar previewImage al cambiar el usuario
+  // ================================
+  useEffect(() => {
+    setPreviewImage(user?.profileImage || null)
+  }, [user?.profileImage])
+
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
       <h2 className="text-4xl font-semibold text-primary-dark mb-8 tracking-wide animate-fade-in">
         Editar Perfil
       </h2>
-      {/* Imagen de perfil con Glassmorphism */}
+
+      {/* Imagen de perfil */}
       <div className="relative">
-        <div
-          className="w-32 h-32 rounded-full border-4 border-secondary-dark shadow-lg overflow-hidden
-                        transition-all duration-300 hover:scale-105"
-        >
+        <div className="w-32 h-32 rounded-full border-4 border-secondary-dark shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
           {previewImage ? (
             <img
               src={previewImage}
@@ -169,6 +190,7 @@ const ProfilePage = () => {
           )}
         </div>
       </div>
+
       {/* Botones de selección de imagen */}
       <div className="flex flex-col sm:flex-row gap-4 mt-6">
         <Button
@@ -196,11 +218,9 @@ const ProfilePage = () => {
           Elegir Avatar
         </Button>
       </div>
-      {/* Formulario con Glassmorphism */}
-      <form
-        className="w-full max-w-[500px] mt-8 p-6 bg-primary-dark/70 backdrop-blur-xl shadow-2xl rounded-xl border border-secondary-dark
-                  space-y-5 animate-slide-up"
-      >
+
+      {/* Formulario */}
+      <form className="w-full max-w-[500px] mt-8 p-6 bg-primary-dark/70 backdrop-blur-xl shadow-2xl rounded-xl border border-secondary-dark space-y-5 animate-slide-up">
         <Input
           label="Nombre de Usuario"
           name="username"
@@ -216,53 +236,7 @@ const ProfilePage = () => {
           required
         />
 
-        {/* Checkbox de cambio de contraseña */}
-        <div className="flex items-center gap-2 mt-6">
-          <input
-            type="checkbox"
-            checked={changePassword}
-            onChange={toggleChangePassword}
-            id="changePassword"
-          />
-          <label
-            htmlFor="changePassword"
-            className="text-primary-light text-sm cursor-pointer m-5"
-          >
-            ¿Cambiar Contraseña?
-          </label>
-        </div>
-
-        {/* Campos de contraseña */}
-        {changePassword && (
-          <>
-            <Input
-              label="Contraseña Actual"
-              name="currentPassword"
-              type="password"
-              value={formData.currentPassword}
-              onChange={handleChange}
-            />
-            <Input
-              label="Nueva Contraseña"
-              name="newPassword"
-              type="password"
-              value={formData.newPassword}
-              onChange={handleChange}
-            />
-            <Input
-              label="Confirmar Nueva Contraseña"
-              name="confirmNewPassword"
-              type="password"
-              value={formData.confirmNewPassword}
-              onChange={handleChange}
-            />
-            {errors.confirmNewPassword && (
-              <p className="text-red-500">{errors.confirmNewPassword}</p>
-            )}
-          </>
-        )}
-
-        {/* Botones */}
+        {/* Botón Guardar Cambios */}
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="primary" type="button" onClick={handleCancel}>
             <XCircle className="w-5 h-5 mr-2" />
@@ -272,28 +246,19 @@ const ProfilePage = () => {
             variant="primary"
             type="submit"
             disabled={loading}
-            onClick={() => updateProfile('general', formData)}
+            onClick={() => updateProfile(formData)}
           >
             <CheckCircle className="w-5 h-5 mr-2" />
             {loading ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       </form>
-      {/* Mensaje de éxito o error */}
-      {successMessage && (
-        <div
-          className="fixed top-5 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-green-100/80
-                  text-green-600 border border-green-500 rounded-xl p-4 shadow-lg flex items-center gap-3
-                  backdrop-blur-md animate-fade-in"
-        >
-          <CheckCircle className="w-6 h-6 text-green-600" />
-          <span className="text-sm font-medium">{successMessage}</span>
-        </div>
-      )}
+
+      {/* AvatarSelector */}
       {showAvatarSelector && (
         <AvatarSelector
           onSaveAvatar={(avatarUrl) =>
-            updateProfile('avatar', { profileImage: avatarUrl })
+            updateProfile({ profileImage: avatarUrl })
           }
           onClose={() => setShowAvatarSelector(false)}
         />
