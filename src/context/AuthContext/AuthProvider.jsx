@@ -43,7 +43,7 @@ const AuthProvider = ({ children }) => {
       })
 
       console.log('Sesión válida:', response.data)
-      setUser(response.data.user)
+      setUser(response.data)
       setIsLoggedIn(true)
     } catch (error) {
       console.warn('Sesión no válida:', error.response?.data || error.message)
@@ -99,7 +99,7 @@ const AuthProvider = ({ children }) => {
               {},
               { withCredentials: true }
             )
-            setUser(response.data.user) // Actualizamos el usuario tras refresh
+            setUser(response.data) // Actualizamos el usuario tras refresh
           } catch (error) {
             console.error('Error al renovar el token:', error)
             setUser(null)

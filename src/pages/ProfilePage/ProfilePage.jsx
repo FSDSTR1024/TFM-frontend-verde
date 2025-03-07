@@ -1,18 +1,17 @@
+import { useState, useRef, useEffect } from 'react'
+import { Eye, EyeOff } from 'lucide-react' // Importar los íconos para mostrar/ocultar contraseñas
 import useAuth from '@/context/AuthContext/useAuth'
 import api from '@/services/api/axios'
 import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
-import { useState, useRef, useEffect } from 'react' // 🔹 Se agregó useEffect
 
 const ProfilePage = () => {
   const { user, setUser, validateStoredSession } = useAuth()
   const fileRef = useRef(null)
 
-  // ================================
-  // Estado del Formulario
-  // ================================
+  // Estado para manejar el formulario
   const [formData, setFormData] = useState({
     username: user?.username || '',
     email: user?.email || '',
@@ -22,10 +21,12 @@ const ProfilePage = () => {
     profileImage: user?.profileImage || null,
   })
 
+  // Estado para los errores, loading, mensaje de éxito y visibilidad de contraseñas
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
-  const [changePassword, setChangePassword] = useState(false)
+  const [changePassword, setChangePassword] = useState(false) // Controla si el usuario quiere cambiar su contraseña
+  const [showPassword, setShowPassword] = useState(false) // Estado para controlar la visibilidad de las contraseñas
   const [showAvatarSelector, setShowAvatarSelector] = useState(false)
   const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -40,7 +41,7 @@ const ProfilePage = () => {
 
     setTimeout(() => {
       setShowSuccessModal(false)
-    }, 3000)
+    }, 3000) // El mensaje se oculta después de 3 segundos
   }
 
   // ================================
@@ -49,6 +50,13 @@ const ProfilePage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  // ================================
+  // Alternar visibilidad de las contraseñas
+  // ================================
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev) // Alternar la visibilidad
   }
 
   // ================================
@@ -62,6 +70,7 @@ const ProfilePage = () => {
   // Validar nueva contraseña antes de enviarla
   // ================================
   const validatePasswords = () => {
+    // Validar si las contraseñas coinciden
     if (
       formData.newPassword &&
       formData.newPassword !== formData.confirmNewPassword
@@ -72,6 +81,16 @@ const ProfilePage = () => {
       }))
       return false
     }
+
+    // Validar que la nueva contraseña no sea la misma que la actual
+    if (formData.currentPassword === formData.newPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        newPassword: 'La nueva contraseña no puede ser la misma que la actual.',
+      }))
+      return false
+    }
+
     return true
   }
 
@@ -96,8 +115,6 @@ const ProfilePage = () => {
     const file = e.target.files[0]
     if (!file) return
 
-    console.log('Archivo seleccionado:', file)
-
     const formDataImage = new FormData()
     formDataImage.append('profileImage', file)
 
@@ -108,19 +125,16 @@ const ProfilePage = () => {
       })
 
       const updatedImage = response.data.profileImage
-      console.log('Imagen subida con éxito:', updatedImage)
-
       setUser((prevUser) => ({
         ...prevUser,
         profileImage: updatedImage,
       }))
-
       setPreviewImage(updatedImage)
 
       await validateStoredSession()
       showSuccessMessage('Imagen actualizada con éxito.')
+      console.log('Imagen de perfil actualizada:', updatedImage) // Registro en consola
     } catch (error) {
-      console.error('Error al subir imagen:', error)
       setErrors({ api: 'Error al actualizar la imagen.' })
     } finally {
       setLoading(false)
@@ -131,32 +145,44 @@ const ProfilePage = () => {
   // Actualizar perfil en Backend
   // ================================
   const updateProfile = async (data) => {
-    // 🔹 Ahora está correctamente definido
     setLoading(true)
     setSuccessMessage('')
+
+    // Validar contraseñas antes de enviarlas
+    if (data.newPassword && !validatePasswords()) {
+      setLoading(false)
+      return
+    }
 
     try {
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
+        console.log('Nombre de usuario actualizado:', data.username) // Registro en consola
       }
       if (data.email) {
         await api.put('/auth/profile/email', { email: data.email })
+        console.log('Correo electrónico actualizado:', data.email) // Registro en consola
       }
       if (data.newPassword) {
+        // Asegurarte de que las contraseñas sean enviadas solo si las validaciones son correctas
         await api.put('/auth/profile/password', {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,
         })
+        console.log('Contraseña actualizada') // Registro en consola
       }
       if (data.profileImage) {
         await handleImageChange({ target: { files: [data.profileImage] } })
       }
 
+      // Actualizamos el estado global con los nuevos datos del usuario
       setUser((prevUser) => ({ ...prevUser, ...data }))
+      // Sincronizamos el estado global con el backend
       await validateStoredSession()
-
+      // Mostramos el mensaje de éxito
       showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
+      setErrors({ api: 'Error al actualizar perfil.' })
       console.error('Error al actualizar perfil:', error)
     } finally {
       setLoading(false)
@@ -236,7 +262,59 @@ const ProfilePage = () => {
           required
         />
 
-        {/* Botón Guardar Cambios */}
+        {/* Checkbox para cambiar contraseña */}
+        <div className="flex items-center gap-2 mt-6">
+          <input
+            type="checkbox"
+            checked={changePassword}
+            onChange={toggleChangePassword}
+            id="changePassword"
+          />
+          <label
+            htmlFor="changePassword"
+            className="text-primary-light text-sm cursor-pointer m-5"
+          >
+            ¿Cambiar Contraseña?
+          </label>
+        </div>
+
+        {/* Campos de contraseña */}
+        {changePassword && (
+          <>
+            <Input
+              label="Contraseña Actual"
+              name="currentPassword"
+              type={showPassword ? 'text' : 'password'}
+              value={formData.currentPassword}
+              onChange={handleChange}
+            />
+            <Input
+              label="Nueva Contraseña"
+              name="newPassword"
+              type={showPassword ? 'text' : 'password'}
+              value={formData.newPassword}
+              onChange={handleChange}
+            />
+            <Input
+              label="Confirmar Nueva Contraseña"
+              name="confirmNewPassword"
+              type={showPassword ? 'text' : 'password'}
+              value={formData.confirmNewPassword}
+              onChange={handleChange}
+            />
+
+            {/* Botón de mostrar/ocultar contraseñas */}
+            <Button type="button" onClick={togglePasswordVisibility}>
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </Button>
+          </>
+        )}
+
+        {/* Botones */}
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="primary" type="button" onClick={handleCancel}>
             <XCircle className="w-5 h-5 mr-2" />
