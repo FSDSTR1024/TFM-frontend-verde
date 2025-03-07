@@ -7,7 +7,7 @@ const Navbar = ({ openAuthModal, setDropdownHeight }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 w-full h-[70px] lg:h-[68px] bg-white px-4 lg:px-8 shadow-md flex items-center justify-between z-50">
+    <header className="fixed top-0 left-0 w-full h-[70px] lg:h-[68px] bg-special-class px-4 lg:px-8 shadow-md flex items-center justify-between z-50">
       {/* Asegurar que el logo esté bien alineado */}
       <div className="lg:flex-1 h-full flex items-center">
         <Link to="/dashboard" className="hover:opacity-80 transition-opacity">
@@ -30,7 +30,7 @@ const Navbar = ({ openAuthModal, setDropdownHeight }) => {
 
       {/* Menú Mobile */}
       {isMobileOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg py-4 z-50">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-special-class border-t  border-secondary-dark shadow-lg py-4 z-50">
           <NavLinks mobile onClose={() => setIsMobileOpen(false)} />
         </div>
       )}
