@@ -6,6 +6,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        'special-class': '#B5B77ACC', // CC añade opacidad
         'primary-dark': '#213435',
         'secondary-dark': '#46685b',
         'primary-light': '#e1e3ac',
