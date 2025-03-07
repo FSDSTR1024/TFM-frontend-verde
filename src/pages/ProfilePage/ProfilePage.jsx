@@ -1,10 +1,7 @@
-// =========================================
-// Página de Edición de Perfil
-// =========================================
-
 import { useState } from 'react'
 import useAuth from '@/context/AuthContext/useAuth'
 import api from '@/services/api/axios'
+import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
@@ -30,6 +27,7 @@ const ProfilePage = () => {
   const [changePassword, setChangePassword] = useState(false)
   const [showAvatarSelector, setShowAvatarSelector] = useState(false)
   const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // ================================
   // Manejo de Inputs
@@ -124,7 +122,7 @@ const ProfilePage = () => {
       // Persistir datos en el estado global (AuthContext)
       if (user) setUser((prevUser) => ({ ...prevUser, ...data }))
 
-      setSuccessMessage('Perfil actualizado exitosamente')
+      setShowSuccessModal(true)
     } catch (error) {
       console.error('Error al actualizar perfil:', error)
     } finally {
@@ -133,47 +131,58 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light">
-      <h2 className="text-3xl font-bold text-primary-dark mb-6">
+    <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
+      <h2 className="text-4xl font-semibold text-primary-dark mb-8 tracking-wide animate-fade-in">
         Editar Perfil
       </h2>
-
-      {/* Vista previa de la imagen */}
-      {previewImage && (
-        <img
-          src={previewImage}
-          alt="Foto de perfil"
-          className="w-32 h-32 rounded-full border-4 border-secondary-dark object-cover mb-8"
-        />
-      )}
-
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
-        <div className="relative">
-          <Button
-            variant="primary"
-            type="button"
-            onClick={() => document.getElementById('uploadImageInput').click()}
-          >
-            Subir Foto Personalizada
-          </Button>
-          <input
-            id="uploadImageInput"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageChange}
-          />
+      {/* Imagen de perfil con Glassmorphism */}
+      <div className="relative">
+        <div
+          className="w-32 h-32 rounded-full border-4 border-secondary-dark shadow-lg overflow-hidden
+                        transition-all duration-300 hover:scale-105"
+        >
+          {previewImage ? (
+            <img
+              src={previewImage}
+              alt="Foto de perfil"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <UserRound className="w-full h-full text-secondary-dark p-6" />
+          )}
         </div>
+      </div>
+      {/* Botones de selección de imagen */}
+      <div className="flex flex-col sm:flex-row gap-4 mt-6">
+        <Button
+          variant="primary"
+          type="button"
+          onClick={() => document.getElementById('uploadImageInput').click()}
+        >
+          <Upload className="w-5 h-5 mr-2" />
+          Subir Foto
+        </Button>
+        <input
+          id="uploadImageInput"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageChange}
+        />
         <Button
           variant="primary"
           type="button"
           onClick={() => setShowAvatarSelector(true)}
         >
-          Seleccionar Avatar Predeterminado
+          <Camera className="w-5 h-5 mr-2" />
+          Elegir Avatar
         </Button>
       </div>
-
-      <form className="w-full max-w-[500px] space-y-6 bg-hover-state rounded-lg p-6 border border-secondary-dark shadow">
+      {/* Formulario con Glassmorphism */}
+      <form
+        className="w-full max-w-[500px] mt-8 p-6 bg-primary-dark/70 backdrop-blur-xl shadow-2xl rounded-xl border border-secondary-dark
+                  space-y-5 animate-slide-up"
+      >
         <Input
           label="Nombre de Usuario"
           name="username"
@@ -189,18 +198,23 @@ const ProfilePage = () => {
           required
         />
 
-        <div className="flex items-center gap-2">
+        {/* Checkbox de cambio de contraseña */}
+        <div className="flex items-center gap-2 mt-6">
           <input
             type="checkbox"
             checked={changePassword}
             onChange={toggleChangePassword}
             id="changePassword"
           />
-          <label htmlFor="changePassword" className="text-primary-dark">
+          <label
+            htmlFor="changePassword"
+            className="text-primary-light text-sm cursor-pointer m-5"
+          >
             ¿Cambiar Contraseña?
           </label>
         </div>
 
+        {/* Campos de contraseña */}
         {changePassword && (
           <>
             <Input
@@ -230,8 +244,10 @@ const ProfilePage = () => {
           </>
         )}
 
-        <div className="flex justify-end gap-3">
-          <Button variant="secondary" type="button" onClick={handleCancel}>
+        {/* Botones */}
+        <div className="flex justify-end gap-3 mt-6">
+          <Button variant="primary" type="button" onClick={handleCancel}>
+            <XCircle className="w-5 h-5 mr-2" />
             Cancelar
           </Button>
           <Button
@@ -240,11 +256,22 @@ const ProfilePage = () => {
             disabled={loading}
             onClick={() => updateProfile('general', formData)}
           >
+            <CheckCircle className="w-5 h-5 mr-2" />
             {loading ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
       </form>
-
+      {/* Mensaje de éxito o error */}
+      {successMessage && (
+        <div
+          className="fixed top-5 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-green-100/80
+                  text-green-600 border border-green-500 rounded-xl p-4 shadow-lg flex items-center gap-3
+                  backdrop-blur-md animate-fade-in"
+        >
+          <CheckCircle className="w-6 h-6 text-green-600" />
+          <span className="text-sm font-medium">{successMessage}</span>
+        </div>
+      )}
       {showAvatarSelector && (
         <AvatarSelector
           onSaveAvatar={(avatarUrl) =>
@@ -253,11 +280,6 @@ const ProfilePage = () => {
           onClose={() => setShowAvatarSelector(false)}
         />
       )}
-
-      {successMessage && (
-        <p className="text-green-500 mt-4">{successMessage}</p>
-      )}
-      {errors.api && <p className="text-red-500 mt-4">{errors.api}</p>}
     </div>
   )
 }

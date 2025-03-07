@@ -21,8 +21,8 @@ body {
 input:invalid,
 textarea:invalid,
 select:invalid {
-  background-color: inherit;
-  color: inherit;
+  background-color: theme('colors.primary-light') !important;
+  color: theme('colors.primary-dark') !important;
   box-shadow: none;
   border-color: theme('colors.secondary-dark');
 }
@@ -33,8 +33,8 @@ textarea,
 select {
   box-sizing: border-box;
   font-family: inherit;
-  background-color: inherit;
-  color: theme('colors.black');
+  background-color: theme('colors.primary-light') !important;
+  color: theme('colors.primary-dark') !important;
   border-width: 1px;
   border-style: solid;
   border-color: theme('colors.secondary-dark');

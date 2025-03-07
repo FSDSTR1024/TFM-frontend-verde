@@ -37,15 +37,17 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="flex flex-col min-h-screen">
-        {/* Se pasa la función para actualizar la altura del dropdown */}
+      <div className="flex flex-col min-h-screen bg-primary-light">
         <Navbar
           openAuthModal={openAuthModal}
           setDropdownHeight={setDropdownHeight}
         />
 
+        {/* Asegurar que el contenido empuje al footer */}
         <main
-          className={`flex-grow pt-[68px] lg:pt-[68px] ${dropdownHeight > 0 ? 'mt-10' : ''}`}
+          className={`flex-1 pt-[68px] pb-20 px-4 lg:px-8 bg-primary-light ${
+            dropdownHeight > 0 ? 'mt-10' : ''
+          }`}
         >
           <Routes>
             <Route path="/" element={<div>Inicio</div>} />
