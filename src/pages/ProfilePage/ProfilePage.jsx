@@ -6,6 +6,7 @@ import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
+import { toast } from 'react-toastify'
 
 const ProfilePage = () => {
   const { user, setUser, validateStoredSession } = useAuth()
@@ -48,6 +49,7 @@ const ProfilePage = () => {
   // Manejo de Inputs
   // ================================
   const handleChange = (e) => {
+    console.log(`Valor ingresado en ${e.target.name}:`, e.target.value)
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
@@ -178,6 +180,7 @@ const ProfilePage = () => {
     }
 
     try {
+      // Actualizar nombre de usuario, correo y contraseña si se proporcionan
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
         console.log('Nombre de usuario actualizado:', data.username)
@@ -196,6 +199,7 @@ const ProfilePage = () => {
       }
 
       // Diferenciación para imagen de perfil:
+      // Si se proporciona un archivo para imagen, se verifica su tipo
       if (data.profileImage) {
         if (data.profileImage instanceof File) {
           // Caso: Imagen personalizada (objeto File), se sube a Cloudinary
@@ -213,23 +217,46 @@ const ProfilePage = () => {
         }
       }
 
-      // Actualizar el estado global con los nuevos datos del usuario
+      // Actualizar el estado global del usuario con los nuevos datos
       setUser((prevUser) => ({ ...prevUser, ...data }))
+      // Sincronizar el estado global con el backend
       await validateStoredSession()
+      // Mostrar mensaje de éxito (aquí puedes usar tu showSuccessMessage o toast, según prefieras)
+      console.log('Estado global actualizado:', user)
       showSuccessMessage('Perfil actualizado correctamente.')
+      // Si prefieres usar react-toastify, reemplaza la línea anterior por:
+      // toast.success('Perfil actualizado correctamente.')
     } catch (error) {
       setErrors({ api: 'Error al actualizar perfil.' })
       console.error('Error en updateProfile:', error)
+      // Para notificaciones con toast, podrías usar:
+      // toast.error('Error al actualizar perfil.')
     } finally {
       setLoading(false)
     }
   }
+
+  // ================================
+  // Sincronizar previewImage con el estado global del usuario
+  // ================================
+  useEffect(() => {
+    setPreviewImage(user?.profileImage || null)
+  }, [user?.profileImage])
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
       <h2 className="text-4xl font-semibold text-primary-dark mb-8 tracking-wide animate-fade-in">
         Editar Perfil
       </h2>
+
+      {/* Mensaje flotante de éxito */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+            {successMessage}
+          </div>
+        </div>
+      )}
 
       {/* Imagen de perfil */}
       <div className="relative">
