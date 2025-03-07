@@ -178,7 +178,6 @@ const ProfilePage = () => {
     }
 
     try {
-      // Actualizar nombre de usuario, correo y contraseña si se proporcionan
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
         console.log('Nombre de usuario actualizado:', data.username)
@@ -195,13 +194,26 @@ const ProfilePage = () => {
         })
         console.log('Contraseña actualizada')
       }
-      // Si se proporciona un archivo para imagen, se llama a handleImageChange
+
+      // Diferenciación para imagen de perfil:
       if (data.profileImage) {
-        // data.profileImage debe ser un objeto File
-        await handleImageChange({ target: { files: [data.profileImage] } })
+        if (data.profileImage instanceof File) {
+          // Caso: Imagen personalizada (objeto File), se sube a Cloudinary
+          await handleImageChange({ target: { files: [data.profileImage] } })
+        } else if (typeof data.profileImage === 'string') {
+          // Caso: Avatar predefinido (URL), se actualiza directamente sin subir a Cloudinary
+          await api.put('/auth/profile/avatar', {
+            profileImage: data.profileImage,
+          })
+          setUser((prevUser) => ({
+            ...prevUser,
+            profileImage: data.profileImage,
+          }))
+          setPreviewImage(data.profileImage)
+        }
       }
 
-      // Actualizar el estado global del usuario con los nuevos datos
+      // Actualizar el estado global con los nuevos datos del usuario
       setUser((prevUser) => ({ ...prevUser, ...data }))
       await validateStoredSession()
       showSuccessMessage('Perfil actualizado correctamente.')
@@ -212,13 +224,6 @@ const ProfilePage = () => {
       setLoading(false)
     }
   }
-
-  // ================================
-  // Sincronizar previewImage con el estado global del usuario
-  // ================================
-  useEffect(() => {
-    setPreviewImage(user?.profileImage || null)
-  }, [user?.profileImage])
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
