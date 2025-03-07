@@ -72,12 +72,12 @@ const ProfilePage = () => {
   const validatePasswords = () => {
     // Validar si las contraseñas coinciden
     if (
-      formData.newPassword &&
-      formData.newPassword !== formData.confirmNewPassword
+      formData.newPassword && // Verificamos si hay una nueva contraseña
+      formData.newPassword !== formData.confirmNewPassword // Comparamos si la nueva contraseña es diferente de la confirmación
     ) {
       setErrors((prev) => ({
         ...prev,
-        confirmNewPassword: 'Las contraseñas no coinciden',
+        confirmNewPassword: 'Las contraseñas no coinciden', // Error si no coinciden
       }))
       return false
     }
@@ -86,11 +86,12 @@ const ProfilePage = () => {
     if (formData.currentPassword === formData.newPassword) {
       setErrors((prev) => ({
         ...prev,
-        newPassword: 'La nueva contraseña no puede ser la misma que la actual.',
+        newPassword: 'La nueva contraseña no puede ser la misma que la actual.', // Error si la nueva es igual a la actual
       }))
       return false
     }
 
+    // Validaciones pasadas, devuelve true
     return true
   }
 
@@ -168,6 +169,7 @@ const ProfilePage = () => {
         await api.put('/auth/profile/password', {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,
+          confirmNewPassword: data.confirmNewPassword,
         })
         console.log('Contraseña actualizada') // Registro en consola
       }
