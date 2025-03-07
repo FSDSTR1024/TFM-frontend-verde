@@ -5,9 +5,11 @@ import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
+import { useState, useRef } from 'react'
 
 const ProfilePage = () => {
-  const { user, setUser } = useAuth()
+  const { user, setUser, validateStoredSession } = useAuth()
+  const fileRef = useRef(null)
 
   // ================================
   // Estado del Formulario
@@ -28,6 +30,19 @@ const ProfilePage = () => {
   const [showAvatarSelector, setShowAvatarSelector] = useState(false)
   const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+
+  // ================================
+  // Función para mostrar mensaje de exito
+  // ================================
+  const showSuccessMessage = (message) => {
+    setErrors({}) // Limpiamos los errores
+    setSuccessMessage(message)
+    setShowSuccessModal(true)
+
+    setTimeout(() => {
+      setShowSuccessModal(false)
+    }, 3000) // Mostramos el mensaje y después de 3 segundos se oculta
+  }
 
   // ================================
   // Manejo de Inputs
@@ -93,14 +108,16 @@ const ProfilePage = () => {
 
       const updatedImage = response.data.profileImage
 
-      // Actualizar la imagen en AuthContext para que se refleje en toda la UI
+      // Actualizamos la imagen en AuthContext para que se refleje en toda la UI
       setUser((prevUser) => ({
         ...prevUser,
         profileImage: updatedImage,
       }))
 
       setPreviewImage(updatedImage)
-      setSuccessMessage('Imagen actualizada con éxito.')
+
+      await validateStoredSession() // Se sincroniza la sesión con el estado global
+      showSuccessMessage('Imagen actualizada con éxito.') // Mostramos el modal de confirmación de actualización exitosa
     } catch (error) {
       console.error('Error al subir imagen:', error)
       setErrors({ api: 'Error al actualizar la imagen.' })
@@ -115,14 +132,14 @@ const ProfilePage = () => {
   const updateProfile = async (endpoint, data) => {
     if (endpoint === 'password' && !validatePasswords()) return
     setLoading(true)
-    setSuccessMessage('')
     try {
       await api.put(`/auth/profile/${endpoint}`, data)
 
       // Persistir datos en el estado global (AuthContext)
       if (user) setUser((prevUser) => ({ ...prevUser, ...data }))
 
-      setShowSuccessModal(true)
+      await validateStoredSession() // Actualiza la sesión almacenada
+      showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
       console.error('Error al actualizar perfil:', error)
     } finally {
@@ -157,18 +174,19 @@ const ProfilePage = () => {
         <Button
           variant="primary"
           type="button"
-          onClick={() => document.getElementById('uploadImageInput').click()}
+          onClick={() => fileRef.current.click()}
         >
           <Upload className="w-5 h-5 mr-2" />
           Subir Foto
         </Button>
         <input
-          id="uploadImageInput"
+          ref={fileRef}
           type="file"
           accept="image/*"
           className="hidden"
           onChange={handleImageChange}
         />
+
         <Button
           variant="primary"
           type="button"
