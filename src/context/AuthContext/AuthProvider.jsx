@@ -10,7 +10,7 @@ const AuthProvider = ({ children }) => {
   // ==============================
   // Validar sesión almacenada
   // ==============================
-  const validateStoredSession = async () => {
+  const validateStoredSession = useCallback(async () => {
     try {
       const response = await api.get('/auth/validate-token', {
         withCredentials: true,
@@ -27,12 +27,12 @@ const AuthProvider = ({ children }) => {
     } finally {
       setChecking(false) // Finalizamos la validación de sesión
     }
-  }
+  }, [logout]) // De esta forma nos aseguramos que logout este actualizado.
 
   // Ejecutar `validateStoredSession` al cargar la página
   useEffect(() => {
     validateStoredSession()
-  }, [])
+  }, [validateStoredSession]) // Nos aseguramos de que siempre se use la versión actual
 
   // ==============================
   // Refresh Token cada 55 minutos
@@ -86,7 +86,7 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Error en login:', error)
     }
-  }, [])
+  }, [validateStoredSession])
 
   // ==============================
   // Función de logout
@@ -109,7 +109,15 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, checking, user, setUser, login, logout }}
+      value={{
+        isLoggedIn,
+        checking,
+        user,
+        setUser,
+        login,
+        logout,
+        validateStoredSession,
+      }}
     >
       {children}
     </AuthContext.Provider>
