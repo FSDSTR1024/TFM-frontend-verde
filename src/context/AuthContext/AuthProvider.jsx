@@ -19,22 +19,19 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Error en logout:', error)
     } finally {
-      // Aseguramos que la cookie se elimine correctamente
       document.cookie = 'Token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
       document.cookie =
         'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
 
-      // Reiniciamos el estado global
       setUser(null)
       setIsLoggedIn(false)
 
-      // Redirigimos al login si es necesario
       if (navigate) navigate('/login', { replace: true })
     }
   }, [])
 
   // ==============================
-  // Validar sesión almacenada (Ahora puede llamar a `logout` correctamente)
+  // Validar sesión almacenada
   // ==============================
   const validateStoredSession = useCallback(async () => {
     try {
@@ -43,15 +40,26 @@ const AuthProvider = ({ children }) => {
       })
 
       console.log('Sesión válida:', response.data)
-      setUser(response.data)
-      setIsLoggedIn(true)
+
+      if (response.data) {
+        setUser((prevUser) => {
+          if (
+            prevUser?.id !== response.data.id ||
+            prevUser?.username !== response.data.username ||
+            prevUser?.email !== response.data.email ||
+            prevUser?.profileImage !== response.data.profileImage
+          ) {
+            return response.data // Solo actualiza si hay cambios
+          }
+          return prevUser
+        })
+        setIsLoggedIn(true)
+      }
     } catch (error) {
       console.warn('Sesión no válida:', error.response?.data || error.message)
-
-      // Si el token es inválido, cerramos sesión
       logout()
     } finally {
-      setChecking(false) // Finalizamos la validación de sesión
+      setChecking(false)
     }
   }, [logout])
 
@@ -74,10 +82,8 @@ const AuthProvider = ({ children }) => {
 
         console.log('Usuario logueado:', response.data)
 
-        // Validar sesión después del login
         await validateStoredSession()
 
-        // Redirigir al dashboard
         navigate('/dashboard', { replace: true })
       } catch (error) {
         console.error('Error en login:', error)
@@ -99,11 +105,14 @@ const AuthProvider = ({ children }) => {
               {},
               { withCredentials: true }
             )
-            setUser(response.data) // Actualizamos el usuario tras refresh
+
+            setUser((prevUser) => ({
+              ...prevUser,
+              ...response.data, // Aseguramos que los datos sean los correctos
+            }))
           } catch (error) {
             console.error('Error al renovar el token:', error)
-            setUser(null)
-            setIsLoggedIn(false)
+            logout()
           }
         },
         55 * 60 * 1000
@@ -111,7 +120,7 @@ const AuthProvider = ({ children }) => {
 
       return () => clearInterval(interval)
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, logout])
 
   // ==============================
   // Ejecutar `validateStoredSession` al cargar la página

@@ -51,7 +51,22 @@ const ProfilePage = () => {
   const handleChange = (e) => {
     console.log(`Valor ingresado en ${e.target.name}:`, e.target.value)
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // Verificar si el campo modificado es `username` y capitalizarlo correctamente
+    const formattedValue =
+      name === 'username'
+        ? value.charAt(0).toUpperCase() + value.slice(1) // Capitalizar primera letra
+        : value
+
+    setFormData((prev) => ({ ...prev, [name]: formattedValue }))
+  }
+
+  // ================================
+  // Manejo de Subida de Imagenes
+  // ================================
+  const handleSaveChanges = async () => {
+    const { profileImage, ...dataWithoutImage } = formData // Eliminar la imagen antes de enviar los datos
+    await updateProfile(dataWithoutImage) // Llamamos `updateProfile` sin `profileImage`
   }
 
   // ================================
@@ -173,42 +188,56 @@ const ProfilePage = () => {
     setLoading(true)
     setSuccessMessage('')
 
-    // Validar contraseñas si se intenta cambiar
-    if (data.newPassword && !validatePasswords()) {
-      setLoading(false)
-      return
-    }
-
     try {
-      // Actualizar nombre de usuario, correo y contraseña si se proporcionan
+      // Validar contraseñas si se intenta cambiar
+      if (data.newPassword && !validatePasswords()) {
+        setLoading(false)
+        return
+      }
+
+      // Actualizar nombre de usuario si se proporciona
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
-        console.log('Nombre de usuario actualizado:', data.username)
+
+        // Actualizar estado inmediatamente para reflejar el cambio en la UI
+        setUser((prevUser) => ({
+          ...prevUser,
+          username: data.username,
+        }))
       }
+
+      // Actualizar correo electrónico si se proporciona
       if (data.email) {
         await api.put('/auth/profile/email', { email: data.email })
-        console.log('Correo electrónico actualizado:', data.email)
       }
+
+      // Actualizar contraseña si se proporciona
       if (data.newPassword) {
         await api.put('/auth/profile/password', {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,
           confirmNewPassword: data.confirmNewPassword,
         })
-        console.log('Contraseña actualizada')
       }
 
-      // Diferenciación para imagen de perfil:
-      // Si se proporciona un archivo para imagen, se verifica su tipo
+      // Manejo de imagen de perfil
       if (data.profileImage) {
         if (data.profileImage instanceof File) {
           // Caso: Imagen personalizada (objeto File), se sube a Cloudinary
-          await handleImageChange({ target: { files: [data.profileImage] } })
+          const updatedImage = await handleImageChange({
+            target: { files: [data.profileImage] },
+          })
+
+          if (updatedImage) {
+            setPreviewImage(updatedImage) // Asegurar que se refleje en la UI
+          }
         } else if (typeof data.profileImage === 'string') {
           // Caso: Avatar predefinido (URL), se actualiza directamente sin subir a Cloudinary
           await api.put('/auth/profile/avatar', {
             profileImage: data.profileImage,
           })
+
+          // Reflejar la nueva imagen inmediatamente en el estado global
           setUser((prevUser) => ({
             ...prevUser,
             profileImage: data.profileImage,
@@ -217,20 +246,18 @@ const ProfilePage = () => {
         }
       }
 
-      // Actualizar el estado global del usuario con los nuevos datos
-      setUser((prevUser) => ({ ...prevUser, ...data }))
-      // Sincronizar el estado global con el backend
-      await validateStoredSession()
-      // Mostrar mensaje de éxito (aquí puedes usar tu showSuccessMessage o toast, según prefieras)
+      // Retrasar la sincronización con el backend para evitar traer datos antiguos
+      setTimeout(async () => {
+        await validateStoredSession()
+      }, 500) // Se da tiempo para que el backend refleje los cambios antes de actualizar el estado global
+
       console.log('Estado global actualizado:', user)
       showSuccessMessage('Perfil actualizado correctamente.')
-      // Si prefieres usar react-toastify, reemplaza la línea anterior por:
-      // toast.success('Perfil actualizado correctamente.')
     } catch (error) {
-      setErrors({ api: 'Error al actualizar perfil.' })
       console.error('Error en updateProfile:', error)
-      // Para notificaciones con toast, podrías usar:
-      // toast.error('Error al actualizar perfil.')
+
+      // Capturar y mostrar mensaje de error detallado
+      setErrors({ api: error.message || 'Error al actualizar perfil.' })
     } finally {
       setLoading(false)
     }
@@ -240,7 +267,7 @@ const ProfilePage = () => {
   // Sincronizar previewImage con el estado global del usuario
   // ================================
   useEffect(() => {
-    setPreviewImage(user?.profileImage || null)
+    setPreviewImage(user?.profileImage ?? null) // Usamos `??` para asegurar que el valor sea `null` en lugar de `undefined`
   }, [user?.profileImage])
 
   return (
@@ -380,7 +407,7 @@ const ProfilePage = () => {
             variant="primary"
             type="submit"
             disabled={loading}
-            onClick={() => updateProfile(formData)}
+            onClick={handleSaveChanges}
           >
             <CheckCircle className="w-5 h-5 mr-2" />
             {loading ? 'Guardando...' : 'Guardar Cambios'}
