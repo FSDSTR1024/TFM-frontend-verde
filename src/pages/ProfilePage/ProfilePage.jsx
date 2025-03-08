@@ -6,7 +6,6 @@ import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
-import { toast } from 'react-toastify'
 
 const ProfilePage = () => {
   const { user, setUser, validateStoredSession } = useAuth()

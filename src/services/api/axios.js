@@ -1,9 +1,9 @@
 // =======================================
 // axios.js - Configuración de API
 // =======================================
-import axios from 'axios' // Verifica que esté al inicio del archivo
+import axios from 'axios'
 import { useContext } from 'react'
-import { AuthContext } from '@/context/AuthContext/AuthContext' // Importamos correctamente desde AuthContext.js
+import { AuthContext } from '@/context/AuthContext/AuthContext'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
@@ -20,6 +20,8 @@ let isRefreshing = false // Flag para evitar múltiples llamadas simultáneas
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const originalRequest = error.config
+
     if ([401, 403].includes(error.response?.status)) {
       console.warn('Error 401/403: intentando renovar el token...')
 
