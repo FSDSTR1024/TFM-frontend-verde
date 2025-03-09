@@ -26,7 +26,13 @@ const AuthProvider = ({ children }) => {
       setUser(null)
       setIsLoggedIn(false)
 
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('user')
+      }
+
       if (navigate) navigate('/login', { replace: true })
+
+      setChecking(false)
     }
   }, [])
 
