@@ -6,9 +6,12 @@ import Footer from './components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import AuthCard from './components/organisms/AuthCard/AuthCard'
 import DashboardPage from './pages/DashboardPage'
+import TradingDashboard from './Components/Tradingdashboard/TradingDashboard'
+import Portfolio from './Components/portfolio/portfolio'
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
+  
 
   if (checking) {
     return (
@@ -20,11 +23,15 @@ const PrivateRoute = ({ children }) => {
 
   return isLoggedIn ? children : <Navigate to="/" replace={true} />
 }
-
+const userId = '67a7c4cba0fbbcefea86135f';
 const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [dropdownHeight, setDropdownHeight] = useState(0) // Nueva variable de estado
+  //const userId = '67a7c4cba0fbbcefea86135f';
+  
+ // const userId = localStorage.getItem('userId')
+  console.log('userid...',userId)
 
   const openAuthModal = useCallback((formType) => {
     setActiveForm(formType)
@@ -35,7 +42,9 @@ const App = () => {
     setIsAuthModalOpen(false)
   }, [])
 
+  
   return (
+   
     <BrowserRouter>
       <div className="flex flex-col min-h-screen bg-primary-light">
         <Navbar
@@ -50,7 +59,8 @@ const App = () => {
           }`}
         >
           <Routes>
-            <Route path="/" element={<div>Inicio</div>} />
+            <Route path="/" element={<TradingDashboard />} />
+           
             <Route
               path="/profile"
               element={
@@ -63,10 +73,25 @@ const App = () => {
               path="/dashboard"
               element={
                 <PrivateRoute>
-                  <DashboardPage />
+                  {/* <DashboardPage /> */}
+                  <TradingDashboard  />
                 </PrivateRoute>
               }
             />
+            
+            <Route
+              path="/portfolios/:userId"
+              element={
+                <PrivateRoute>
+                  <Portfolio userId={userId}  />
+                </PrivateRoute>
+              }
+
+
+            />
+
+
+
             <Route
               path="*"
               element={
