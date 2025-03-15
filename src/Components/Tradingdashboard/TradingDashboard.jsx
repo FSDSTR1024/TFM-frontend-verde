@@ -11,6 +11,10 @@ import FinancialNews  from '../noticias/FinancialNews'
 import InsertNews  from '../noticias/InsertNews'
 import AccionesMejorRendimiento  from '../noticias/AccionesMejorRendimiento'
 import AccionesPeorRendimiento  from '../noticias/AccionesPeorRendimiento'
+import MarketTrendsComponent  from '../noticias/MarketTrendsComponent'
+import Calendario  from '../noticias/Calendario'
+import MundoCripto  from '../noticias/MundoCripto'
+
 
 const TradingDashboard = () => {
 
@@ -57,14 +61,14 @@ const TradingDashboard = () => {
           <div className="p-4 md:p-6 lg:p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro">
            <AccionesPeorRendimiento/>  
           </div>
-          <div className="bg-emerald-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 bg-verde-claro">
-            <span className="text-white text-lg font-bold">Caja 13</span>
+          <div className="bg-emerald-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro">
+            <MarketTrendsComponent />
           </div>
-          <div className="bg-gray-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 bg-verde-claro">
-            <span className="text-white text-lg font-bold">Caja 14</span>
+          <div className="bg-gray-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro">
+            <Calendario />
           </div>
-          <div className="bg-blue-800 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 bg-verde-claro">
-            <span className="text-white text-lg font-bold">Caja 15</span>
+          <div className="bg-blue-800 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro">
+            <MundoCripto /> 
           </div>
         </div>
       </main>

@@ -27,6 +27,15 @@ export default {
       transitionTimingFunction: {
         base: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       },
+      animation: {
+        float: "floatAnimation 6s infinite linear",
+      },
+      keyframes: {
+        floatAnimation: {
+          "0%": { transform: "translateY(0px)", opacity: 1 },
+          "100%": { transform: "translateY(-150px)", opacity: 0 },
+        },
+      },
     },
   },
   plugins: [daisyui], // Importación correcta de DaisyUI
