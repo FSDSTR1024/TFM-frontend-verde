@@ -12,6 +12,11 @@ export default {
         'primary-light': '#e1e3ac',
         'hover-state': '#648a64',
         'error-color': '#c44536',
+        'verde-claro': '#a8ba86',
+        'verde-clarito': '#fafafa',
+        'verde-medio': '#638a63',
+
+
       },
       fontFamily: {
         primary: ['Playfair Display', 'serif'],

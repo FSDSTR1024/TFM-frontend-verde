@@ -9,6 +9,7 @@ const NavLinks = ({ mobile, onClose }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [formData, setFormData] = useState({
+    _id:'',    //Extraigo el id para guardar en el LocalStorage el userId
     username: '',
     email: '',
     password: '',
@@ -28,7 +29,8 @@ const NavLinks = ({ mobile, onClose }) => {
   const handleCloseModal = () => {
     setIsAuthModalOpen(false)
     setActiveForm('login')
-    setFormData({ username: '', email: '', password: '' })
+    setFormData({ _id: '', username: '', email: '', password: '' })
+console.log('EMAIL',formData.email)
     if (onClose) onClose()
   }
 
@@ -61,7 +63,7 @@ const NavLinks = ({ mobile, onClose }) => {
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={logout}
+                onClick={logout} 
                 ariaLabel="Cerrar sesión"
               >
                 Cerrar sesión
