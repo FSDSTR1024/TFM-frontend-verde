@@ -25,6 +25,7 @@ const AuthProvider = ({ children }) => {
 
       setUser(null)
       setIsLoggedIn(false)
+      localStorage.removeItem("userId") //Aqui borro el userId cuando el usuario se desloguea
 
       if (navigate) navigate('/login', { replace: true })
     }
@@ -54,6 +55,8 @@ const AuthProvider = ({ children }) => {
           return prevUser
         })
         setIsLoggedIn(true)
+        //Aqui guardo el userId
+        localStorage.setItem('userId',response.data.id)
       }
     } catch (error) {
       console.warn('Sesión no válida:', error.response?.data || error.message)
@@ -84,7 +87,7 @@ const AuthProvider = ({ children }) => {
 
         await validateStoredSession()
 
-        navigate('/dashboard', { replace: true })
+        navigate('/', { replace: true })
       } catch (error) {
         console.error('Error en login:', error)
       }

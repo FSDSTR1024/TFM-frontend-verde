@@ -1,20 +1,20 @@
 //Este componente grafica noticias de analisis de Acciones
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 
 const AnalisisAcciones = () => {
-  const [analyses, setAnalyses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [analyses, setAnalyses] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchAnalyses = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
         // Simulando carga de datos de API externa con análisis de ejemplo
         // En un caso real, harías un fetch a una API como:
-        // const response = await fetch('https://api.example.com/stock-analysis');
-        // const data = await response.json();
+        // const response = await fetch('https://api.example.com/stock-analysis')
+        // const data = await response.json()
         
         // Datos de ejemplo de análisis de acciones
         const mockData = [
@@ -68,35 +68,35 @@ const AnalisisAcciones = () => {
             analyst: "Citi Research",
             date: "24 Feb 2025"
           }
-        ];
+        ]
         
         // Simulamos un pequeño retraso para mostrar el estado de carga
         setTimeout(() => {
-          setAnalyses(mockData);
-          setLoading(false);
-        }, 1000);
+          setAnalyses(mockData)
+          setLoading(false)
+        }, 1000)
       } catch (err) {
-        setError("No se pudieron cargar los análisis. Por favor, intente más tarde.");
-        setLoading(false);
+        setError("No se pudieron cargar los análisis. Por favor, intente más tarde.")
+        setLoading(false)
       }
-    };
+    }
 
-    fetchAnalyses();
-  }, []);
+    fetchAnalyses()
+  }, [])
 
   // Función para determinar el color basado en la recomendación
   const getRecommendationColor = (recommendation) => {
     switch (recommendation.toLowerCase()) {
       case 'comprar':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case 'mantener':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       case 'vender':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -142,7 +142,7 @@ const AnalisisAcciones = () => {
         <button className="text-gray-800 hover:underline text-sm">Ver todos los análisis →</button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AnalisisAcciones;
+export default AnalisisAcciones

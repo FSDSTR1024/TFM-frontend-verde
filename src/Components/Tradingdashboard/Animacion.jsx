@@ -178,7 +178,7 @@ const ParticleAnimation = () => {
       {/* Botón central */}
 
 
-      <Link to="/portfolios/:userId">
+      <Link to="/portfolios/">
              <button className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 
                   px-6 py-3 bg-transparent border-2 border-white text-white 
                   hover:bg-white hover:text-black transition-colors duration-300

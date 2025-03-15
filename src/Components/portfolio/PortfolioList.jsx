@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import SearchModal from './SearchModal';
-import axios from "axios";
+//Este componente muestra el Portfolio de un usuario logueado
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import SearchModal from './SearchModal'
+import axios from "axios"
 
 const customColors = {
-  primary: "#638a63",      // Verde principal (de tu paleta)
+  primary: "#638a63",      // Verde principal (de la paleta)
   primaryLight: "#e1e3ac", // Verde claro para fondos
   secondary: "#fafafa",    // Fondo muy claro
   text: "#223536",         // Color de texto principal (oscuro)
@@ -12,31 +14,31 @@ const customColors = {
   accent: "#a8ba86",       // Color acento
   accentLight: "#e1e3ac",  // Acento claro
   border: "#638a63",       // Color para bordes
-  white: "#fafafa",        // Blanco (usando el tono más claro de tu paleta)
+  white: "#fafafa",        // Blanco (usando el tono más claro de la paleta)
   red: "#46695a",          // Reemplazado por verde oscuro para "vender"
   redHover: "#223536",     // Hover del botón "vender"
-};
+}
 
 // Base URL for the backend API
-const API_BASE_URL = 'https://tfm-backend-kalx.onrender.com';
+const API_BASE_URL = 'https://tfm-backend-kalx.onrender.com'
 
 const PortfolioList = () => {
-  const [portfolioData, setPortfolioData] = useState(null);  // Almacena los datos de las carteras del usuario
-  const [selectedPortfolio, setSelectedPortfolio] = useState(null); // Guarda la cartera seleccionada actualmente.
-  const [loading, setLoading] = useState(true); // Indica si los datos están cargando.
-  const [error, setError] = useState(null); // Almacena mensajes de error.
-  const [availableStocks, setAvailableStocks] = useState([]); // Lista de acciones disponibles para agregar a una cartera.
-  const [acciones, setAcciones] = useState([]); // Lista de acciones obtenidas del servidor.
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controla la visibilidad del modal para agregar acciones.
-  const [isAddPortfolioModalOpen, setIsAddPortfolioModalOpen] = useState(false); // Controla la visibilidad del modal para agregar una nueva cartera.
-  const [newPortfolioName, setNewPortfolioName] = useState(""); // Almacena el nombre de la nueva cartera.
-  const userId = localStorage.getItem('userId'); // ID del usuario obtenido del localStorage.
-  const navigate = useNavigate();
+  const [portfolioData, setPortfolioData] = useState(null)  // Almacena los datos de las carteras del usuario
+  const [selectedPortfolio, setSelectedPortfolio] = useState(null) // Guarda la cartera seleccionada actualmente.
+  const [loading, setLoading] = useState(true) // Indica si los datos están cargando.
+  const [error, setError] = useState(null) // Almacena mensajes de error.
+  const [availableStocks, setAvailableStocks] = useState([]) // Lista de acciones disponibles para agregar a una cartera.
+  const [acciones, setAcciones] = useState([]) // Lista de acciones obtenidas del servidor.
+  const [isModalOpen, setIsModalOpen] = useState(false) // Controla la visibilidad del modal para agregar acciones.
+  const [isAddPortfolioModalOpen, setIsAddPortfolioModalOpen] = useState(false) // Controla la visibilidad del modal para agregar una nueva cartera.
+  const [newPortfolioName, setNewPortfolioName] = useState("") // Almacena el nombre de la nueva cartera.
+  const userId = localStorage.getItem('userId') // ID del usuario obtenido del localStorage.
+  const navigate = useNavigate()
 
   const formatNumber = (number) => { // Formatea un número para mostrarlo con dos decimales y separadores de miles.
-    if (number === undefined || number === null) return '0.00';
-    return number.toLocaleString('es-ES', { minimumFractionDigits: 2 });
-  };
+    if (number === undefined || number === null) return '0.00'
+    return number.toLocaleString('es-ES', { minimumFractionDigits: 2 })
+  }
 
   // Axios instance with common configuration
   const apiClient = axios.create({
@@ -45,75 +47,83 @@ const PortfolioList = () => {
       'Content-Type': 'application/json',
     },
     timeout: 10000, // 10 seconds timeout
-  });
+  })
 
-  const fetchPortfolioData = async () => { // Obtiene los datos de las carteras y acciones del servidor.
+  const fetchPortfolioData = async () => {
     try {
       if (!userId) {
-        throw new Error('Usuario no encontrado. Por favor, inicie sesión nuevamente.');
+        throw new Error('Usuario no encontrado. Por favor, inicie sesión nuevamente.')
       }
-
-      setLoading(true);
-
+  
+      setLoading(true)
+  
       const [portfoliosResponse, stocksResponse] = await Promise.all([
         apiClient.get(`/portfolios`, {
           params: { userId: userId }
         }),
         apiClient.get(`/accions`)
-      ]);
-
-      if (portfoliosResponse.data && portfoliosResponse.data.length > 0) {
-        const portfoliosWithPrices = portfoliosResponse.data.map(portfolio => {
+      ])
+  
+      let portfoliosWithPrices = []
+  
+      // Si no hay carteras, crea una cartera vacía para el usuario
+      if (!portfoliosResponse.data || portfoliosResponse.data.length === 0) {
+        const emptyPortfolio = {
+          name: "Mi Cartera",
+          stocks: [],
+          totalValue: 0
+        }
+        portfoliosWithPrices = [emptyPortfolio]
+      } else {
+        // Si hay carteras, calcula los valores como antes
+        portfoliosWithPrices = portfoliosResponse.data.map(portfolio => {
           const portfolioTotalValue = portfolio.stocks.reduce((total, stock) => {
-            const stockData = (stocksResponse.data.data || []).find(s => s.ticker === stock.ticker);
-            const stockPrice = stockData?.price !== undefined ? stockData.price : stock.price;
-            return total + (stockPrice * stock.cantidad);
-          }, 0);
-
+            const stockData = (stocksResponse.data.data || []).find(s => s.ticker === stock.ticker)
+            const stockPrice = stockData?.price !== undefined ? stockData.price : stock.price
+            return total + (stockPrice * stock.cantidad)
+          }, 0)
+  
           return {
             ...portfolio,
             totalValue: portfolioTotalValue,
             stocks: portfolio.stocks.map(stock => {
-              const stockData = (stocksResponse.data.data || []).find(s => s.ticker === stock.ticker);
-              
+              const stockData = (stocksResponse.data.data || []).find(s => s.ticker === stock.ticker)
               return {
                 ...stock,
                 price: stockData?.price !== undefined ? stockData.price : stock.price,
                 currentValue: stockData?.price !== undefined ? stockData.price * stock.cantidad : (stock.price * stock.cantidad)
-              };
+              }
             })
-          };
-        });
-
-        setPortfolioData({ portfolios: portfoliosWithPrices });
-        setSelectedPortfolio(portfoliosWithPrices[0]);
-        setAcciones(stocksResponse.data);
-        setAvailableStocks(Array.isArray(stocksResponse.data.data) ? stocksResponse.data.data : []);
-      } else {
-        throw new Error('No se encontraron datos de cartera');
+          }
+        })
       }
+  
+      setPortfolioData({ portfolios: portfoliosWithPrices })
+      setSelectedPortfolio(portfoliosWithPrices[0])
+      setAcciones(stocksResponse.data)
+      setAvailableStocks(Array.isArray(stocksResponse.data.data) ? stocksResponse.data.data : [])
     } catch (err) {
-      console.error('Error fetching portfolio:', err);
-      setError(err.response?.data?.message || err.message || 'Error al cargar los datos de la cartera');
+      console.error('Error fetching portfolio:', err)
+      setError(err.response?.data?.message || err.message || 'Error al cargar los datos de la cartera')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchPortfolioData();
-  }, []);
+    fetchPortfolioData()
+  }, [])
 
   const handleSellStock = async (ticker) => { // Vende una acción de la cartera seleccionada.
     try {
-      await apiClient.delete(`/portfolios/${userId}/${selectedPortfolio.name}/stock/${ticker}`);
-      await fetchPortfolioData();
-      console.log('Ticker vendido', ticker);
+      await apiClient.delete(`/portfolios/${userId}/${selectedPortfolio.name}/stock/${ticker}`)
+      await fetchPortfolioData()
+      console.log('Ticker vendido', ticker)
     } catch (err) {
-      console.error('Error selling stock:', err);
-      alert('Error al vender la acción: ' + (err.response?.data?.message || err.message));
+      console.error('Error selling stock:', err)
+      alert('Error al vender la acción: ' + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
   // Agrega una acción a la cartera seleccionada.
   const handleAddStock = async (userId, ticker, quantity, selectedPortfolio) => {
@@ -125,21 +135,21 @@ const PortfolioList = () => {
           price: availableStocks.find(stock => stock.ticker === ticker)?.price || 0,
           quantity: quantity,
           portfolioName: selectedPortfolio,
-        });
-        await fetchPortfolioData();
-        setIsModalOpen(false);
+        })
+        await fetchPortfolioData()
+        setIsModalOpen(false)
       } catch (err) {
-        console.error('Error adding stock:', err);
-        alert('Error al añadir la acción: ' + (err.response?.data?.message || err.message));
+        console.error('Error adding stock:', err)
+        alert('Error al añadir la acción: ' + (err.response?.data?.message || err.message))
       }
     }
-  };
+  }
 
   // Agrega una Cartera nueva
   const handleAddPortfolio = async () => {
     if (!newPortfolioName.trim()) {
-      alert('Por favor, ingrese un nombre para la cartera');
-      return;
+      alert('Por favor, ingrese un nombre para la cartera')
+      return
     }
 
     try {
@@ -147,34 +157,34 @@ const PortfolioList = () => {
         userId: userId,
         name: newPortfolioName,
         stocks: []
-      });
+      })
       
-      setNewPortfolioName("");
-      setIsAddPortfolioModalOpen(false);
-      await fetchPortfolioData();
+      setNewPortfolioName("")
+      setIsAddPortfolioModalOpen(false)
+      await fetchPortfolioData()
     } catch (err) {
-      console.error('Error creating portfolio:', err);
-      alert('Error al crear la cartera: ' + (err.response?.data?.message || err.message));
+      console.error('Error creating portfolio:', err)
+      alert('Error al crear la cartera: ' + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
   // Borra una Cartera
   const handleDeletePortfolio = async (portfolioName) => {
     if (!confirm(`¿Está seguro que desea eliminar la cartera "${portfolioName}"?`)) {
-      return;
+      return
     }
 
     try {
-      await apiClient.delete(`/portfolios/${userId}/${portfolioName}`);
-      await fetchPortfolioData();
+      await apiClient.delete(`/portfolios/${userId}/${portfolioName}`)
+      await fetchPortfolioData()
       if (selectedPortfolio?.name === portfolioName) {
-        setSelectedPortfolio(portfolioData?.portfolios[0] || null);
+        setSelectedPortfolio(portfolioData?.portfolios[0] || null)
       }
     } catch (err) {
-      console.error('Error deleting portfolio:', err);
-      alert('Error al eliminar la cartera: ' + (err.response?.data?.message || err.message));
+      console.error('Error deleting portfolio:', err)
+      alert('Error al eliminar la cartera: ' + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
   if (error) return (
     <div style={{ minHeight: "100vh", backgroundColor: customColors.secondary, padding: "1.5rem" }}>
@@ -199,7 +209,7 @@ const PortfolioList = () => {
         </button>
       </div>
     </div>
-  );
+  )
   
   if (loading) return (
     <div style={{ minHeight: "100vh", backgroundColor: customColors.secondary, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -207,7 +217,7 @@ const PortfolioList = () => {
         <p style={{ fontSize: "1.125rem", fontWeight: 500, color: customColors.text }}>Cargando carteras...</p>
       </div>
     </div>
-  );
+  )
   
   if (!portfolioData) return (
     <div style={{ minHeight: "100vh", backgroundColor: customColors.secondary, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -215,7 +225,7 @@ const PortfolioList = () => {
         <p style={{ fontSize: "1.125rem", fontWeight: 500, color: customColors.text }}>No se encontraron carteras.</p>
       </div>
     </div>
-  );
+  )
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: customColors.secondary }}>
@@ -290,9 +300,9 @@ const PortfolioList = () => {
     width: "100%",
     padding: "0.5rem",
     marginBottom: "1rem",
-    border: `1px solid ${customColors.border}`, // Change from customColors.white to customColors.border
+    border: `1px solid ${customColors.border}`,
     borderRadius: "0.375rem",
-    backgroundColor: customColors.white // Add this line to explicitly set the background color
+    backgroundColor: customColors.white
   }}
 />
               <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
@@ -426,8 +436,8 @@ const PortfolioList = () => {
             <label style={{ fontWeight: "500", color: customColors.text }}>Seleccionar cartera: </label>
             <select
               onChange={(e) => {
-                const selected = portfolioData.portfolios.find(p => p.name === e.target.value);
-                setSelectedPortfolio(selected);
+                const selected = portfolioData.portfolios.find(p => p.name === e.target.value)
+                setSelectedPortfolio(selected)
               }}
               style={{ 
                 marginLeft: "0.5rem", 
@@ -537,7 +547,7 @@ const PortfolioList = () => {
                 <tbody>
                   {selectedPortfolio?.stocks?.length > 0 ? (
                     selectedPortfolio.stocks.map((stock, index) => {
-                      const stockValue = stock.price * stock.cantidad;
+                      const stockValue = stock.price * stock.cantidad
                       return (
                         <tr 
                           key={stock.ticker}
@@ -573,7 +583,7 @@ const PortfolioList = () => {
                             </button>
                           </td>
                         </tr>
-                      );
+                      )
                     })
                   ) : (
                     <tr>
@@ -599,7 +609,7 @@ const PortfolioList = () => {
         onStockUpdate={fetchPortfolioData}
       />
     </div>
-  );
-};
+  )
+}
 
-export default PortfolioList;
+export default PortfolioList

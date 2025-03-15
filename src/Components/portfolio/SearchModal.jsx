@@ -1,29 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus } from 'lucide-react';
-import axios from 'axios';
-
 // Este componente implementa un modal de búsqueda y selección de acciones 
 // para añadir a un portafolio
 // Las acciones estan guardadas en una coleccion llamada accions en MongoDb
 // isOpen es una variable con la que se verifica si la ventana esta abienta o no
 // onClose sirve cerrar la ventana
-// selectedPortfolio: : Un objeto que representa el portafolio que el usuario ha seleccionado.
-// Este objeto contendrá información sobre el portafolio, como su nombre o ID. 
+// selectedPortfolio: : Un objeto que representa el portafolio que el usuario ha seleccionado
+// Este objeto contendrá información sobre el portafolio, como su nombre o ID 
 // Se utiliza para mostrar el nombre del portafolio en el modal y para asociar 
-// la acción añadida al portafolio correcto.
+// la acción añadida al portafolio correcto
 // portfolioId : El identificador único del portafolio seleccionado
 
+import { useState, useEffect } from 'react'
+import { X, Plus, Minus } from 'lucide-react'
+import axios from 'axios'
 
 const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockUpdate }) => {
-  const [searchTerm, setSearchTerm] = useState(''); // Término de búsqueda
-  const [selectedStock, setSelectedStock] = useState(null); //Aqui se guarda la acción seleccionada
-  const [quantity, setQuantity] = useState(1); // Aqui se almacena el numero de acciones que se van a agregar
-  const [isLoading, setIsLoading] = useState(false);
-  const [stocks, setStocks] = useState([]);  // Aqui se almacenan las acciones leidas de la BD
-  const [filteredStocks, setFilteredStocks] = useState([]); //Aqui se almacenan las accions filtradas por el usuario
-  const [loadingStocks, setLoadingStocks] = useState(true); // Indica si se están cargando las acciones
-  const [error, setError] = useState(null);
-  const userId = localStorage.getItem('userId'); // Obtiene el ID del usuario del localStorage
+  const [searchTerm, setSearchTerm] = useState('') // Término de búsqueda
+  const [selectedStock, setSelectedStock] = useState(null) // Aqui se guarda la acción seleccionada
+  const [quantity, setQuantity] = useState(1) // Aqui se almacena el numero de acciones que se van a agregar
+  const [isLoading, setIsLoading] = useState(false)
+  const [stocks, setStocks] = useState([])  // Aqui se almacenan las acciones leidas de la BD
+  const [filteredStocks, setFilteredStocks] = useState([]) // Aqui se almacenan las accions filtradas por el usuario
+  const [loadingStocks, setLoadingStocks] = useState(true) // Indica si se están cargando las acciones
+  const [error, setError] = useState(null)
+  const userId = localStorage.getItem('userId') // Obtiene el ID del usuario del localStorage
 
   const customColors = {
     primary: "#638a63",      // Verde principal (de tu paleta)
@@ -36,82 +35,83 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
     border: "#638a63",       // Color para bordes
     white: "#fafafa",        // Blanco (usando el tono más claro de tu paleta)
     red: "#46695a",          // Reemplazado por verde oscuro para "vender"
-    redHover: "#223536",     // Hover del botón "vender"
-  };
-  
+    redHover: "#223536"      // Hover del botón "vender"
+  }
 
-    // Efecto para cargar las acciones al abrir el modal
+  // Efecto para cargar las acciones al abrir el modal
   useEffect(() => {
     const fetchStocks = async () => {
       try {
-        setLoadingStocks(true);
-        const response = await axios.get("https://tfm-backend-kalx.onrender.com/accions");
+        setLoadingStocks(true)
+        const response = await axios.get("https://tfm-backend-kalx.onrender.com/accions")
 
         if (Array.isArray(response.data.accions)) { // Verifica si la respuesta es un array
-          setStocks(response.data.accions);
-          setFilteredStocks(response.data.accions.slice(0, 5)); // Muestra las primeras 5 acciones
-          setError(null);
+          setStocks(response.data.accions)
+          setFilteredStocks(response.data.accions.slice(0, 5)) // Muestra las primeras 5 acciones
+          setError(null)
         } else {
-          throw new Error('La respuesta de la API no es un array');
+          throw new Error('La respuesta de la API no es un array')
         }
       } catch (err) {
-        console.error('Error getting accions:', err);
-        setError('Error al obtener las acciones');
-        setStocks([]);
-        setFilteredStocks([]);
+        console.error('Error getting accions:', err)
+        setError('Error al obtener las acciones')
+        setStocks([])
+        setFilteredStocks([])
       } finally {
-        setLoadingStocks(false);
+        setLoadingStocks(false)
       }
-    };
-
-    if (isOpen) { // Solo carga las acciones si el modal está abiert
-      fetchStocks();
-      // Resetear selección al abrir el modal
-      setSelectedStock(null);
-      setQuantity(1);
     }
-  }, [isOpen]); // El efecto se ejecuta cuando cambia isOpen
+
+    if (isOpen) { // Solo carga las acciones si el modal está abierto
+      fetchStocks()
+      // Resetear selección al abrir el modal
+      setSelectedStock(null)
+      setQuantity(1)
+    }
+  }, [isOpen]) // El efecto se ejecuta cuando cambia isOpen
 
   useEffect(() => {   // Efecto para filtrar las acciones según el término de búsqueda
     if (stocks.length > 0) {
-      const filtered = stocks.filter(stock =>
-        (stock.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        stock.ticker?.toLowerCase().includes(searchTerm.toLowerCase()))
-      ).slice(0, 5); // Filtra y muestra las primeras 5 coincidencias
-      setFilteredStocks(filtered);
+      const filtered = stocks
+        .filter(stock =>
+          stock.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          stock.ticker?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .slice(0, 5) // Filtra y muestra las primeras 5 coincidencias
+      setFilteredStocks(filtered)
     }
-  }, [searchTerm, stocks]);
+  }, [searchTerm, stocks])
 
-   // Funciones para manejar la selección de acciones, la cantidad y la adición al portafolio
+  // Funciones para manejar la selección de acciones, la cantidad y la adición al portafolio
   const handleStockSelection = (stock) => {
-    setSelectedStock(stock);
-  };
+    setSelectedStock(stock)
+  }
 
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
-  };
+    setQuantity(prev => prev + 1)
+  }
 
   const decrementQuantity = () => {
-    setQuantity(prev => Math.max(1, prev - 1));
-  };
+    setQuantity(prev => Math.max(1, prev - 1))
+  }
 
   const handleQuantityChange = (value) => {
-    setQuantity(Math.max(1, Number(value)));
-  };
+    setQuantity(Math.max(1, Number(value)))
+  }
 
   const handleAddToPortfolio = async () => {
     if (!selectedStock) {
-      alert('Por favor selecciona una acción');
-      return;
+      alert('Por favor selecciona una acción')
+      return
     }
 
     if (!portfolioId || portfolioId === userId) {
-      console.error('Portfolio ID inválido:', portfolioId);
-      alert('Error: Portfolio ID no válido');
-      return;
+      console.error('Portfolio ID inválido:', portfolioId)
+      alert('Error: Portfolio ID no válido')
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const stockData = {
         ticker: selectedStock.ticker,
@@ -119,51 +119,49 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
         price: selectedStock.price,
         cantidad: quantity,
         userId: userId
-      };
+      }
 
       // Primero verificamos si la acción ya existe
       const checkResponse = await axios.get(
         `https://tfm-backend-kalx.onrender.com/portfolios/${portfolioId}/stock/${selectedStock.ticker}`
-      );
+      )
 
-      let response;
+      let response
       if (checkResponse.data.exists) {
         // Si existe, actualizamos la cantidad
         response = await axios.put(
           `https://tfm-backend-kalx.onrender.com/portfolios/${portfolioId}/stock/${selectedStock.ticker}`,
           stockData
-        );
+        )
       } else {
         // Si no existe, la añadimos
         response = await axios.post(
           `https://tfm-backend-kalx.onrender.com/portfolios/${portfolioId}/stock`,
           stockData
-        );
+        )
       }
-      
+
       if (response.status === 200 || response.status === 201) {
         alert('Acción ' + (checkResponse.data.exists ? 'actualizada' : 'agregada') + 
-              ' exitosamente a la cartera ' + selectedPortfolio.name);
-        onClose();
+              ' exitosamente a la cartera ' + selectedPortfolio.name)
+        onClose()
         // Llamar a la función de actualización del padre
         if (typeof onStockUpdate === 'function') {
-          onStockUpdate();
+          onStockUpdate()
         }
       } else {
-        throw new Error('Error al guardar la acción');
+        throw new Error('Error al guardar la acción')
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error al guardar la acción: ' + (error.response?.data?.message || error.message));
+      console.error('Error:', error)
+      alert('Error al guardar la acción: ' + (error.response?.data?.message || error.message))
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-};
-
-
+  }
 
   // Renderizado del componente
-  if (!isOpen) return null; // No renderiza nada si el modal está cerrado
+  if (!isOpen) return null // No renderiza nada si el modal está cerrado
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-16">
@@ -199,10 +197,10 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
             ) : (
               filteredStocks.map((item) => {
                 if (!item.title || !item.ticker || !item.price || !item.change) {
-                  return null;
+                  return null
                 }
 
-                const isSelected = selectedStock?.id === item.id;
+                const isSelected = selectedStock?.id === item.id
 
                 return (
                   <div
@@ -226,8 +224,8 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={(e) => {
-                            e.stopPropagation();
-                            decrementQuantity();
+                            e.stopPropagation()
+                            decrementQuantity()
                           }}
                           className="p-1 bg-gray-200 rounded-full"
                         >
@@ -237,8 +235,8 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
                           type="number"
                           value={quantity}
                           onChange={(e) => {
-                            e.stopPropagation();
-                            handleQuantityChange(e.target.value);
+                            e.stopPropagation()
+                            handleQuantityChange(e.target.value)
                           }}
                           onClick={(e) => e.stopPropagation()}
                           className="w-16 text-center border border-gray-300 rounded-lg bg-white text-gray-800"
@@ -246,8 +244,8 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
                         />
                         <button
                           onClick={(e) => {
-                            e.stopPropagation();
-                            incrementQuantity();
+                            e.stopPropagation()
+                            incrementQuantity()
                           }}
                           className="p-1 bg-gray-200 rounded-full"
                         >
@@ -256,7 +254,7 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
                       </div>
                     )}
                   </div>
-                );
+                )
               })
             )}
           </div>
@@ -290,7 +288,7 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SearchModal;
+export default SearchModal

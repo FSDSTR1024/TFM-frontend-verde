@@ -2,27 +2,27 @@
 // y van a ser enviadas al frontend por Websockets cuando la noticia afecte a un ticker que el
 //usuario tenga en su Portfolio
 
-import { useEffect, useState } from "react";
-import { socket } from "../../socket";
+import { useEffect, useState } from "react"
+import { socket } from "../../socket"
 
 const FinancialNews = () => {
-  console.log("Componente FinancialNews montado");
-  const [news, setNews] = useState(null); // Inicialmente no hay noticias
+  console.log("Componente FinancialNews montado")
+  const [news, setNews] = useState(null) // Inicialmente no hay noticias
 
   useEffect(() => {
     // Escuchar el evento 'FinancialNews'
     socket.on("FinancialNews", (newNews) => {
-      console.log("Nueva noticia recibida:", newNews); // Esto funciona
+      console.log("Nueva noticia recibida:", newNews) // Esto funciona
 
       // Reemplazar la noticia anterior con la nueva
-      setNews(newNews);
-    });
+      setNews(newNews)
+    })
 
     // Limpiar el listener cuando el componente se desmonte
     return () => {
-      socket.off("FinancialNews");
-    };
-  }, []);
+      socket.off("FinancialNews")
+    }
+  }, [])
 
   return (
     <div>
@@ -43,7 +43,7 @@ const FinancialNews = () => {
         <p>No hay noticias disponibles.</p>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default FinancialNews;
+export default FinancialNews

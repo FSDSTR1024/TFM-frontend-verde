@@ -1,6 +1,6 @@
 //En este componente, se grafica el modelo de cajas en la Landing Page
 //Y se insertan todo los componentes
-// Esta compuesto por 5 Columnas x 3 Filas 
+//Esta compuesto por 5 Columnas x 3 Filas 
 
 import Indices from '../indices/Indices'
 import StockIndicesDashboard  from '../grafico/StockIndicesDashboard'

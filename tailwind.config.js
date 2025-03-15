@@ -14,6 +14,8 @@ export default {
         'error-color': '#c44536',
         'verde-claro': '#a8ba86',
         'verde-clarito': '#fafafa',
+        'verde-medio': '#638a63',
+
 
       },
       fontFamily: {
