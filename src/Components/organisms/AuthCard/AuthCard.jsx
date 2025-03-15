@@ -3,11 +3,11 @@ import { useState } from 'react'
 import api from '@/services/api/axios'
 import useAuth from '@/context/AuthContext/useAuth'
 import { X } from 'lucide-react'
-import Button from '@/components/atoms/Button'
-import { EmailInput } from '@/components/atoms/Input'
-import Input from '@/components/atoms/Input'
-import Logo from '@/components/atoms/Logo'
-import PasswordToggle from '@/components/atoms/PasswordToggle/PasswordToggle'
+import Button from '@/Components/atoms/Button'
+import { EmailInput } from '@/Components/atoms/Input'
+import Input from '@/Components/atoms/Input'
+import Logo from '@/Components/atoms/Logo'
+import PasswordToggle from '@/Components/atoms/PasswordToggle/PasswordToggle'
 
 const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
   const { login } = useAuth()
