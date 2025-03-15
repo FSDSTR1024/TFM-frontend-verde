@@ -5,7 +5,6 @@ import Navbar from './Components/organisms/Navbar/Navbar'
 import Footer from './Components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import AuthCard from './Components/organisms/AuthCard/AuthCard'
-import DashboardPage from './pages/DashboardPage'
 import TradingDashboard from './Components/organisms/Tradingdashboard/TradingDashboard'
 import PortfolioList from './Components/organisms/portfolio/PortfolioList'
 
