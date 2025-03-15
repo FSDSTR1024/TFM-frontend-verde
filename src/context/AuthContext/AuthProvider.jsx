@@ -84,7 +84,8 @@ const AuthProvider = ({ children }) => {
         })
 
         console.log('Usuario logueado:', response.data)
-
+        //Aqui guardo la Cookie despues que el usuario se loguea
+        document.cookie = `Token=${response.data.token}; Path=/; HttpOnly; Max-Age=3600`;
         await validateStoredSession()
 
         navigate('/', { replace: true })
