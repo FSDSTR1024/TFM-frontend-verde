@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react"
+// Este componente grafica criptomonedas flotando en el aire
+//Tiene un boton para dirgirse a noticias relacionadas con Criptomonedas
+
+import{ useEffect, useState } from "react"
 
 export default function MundoCripto() {
   return (

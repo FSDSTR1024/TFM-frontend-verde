@@ -1,3 +1,5 @@
+//Este componente muestra un Calendario relacionado con eventos que afectan a los mercados
+
 import { useState } from "react"
 
 export default function Calendario() {
