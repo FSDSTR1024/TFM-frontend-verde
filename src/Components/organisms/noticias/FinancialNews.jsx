@@ -3,7 +3,7 @@
 //usuario tenga en su Portfolio
 
 import { useEffect, useState } from "react"
-import { socket } from "../../socket"
+import { socket } from "../../../socket"
 
 const FinancialNews = () => {
   console.log("Componente FinancialNews montado")
