@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '@/services/api/axios'
 import useAuth from '@/context/AuthContext/useAuth'
+import { toast } from 'react-toastify'
 import { X } from 'lucide-react'
 import Button from '@/components/atoms/Button'
 import { EmailInput } from '@/components/atoms/Input'
@@ -19,6 +20,20 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
   })
   const [error, setError] = useState(null)
 
+  const showSuccessMessage = (message) => {
+    console.log('Ejecutando showSuccessMessage:', message)
+    toast.success(message, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'colored',
+    })
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({
@@ -35,7 +50,6 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     console.log('formDatatoSend', formDatatoSend)
     if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
 
-    // Lo siguiente es valdir que email y password no estén vacios antes de enviar
     if (!formDatatoSend.email || !formDatatoSend.password) {
       setError('Todos los campos son obligatorios')
       return
@@ -45,12 +59,17 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
 
     try {
       const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
-
       const response = await api.post(endpoint, formDatatoSend, {
         withCredentials: true,
       })
 
       console.log('Respuesta del servidor:', response.data)
+
+      if (activeForm === 'register') {
+        showSuccessMessage(
+          'Registro exitoso, revisa tu correo para confirmarlo.'
+        )
+      }
 
       login(formDatatoSend, navigate) //  Pasamos navigate a login
       onClose()
