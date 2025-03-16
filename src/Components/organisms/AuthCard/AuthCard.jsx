@@ -20,20 +20,6 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
   })
   const [error, setError] = useState(null)
 
-  const showSuccessMessage = (message) => {
-    console.log('Ejecutando showSuccessMessage:', message)
-    toast.success(message, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'colored',
-    })
-  }
-
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({
@@ -66,7 +52,9 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       console.log('Respuesta del servidor:', response.data)
 
       if (activeForm === 'register') {
-        showSuccessMessage(
+        // Guarda el mensaje solo después de una respuesta exitosa
+        localStorage.setItem(
+          'registrationSuccess',
           'Registro exitoso, revisa tu correo para confirmarlo.'
         )
       }

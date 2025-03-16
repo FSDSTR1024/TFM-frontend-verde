@@ -6,6 +6,8 @@ import Footer from './components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import AuthCard from './components/organisms/AuthCard/AuthCard'
 import DashboardPage from './pages/DashboardPage'
+import { ToastContainer } from 'react-toastify' // 🔥 IMPORTANTE
+import 'react-toastify/dist/ReactToastify.css' // 🔥 IMPORTANTE
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
@@ -88,6 +90,13 @@ const App = () => {
           onClose={handleCloseModal}
         />
       )}
+
+      {/* Esto permitirá que los toasts se muestren en toda la aplicación */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+      />
     </BrowserRouter>
   )
 }
