@@ -32,16 +32,15 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     setError(null)
 
     const formDatatoSend = { ...formData }
-    console.log('formDatatoSend', formDatatoSend)
     if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
 
-    // Lo siguiente es valdir que email y password no estén vacios antes de enviar
+    // Validar que email y password no estén vacios antes de enviar
     if (!formDatatoSend.email || !formDatatoSend.password) {
       setError('Todos los campos son obligatorios')
       return
     }
 
-    console.log('Enviando datos:', formDatatoSend) // verifica si los datos son correctos antes de enviarlos
+    console.log('Enviando datos:', formDatatoSend)
 
     try {
       const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
@@ -52,7 +51,8 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
 
       console.log('Respuesta del servidor:', response.data)
 
-      login(formDatatoSend, navigate) //  Pasamos navigate a login
+      // Pasamos la respuesta directamente a login en lugar de las credenciales
+      login(response.data, navigate)
       onClose()
     } catch (error) {
       console.error(
@@ -72,7 +72,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     <div
       id="authModalBackground"
       className="fixed inset-0 bg-primary-dark/50 flex justify-center items-center z-50"
-      onClick={(e) => e.target.id === 'authModalBackground' && onClose()} // ierra modal al hacer clic fuera
+      onClick={(e) => e.target.id === 'authModalBackground' && onClose()} // Cierra modal al hacer clic fuera
     >
       <section
         className="relative bg-primary-light border-2 border-primary-dark rounded-lg p-6 w-full max-w-md min-h-[540px] shadow-lg flex flex-col"
