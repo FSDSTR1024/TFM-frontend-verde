@@ -43,11 +43,17 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error('Error al renovar el token:', refreshError);
 
-        // Si el usuario ya está en /login, no redirigir nuevamente
-        const currentPath = window.location.pathname;
-        if (!currentPath.includes('/login')) {
-          console.warn('Redirigiendo al login debido a sesión expirada.');
-          window.location.href = `/login?reason=session_expired`;
+        const hasToken = document.cookie.includes('Token=')
+
+        // Solo redirigir si el usuario tenía ya una sesión iniciada previamente
+        if (hasToken) {
+          const currentPath = window.location.pathname
+          if(!currentPath.includes('/login')) {
+            consele.warn('Redirigiendo al login debido a su sesión expirada.')
+            window.location.href = `/login?reason=session_expired`
+          }
+        } else {
+          console.warn('No hay sesión activa. No se redirige.');
         }
       } finally {
         isRefreshing = false;

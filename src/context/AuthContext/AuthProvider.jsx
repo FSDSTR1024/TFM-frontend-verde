@@ -40,29 +40,29 @@ const AuthProvider = ({ children }) => {
   // Validar sesión almacenada
   // ==============================
   const validateStoredSession = useCallback(async () => {
+    const token = document.cookie.includes('token')
+
+    if (!hasToken) {
+      console.log(
+        'No existe un token almacenado. Se omite la validación de sesión.'
+      )
+      setChecking(false) // Con esto, evitamos que la app quede en estado de carga infinito
+      return
+    }
+
     try {
       const response = await api.get('/auth/validate-token', {
         withCredentials: true,
       })
 
-      console.log('Sesión válida:', response.data)
+      console.log('Sesión válida', response.data)
 
       if (response.data) {
-        setUser((prevUser) => {
-          if (
-            prevUser?.id !== response.data.id ||
-            prevUser?.username !== response.data.username ||
-            prevUser?.email !== response.data.email ||
-            prevUser?.profileImage !== response.data.profileImage
-          ) {
-            return response.data // Solo actualiza si hay cambios
-          }
-          return prevUser
-        })
+        setUser(response.data)
         setIsLoggedIn(true)
       }
     } catch (error) {
-      console.warn('Sesión no válida:', error.response?.data || error.message)
+      console.warn('Sesión no valida:', error.response?.data || error.message)
       logout()
     } finally {
       setChecking(false)
@@ -132,7 +132,15 @@ const AuthProvider = ({ children }) => {
   // Ejecutar `validateStoredSession` al cargar la página
   // ==============================
   useEffect(() => {
-    validateStoredSession()
+    const hasToken = document.cookie.includes('Token=')
+
+    if (hasToken) {
+      console.log('Token encontrado. Validando sesión...')
+      validateStoredSession()
+    } else {
+      console.log('No hay token. Omitiendo validación de sesión.')
+      setChecking(false) // Evita que la app quede bloqueada en "cargando"
+    }
   }, [validateStoredSession])
 
   // ==============================
