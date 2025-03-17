@@ -37,7 +37,13 @@ api.interceptors.response.use(
         console.log('Token renovado correctamente.');
 
         // Actualizar headers con el nuevo token y reintentar la solicitud original
-        originalRequest.headers['Authorization'] = `Bearer ${refreshResponse.data.accessToken}`;
+        const newToken = `Bearer ${refreshResponse.data.accessToken}`
+
+        // Actualizar los headers globales para todas las futuras solicitudes
+        api.defaults.headers.common["Authorization"] = newToken
+
+        // También se deben de actualziar los headers de la solicitud original
+        originalRequest.headers["Authorization"] = newToken
 
         return api(originalRequest);
       } catch (refreshError) {

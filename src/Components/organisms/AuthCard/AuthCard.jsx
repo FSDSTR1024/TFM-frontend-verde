@@ -59,7 +59,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         )
       }
 
-      login(formDatatoSend, navigate) //  Pasamos navigate a login
+      login(response.data.token, navigate) //  Pasamos navigate a login
       onClose()
     } catch (error) {
       console.error(

@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
   // Validar sesión almacenada
   // ==============================
   const validateStoredSession = useCallback(async () => {
-    const token = document.cookie.includes('token')
+    const token = document.cookie.includes('token=')
 
     if (!token) {
       console.log(
@@ -60,6 +60,9 @@ const AuthProvider = ({ children }) => {
       if (response.data) {
         setUser(response.data)
         setIsLoggedIn(true)
+
+        // Guardar token en headers de axios para futuras solicitudes
+        api.default.headers.common['Authorization'] = `Bearer ${response.data.token}`
       }
     } catch (error) {
       console.warn('Sesión no valida:', error.response?.data || error.message)
