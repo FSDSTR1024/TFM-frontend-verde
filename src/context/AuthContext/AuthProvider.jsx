@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
   const validateStoredSession = useCallback(async () => {
     const token = document.cookie.includes('token')
 
-    if (!hasToken) {
+    if (!token) {
       console.log(
         'No existe un token almacenado. Se omite la validación de sesión.'
       )
