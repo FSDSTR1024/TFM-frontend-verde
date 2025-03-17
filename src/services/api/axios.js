@@ -6,7 +6,7 @@ import { useContext } from 'react'
 import { AuthContext } from '@/context/AuthContext/AuthContext'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000' || 'https://tfm-backend-verde.onrender.com',
   withCredentials: true,
   timeout: 10000,
   headers: {
@@ -37,7 +37,7 @@ api.interceptors.response.use(
       try {
         // Intentar renovar el token antes de forzar el logout
         const refreshResponse = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/refresh-token`,
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3000' || 'https://tfm-backend-verde.onrender.com'}/auth/refresh-token`,
           {},
           { withCredentials: true }
         )
