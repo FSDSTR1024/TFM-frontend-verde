@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
-  const { user, setUser, validateStoredSession } = useAuth()
+  const { user, login } = useAuth()
   const fileRef = useRef(null)
   const navigate = useNavigate()
 
@@ -126,12 +126,12 @@ const ProfilePage = () => {
     if (!file) return
 
     const formDataImage = new FormData()
-    formDataImage.append('file', file) // Se usa 'file' como clave igual que se hace en postman
-    formDataImage.append('upload_preset', 'user_profile') // Usa "upload_preset" como clave para configurar el preset de cloudinary
+    formDataImage.append('file', file) // Clave esperada por Cloudinary
+    formDataImage.append('upload_preset', 'user_profile') // Configuración de Cloudinary
 
     setLoading(true)
     try {
-      // Subir la imagen directamente a Cloudinary
+      // ✅ Subir la imagen a Cloudinary
       const response = await api.post(
         'https://api.cloudinary.com/v1_1/dwsnf2wlr/image/upload',
         formDataImage,
@@ -143,18 +143,16 @@ const ProfilePage = () => {
       )
 
       const updatedImage = response.data.secure_url
-      if (!updatedImage)
-        throw new Error('No se pudo obtener la URL de la imagen.')
+      if (!updatedImage) throw new Error('No se pudo obtener la URL de la imagen.')
 
-      await api.put('/auth/profile/avatar', { profileImage: updatedImage })
+      // Envia la URL de la imagen al backend para actualizarla
+      const updatedUserResponse = await api.put('/auth/profile/avatar', { profileImage: updatedImage })
 
-      setUser((prevUser) => ({
-        ...prevUser,
-        profileImage: updatedImage,
-      }))
-      setPreviewImage(updatedImage)
+      // Con los cambuos realizados en AuthProvider.jsx ahora usamos `login()` para actualizar el estado global del usuario
+      login(updatedUserResponse.data.updatedUser)
 
-      await validateStoredSession()
+      setPreviewImage(updatedImage) // Sigue actualizando la previsualización de la imagen
+
       showSuccessMessage('Imagen actualizada con éxito.')
 
       return updatedImage
@@ -166,7 +164,6 @@ const ProfilePage = () => {
       setLoading(false)
     }
   }
-
   // ================================
   // Actualizar perfil en Backend (Perfil Completo)
   // ================================

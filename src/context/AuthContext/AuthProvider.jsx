@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
     }
 
     checkSession()
-  }, [])
+  }, [isLoggedIn])
 
   return (
     <AuthContext.Provider
