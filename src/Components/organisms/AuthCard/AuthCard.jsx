@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '@/services/api/axios'
 import useAuth from '@/context/AuthContext/useAuth'
+import { getUserSession } from '@/services/api/authController' // ✅ Importar correctamente
 import { toast } from 'react-toastify'
 import { X } from 'lucide-react'
 import Button from '@/components/atoms/Button'
@@ -33,15 +34,17 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     setError(null)
 
     const formDatatoSend = { ...formData }
-    console.log('formDatatoSend', formDatatoSend)
-    if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
+    console.log('formDatatoSend antes de envío:', formDatatoSend)
+
+    // Eliminar username si estamos en login
+    if (activeForm === 'login') delete formDatatoSend.username
 
     if (!formDatatoSend.email || !formDatatoSend.password) {
       setError('Todos los campos son obligatorios')
       return
     }
 
-    console.log('Enviando datos:', formDatatoSend) // verifica si los datos son correctos antes de enviarlos
+    console.log('Enviando datos de login:', formDatatoSend)
 
     try {
       const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
@@ -59,21 +62,26 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         )
       }
 
-      login(response.data.token, navigate) //  Pasamos navigate a login
+      await getUserSession() // ✅ Confirmar sesión activa tras login
+
+      navigate('/dashboard')
       onClose()
     } catch (error) {
       console.error(
-        'Error en la autenticación:',
+        'Error en autenticación:',
         error.response?.data || error.message
       )
       setError(error.response?.data?.message || 'Error en la autenticación')
     }
   }
 
+  // ✅ Definir `isFormValid` correctamente ANTES del `return`
   const isFormValid =
     activeForm === 'login'
-      ? formData.email.trim() && formData.password.trim()
-      : Object.values(formData).every((field) => field.trim())
+      ? formData.email?.trim() && formData.password?.trim()
+      : Object.values(formData).every((field) => field.trim() !== '')
+
+  console.log('isFormValid:', isFormValid) // 🔥 Depuración
 
   return (
     <div
@@ -105,6 +113,10 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         >
           {activeForm === 'login' ? 'Iniciar sesión' : 'Registrarse'}
         </h2>
+
+        <p className="text-center text-sm text-primary-dark">
+          {isFormValid ? 'Formulario válido' : 'Formulario incompleto'}
+        </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-grow">
           {activeForm === 'register' && (

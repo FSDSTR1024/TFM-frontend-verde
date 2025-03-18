@@ -6,6 +6,22 @@ import api from './axios'
  * @param {string} password - Contraseña del usuario.
  * @returns {Promise<object>} - Respuesta con los datos del usuario autenticado.
  */
+export const logout = async () => {
+  try {
+    console.log('Enviando solicitud de logout...')
+    const response = await api.post(
+      '/auth/logout',
+      {},
+      { withCredentials: true }
+    )
+    console.log('Respuesta del logout:', response.data)
+    return true
+  } catch (error) {
+    console.error('Error en logout:', error.response?.data || error.message)
+    return false
+  }
+}
+
 export const login = async (email, password) => {
   try {
     console.log('Enviando login con:', { email, password })
@@ -14,29 +30,11 @@ export const login = async (email, password) => {
       { email, password },
       { withCredentials: true }
     )
+    console.log('Respuesta del servidor:', response.data)
     return response.data
   } catch (error) {
     console.error('Error en login:', error.response?.data || error.message)
     throw error
-  }
-}
-
-/**
- * Cierra la sesión del usuario.
- * Llama a `/auth/logout` en el backend y elimina la sesión en el frontend.
- */
-export const logout = async () => {
-  try {
-    const response = await api.post(
-      '/auth/logout',
-      {},
-      { withCredentials: true }
-    )
-    console.log('Logout exitoso:', response.data)
-    return true
-  } catch (error) {
-    console.error('Error en logout:', error.response?.data || error.message)
-    return false
   }
 }
 
@@ -46,16 +44,14 @@ export const logout = async () => {
  */
 export const getUserSession = async () => {
   try {
+    console.log('Verificando sesión...') // 🔥 Depuración
     const response = await api.get('/auth/validate-token', {
-      withCredentials: true,
+      withCredentials: true, // Asegurar que se envíe la cookie
     })
-    return {
-      id: response.data.id,
-      username: response.data.username,
-      email: response.data.email,
-      role: response.data.role,
-      profileImage: response.data.profileImage,
-    }
+
+    console.log('Sesión validada:', response.data) // 🔍 Verificar respuesta del backend
+
+    return response.data
   } catch (error) {
     console.error(
       'Error validando token:',
