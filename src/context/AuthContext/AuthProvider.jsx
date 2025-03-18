@@ -2,18 +2,22 @@ import { useEffect, useState, useCallback } from 'react'
 import api from '@/services/api/axios'
 import { AuthContext } from './AuthContext'
 
+/**
+ * Proveedor de Autenticación que gestiona el estado global de la sesión del usuario.
+ * Incluye manejo de login, logout y validación de sesión.
+ */
+
 const AuthProvider = ({ children }) => {
-  // ==============================
-  // Estado Global de Autenticación
-  // ==============================
+  // Estado global de autenticación
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [checking, setChecking] = useState(true)
   const [user, setUser] = useState(null)
 
-  // ==============================
-  // Función de logout (Debe ir antes de `validateStoredSession`)
-  // ==============================
-  const logout = useCallback(async (navigate) => {
+  /**
+   * Función para cerrar sesión.
+   * Llama al backend para eliminar la sesión y limpia el estado global.
+   */
+  const logout = useCallback(async () => {
     try {
       await api.post('/auth/logout', {}, { withCredentials: true })
     } catch (error) {
@@ -21,24 +25,21 @@ const AuthProvider = ({ children }) => {
     } finally {
       setUser(null)
       setIsLoggedIn(false)
-
-      if (navigate) {
-        navigate('/login', { replace: true })
-      }
-
       setChecking(false)
 
-      setTimeout(() => {
+      // Si el usuario estaba en otra página, redirigir al login
+      if (window.location.pathname !== '/login') {
         window.location.href = '/login'
-      }, 100)
+      }
     }
   }, [])
 
-  // ==============================
-  // Validar sesión almacenada
-  // ==============================
+  /**
+   * Función para validar si hay una sesión almacenada.
+   * Verifica con el backend si el usuario está autenticado y actualiza el estado.
+   */
   const validateStoredSession = useCallback(async () => {
-    console.log('Intentando validar sesión con /auth/validate-token...')
+    console.log('Validando sesión almacenada...')
     try {
       const response = await api.get('/auth/validate-token', {
         withCredentials: true,
@@ -49,89 +50,72 @@ const AuthProvider = ({ children }) => {
       if (response.data) {
         setUser(response.data)
         setIsLoggedIn(true)
-
-        // Guardar token en headers de axios para futuras solicitudes
-        api.default.headers.common['Authorization'] =
+        api.defaults.headers.common['Authorization'] =
           `Bearer ${response.data.token}`
       }
     } catch (error) {
-      console.warn('Sesión no valida:', error.response?.data || error.message)
+      console.warn('Sesión no válida:', error.response?.data || error.message)
       logout()
     } finally {
       setChecking(false)
     }
   }, [logout])
 
-  // ==============================
-  // Función de login
-  // ==============================
-  const login = useCallback(
-    async (credentials, navigate) => {
-      try {
-        console.log('Intentando iniciar sesión con:', credentials)
-
-        if (!credentials?.email || !credentials?.password) {
-          console.error('Error: Email o password no proporcionados.')
-          return
-        }
-
-        const response = await api.post('/auth/login', credentials, {
-          withCredentials: true,
-        })
-
-        console.log('Usuario logueado:', response.data)
-
-        await validateStoredSession()
-
-        navigate('/dashboard', { replace: true })
-      } catch (error) {
-        console.error('Error en login:', error)
-      }
-    },
-    [validateStoredSession]
-  )
-
-  // ==============================
-  // Refresh Token cada 55 minutos
-  // ==============================
+  /**
+   * Efecto para validar la sesión al cargar la aplicación.
+   * Se asegura de ejecutar la validación solo si el componente sigue montado.
+   */
   useEffect(() => {
-    if (isLoggedIn) {
-      const interval = setInterval(
-        async () => {
-          try {
-            const response = await api.post(
-              '/auth/refresh-token',
-              {},
-              { withCredentials: true }
-            )
+    let isMounted = true
+    console.log('Ejecutando validateStoredSession')
 
+    validateStoredSession().finally(() => {
+      if (isMounted) {
+        setChecking(false)
+      }
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  /**
+   * Efecto para manejar la renovación del token de autenticación.
+   * Se ejecuta periódicamente si el usuario está autenticado.
+   */
+  useEffect(() => {
+    if (!isLoggedIn) return
+
+    const interval = setInterval(
+      async () => {
+        try {
+          const response = await api.post(
+            '/auth/refresh-token',
+            {},
+            { withCredentials: true }
+          )
+
+          if (response.data) {
             setUser((prevUser) => ({
               ...prevUser,
-              ...response.data, // Aseguramos que los datos sean los correctos
+              ...response.data,
             }))
-          } catch (error) {
-            console.error('Error al renovar el token:', error)
-            logout()
           }
-        },
-        55 * 60 * 1000
-      )
+        } catch (error) {
+          console.error('Error al renovar el token:', error)
+          logout()
+        }
+      },
+      55 * 60 * 1000
+    ) // Se ejecuta cada 55 minutos
 
-      return () => clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [isLoggedIn, logout])
 
-  // ==============================
-  // Ejecutar `validateStoredSession` al cargar la página
-  // ==============================
-  useEffect(() => {
-    console.log('Ejecutando validateStoredSession')
-    validateStoredSession()
-  }, [validateStoredSession])
-
-  // ==============================
-  // Renderizar el Contexto
-  // ==============================
+  /**
+   * Proveedor de contexto que permite el acceso global al estado de autenticación.
+   */
   return (
     <AuthContext.Provider
       value={{
@@ -139,7 +123,6 @@ const AuthProvider = ({ children }) => {
         checking,
         user,
         setUser,
-        login,
         logout,
         validateStoredSession,
       }}
