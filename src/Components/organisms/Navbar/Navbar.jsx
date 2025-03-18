@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import Logo from '@/components/atoms/Logo'
-import NavLinks from '@/components/molecules/NavLinks'
+import Logo from '@/Components/atoms/Logo'
+import NavLinks from '@/Components/molecules/NavLinks'
 import { Link } from 'react-router-dom'
 
 const Navbar = ({ openAuthModal, setDropdownHeight }) => {
