@@ -62,7 +62,6 @@ const NavLinks = ({ mobile, onClose }) => {
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
                 onClick={() => {
-                  console.log("botón de cerrarsesión presionado")
                   handleLogout()
                 }}
                 ariaLabel="Cerrar sesión"

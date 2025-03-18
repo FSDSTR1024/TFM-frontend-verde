@@ -54,7 +54,6 @@ const ProfilePage = () => {
   // Manejo de Inputs
   // ================================
   const handleChange = (e) => {
-    console.log(`Valor ingresado en ${e.target.name}:`, e.target.value)
     const { name, value } = e.target
 
     // Verificar si el campo modificado es `username` y capitalizarlo correctamente
@@ -133,7 +132,6 @@ const ProfilePage = () => {
     setLoading(true)
     try {
       // Subir la imagen a Cloudinary
-      console.log('Enviando imagen a Cloudinary...') // Depuración (borrar en producción)
       const response = await api.post(
         'https://api.cloudinary.com/v1_1/dwsnf2wlr/image/upload',
         formDataImage,
@@ -148,23 +146,14 @@ const ProfilePage = () => {
       if (!updatedImage)
         throw new Error('No se pudo obtener la URL de la imagen.')
 
-      console.log('Imagen subida a Cloudinary:', updatedImage) // Depuración (borrar en producción)
-
-      console.log('Enviando URL de la imagen al backend...') // Depuración (borrar en producción)
       // Envia la URL de la imagen al backend para actualizarla
       const updatedUserResponse = await api.put('/auth/profile/avatar', {
         profileImage: updatedImage,
       })
 
-      console.log('Respuesta del backend:', updatedUserResponse.data) // Depuración (borrar en producción)
 
       // Con los cambios realizados en AuthProvider.jsx ahora usamos `login()` para actualizar el estado global del usuario
       login(updatedUserResponse.data.updatedUser)
-
-      console.log(
-        'Imagen actualizada en AuthContext:',
-        updatedUserResponse.data.updatedUser
-      ) // Depuración (borrar en producción)
 
       setPreviewImage(updatedImage) // Sigue actualizando la previsualización de la imagen
 

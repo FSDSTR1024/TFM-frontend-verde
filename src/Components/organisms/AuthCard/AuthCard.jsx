@@ -52,7 +52,6 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       const response = await api.post(endpoint, formDatatoSend, {
         withCredentials: true,
       })
-      console.log('Respuesta del servidor:', response.data)
 
       if (activeForm === 'register') {
         localStorage.setItem(

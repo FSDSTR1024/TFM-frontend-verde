@@ -15,7 +15,6 @@ const AuthProvider = ({ children }) => {
    * - Actualiza el estado global del usuario y la sesión.
    */
   const login = (userData) => {
-    console.log('Actualizando estado global con login():', userData) // Depuracion borrar en produccion
     setUser(userData)
     setIsLoggedIn(true)
   }
@@ -27,10 +26,8 @@ const AuthProvider = ({ children }) => {
    * - Redirige al login
    */
   const handleLogout = useCallback(async () => {
-    console.log('Ejecutando logout...')
     const success = await logout()
     if (success) {
-      console.log('Logout exitoso, limpiando sesión...')
       setUser(null)
       setIsLoggedIn(false)
       setChecking(false)
@@ -54,7 +51,6 @@ const AuthProvider = ({ children }) => {
     }
 
     checkSession()
-    console.log('Nuevo user.profileImage en AuthProvider:', user?.profileImage) // Depuración borrar en producción
   }, [isLoggedIn, user?.profileImage])
 
   return (
