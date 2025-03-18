@@ -1,7 +1,7 @@
 import { useState, useContext, useCallback } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { AuthContext } from './context/AuthContext/AuthContext'
-import Navbar from './components/organisms/Navbar/Navbar.jsx'
+import Navbar from '@/components/organisms/Navbar/Navbar'
 import Footer from './components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import AuthCard from './components/organisms/AuthCard/AuthCard'
