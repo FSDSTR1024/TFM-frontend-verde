@@ -46,7 +46,7 @@ export const getUserSession = async () => {
   try {
     console.log('Verificando sesión...') // 🔥 Depuración
     const response = await api.get('/auth/validate-token', {
-      withCredentials: true, // Asegurar que se envíe la cookie
+      withCredentials: true, // 🔥 Asegurar que la cookie de sesión se envíe
     })
 
     console.log('Sesión validada:', response.data) // 🔍 Verificar respuesta del backend
@@ -57,6 +57,12 @@ export const getUserSession = async () => {
       'Error validando token:',
       error.response?.data || error.message
     )
+
+    if (error.response?.status === 401) {
+      console.warn('Token inválido, cerrando sesión...')
+      await logout()
+    }
+
     return null
   }
 }

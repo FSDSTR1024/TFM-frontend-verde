@@ -31,27 +31,38 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   /**
-   * Efecto para comprobar la sesión al montar el componente.
+   * Verifica la sesión del usuario.
+   * - Se ejecuta al montar el componente
+   * - Se ejecuta cada vez que `isLoggedIn` cambia
    */
-  useEffect(() => {
-    const verifySession = async () => {
-      const sessionUser = await getUserSession()
-      if (sessionUser) {
-        setUser(sessionUser)
-        setIsLoggedIn(true)
-      } else {
-        setIsLoggedIn(false)
-        setUser(null)
-      }
-      setChecking(false)
+  const verifySession = async () => {
+    setChecking(true)
+    const sessionUser = await getUserSession()
+    if (sessionUser) {
+      setUser(sessionUser)
+      setIsLoggedIn(true)
+    } else {
+      setUser(null)
+      setIsLoggedIn(false)
     }
+    setChecking(false)
+  }
 
+  // 🔥 Se ejecuta al montar el componente
+  useEffect(() => {
     verifySession()
   }, [])
 
+  // 🔥 Nuevo efecto: detecta cuando `isLoggedIn` cambia y actualiza la sesión automáticamente
+  useEffect(() => {
+    if (isLoggedIn) {
+      verifySession() // 🔥 Refresca la sesión automáticamente después del login
+    }
+  }, [isLoggedIn])
+
   return (
     <AuthContext.Provider
-      value={{ user, isLoggedIn, checking, login, handleLogout }}
+      value={{ user, isLoggedIn, checking, login, handleLogout, verifySession }}
     >
       {children}
     </AuthContext.Provider>

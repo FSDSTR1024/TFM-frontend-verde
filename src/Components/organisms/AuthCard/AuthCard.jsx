@@ -29,6 +29,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     }))
   }
 
+  const { verifySession } = useContext(AuthContext)
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
@@ -36,7 +37,6 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     const formDatatoSend = { ...formData }
     console.log('formDatatoSend antes de envío:', formDatatoSend)
 
-    // Eliminar username si estamos en login
     if (activeForm === 'login') delete formDatatoSend.username
 
     if (!formDatatoSend.email || !formDatatoSend.password) {
@@ -55,14 +55,13 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       console.log('Respuesta del servidor:', response.data)
 
       if (activeForm === 'register') {
-        // Guarda el mensaje solo después de una respuesta exitosa
         localStorage.setItem(
           'registrationSuccess',
           'Registro exitoso, revisa tu correo para confirmarlo.'
         )
       }
 
-      await getUserSession() // ✅ Confirmar sesión activa tras login
+      await verifySession() // ✅ Ahora se actualizará la sesión correctamente después del login
 
       navigate('/dashboard')
       onClose()
@@ -74,15 +73,6 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       setError(error.response?.data?.message || 'Error en la autenticación')
     }
   }
-
-  // ✅ Definir `isFormValid` correctamente ANTES del `return`
-  const isFormValid =
-    activeForm === 'login'
-      ? formData.email?.trim() && formData.password?.trim()
-      : Object.values(formData).every((field) => field.trim() !== '')
-
-  console.log('isFormValid:', isFormValid) // 🔥 Depuración
-
   return (
     <div
       id="authModalBackground"
