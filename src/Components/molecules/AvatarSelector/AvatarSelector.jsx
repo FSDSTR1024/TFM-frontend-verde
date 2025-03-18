@@ -29,8 +29,8 @@ const AvatarSelector = ({ onClose, onSaveAvatar }) => {
   // ==========================================
   const handleSave = () => {
     if (selectedAvatar) {
-      onSaveAvatar(selectedAvatar) // 👈 Manda el avatar al ProfileForm
-      onClose() // 👈 CIERRA EL MODAL
+      onSaveAvatar(selectedAvatar) // Manda el avatar al ProfileForm
+      onClose() // CIERRA EL MODAL
     }
   }
 

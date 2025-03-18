@@ -131,7 +131,8 @@ const ProfilePage = () => {
 
     setLoading(true)
     try {
-      // ✅ Subir la imagen a Cloudinary
+      // Subir la imagen a Cloudinary
+      console.log('Enviando imagen a Cloudinary...') // Depuración (borrar en producción)
       const response = await api.post(
         'https://api.cloudinary.com/v1_1/dwsnf2wlr/image/upload',
         formDataImage,
@@ -143,17 +144,30 @@ const ProfilePage = () => {
       )
 
       const updatedImage = response.data.secure_url
-      if (!updatedImage) throw new Error('No se pudo obtener la URL de la imagen.')
+      if (!updatedImage)
+        throw new Error('No se pudo obtener la URL de la imagen.')
 
+      console.log('Imagen subida a Cloudinary:', updatedImage) // Depuración (borrar en producción)
+
+      console.log('Enviando URL de la imagen al backend...') // Depuración (borrar en producción)
       // Envia la URL de la imagen al backend para actualizarla
-      const updatedUserResponse = await api.put('/auth/profile/avatar', { profileImage: updatedImage })
+      const updatedUserResponse = await api.put('/auth/profile/avatar', {
+        profileImage: updatedImage,
+      })
 
-      // Con los cambuos realizados en AuthProvider.jsx ahora usamos `login()` para actualizar el estado global del usuario
+      console.log('Respuesta del backend:', updatedUserResponse.data) // Depuración (borrar en producción)
+
+      // Con los cambios realizados en AuthProvider.jsx ahora usamos `login()` para actualizar el estado global del usuario
       login(updatedUserResponse.data.updatedUser)
+
+      console.log(
+        'Imagen actualizada en AuthContext:',
+        updatedUserResponse.data.updatedUser
+      ) // Depuración (borrar en producción)
 
       setPreviewImage(updatedImage) // Sigue actualizando la previsualización de la imagen
 
-      showSuccessMessage('Imagen actualizada con éxito.')
+      toast.success('Imagen de perfil actualizada con éxito.')
 
       return updatedImage
     } catch (error) {
@@ -176,11 +190,12 @@ const ProfilePage = () => {
 
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
-        setUser((prevUser) => ({ ...prevUser, username: data.username }))
+        login({ ...user, username: data.username }) // Usamos `login()`
       }
 
       if (data.email) {
         await api.put('/auth/profile/email', { email: data.email })
+        login({ ...user, email: data.email }) // Usamos `login()`
       }
 
       if (data.newPassword) {
@@ -196,19 +211,15 @@ const ProfilePage = () => {
           target: { files: [data.profileImage] },
         })
         if (updatedImage) {
-          setUser((prevUser) => ({ ...prevUser, profileImage: updatedImage }))
+          login({ ...user, profileImage: updatedImage }) // Conservamos los datos del usuario
         }
       } else if (typeof data.profileImage === 'string') {
-        await api.put('/auth/profile/avatar', {
+        const updatedUserResponse = await api.put('/auth/profile/avatar', {
           profileImage: data.profileImage,
         })
-        setUser((prevUser) => ({
-          ...prevUser,
-          profileImage: data.profileImage,
-        }))
+        login(updatedUserResponse.data.updatedUser) // Usamos `login()`
       }
 
-      await validateStoredSession()
       showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
       console.error('Error en updateProfile:', error)

@@ -15,6 +15,7 @@ const AuthProvider = ({ children }) => {
    * - Actualiza el estado global del usuario y la sesión.
    */
   const login = (userData) => {
+    console.log('Actualizando estado global con login():', userData) // Depuracion borrar en produccion
     setUser(userData)
     setIsLoggedIn(true)
   }
@@ -46,14 +47,15 @@ const AuthProvider = ({ children }) => {
     const checkSession = async () => {
       const sessionUser = await getUserSession()
       if (sessionUser) {
-        setUser(sessionUser)
+        setUser(sessionUser) // Actualiza el estado global del usuario
         setIsLoggedIn(true)
       }
       setChecking(false)
     }
 
     checkSession()
-  }, [isLoggedIn])
+    console.log('Nuevo user.profileImage en AuthProvider:', user?.profileImage) // Depuración borrar en producción
+  }, [isLoggedIn, user?.profileImage])
 
   return (
     <AuthContext.Provider
