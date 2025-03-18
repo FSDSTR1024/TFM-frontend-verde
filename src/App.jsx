@@ -6,8 +6,8 @@ import Footer from './components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
 import AuthCard from './components/organisms/AuthCard/AuthCard'
 import DashboardPage from './pages/DashboardPage'
-import { ToastContainer } from 'react-toastify' // 🔥 IMPORTANTE
-import 'react-toastify/dist/ReactToastify.css' // 🔥 IMPORTANTE
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
@@ -26,7 +26,7 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
-  const [dropdownHeight, setDropdownHeight] = useState(0) // Nueva variable de estado
+  const [dropdownHeight, setDropdownHeight] = useState(0)
 
   const openAuthModal = useCallback((formType) => {
     setActiveForm(formType)
