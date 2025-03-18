@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '@/services/api/axios'
 import useAuth from '@/context/AuthContext/useAuth'
-import { getUserSession } from '@/services/api/authController' // ✅ Importar correctamente
+import { getUserSession } from '@/services/api/authController'
 import { toast } from 'react-toastify'
 import { X } from 'lucide-react'
 import Button from '@/components/atoms/Button'
@@ -29,14 +29,17 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     }))
   }
 
-  const { verifySession } = useContext(AuthContext)
+  // Validar los datos ingresados y hacer visible el formulario
+  const isFormValid =
+    formData.email.trim() !== '' &&
+    formData.password.trim() !== '' &&
+    (activeForm !== 'register' || formData.username.trim() !== '')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
 
     const formDatatoSend = { ...formData }
-    console.log('formDatatoSend antes de envío:', formDatatoSend)
-
     if (activeForm === 'login') delete formDatatoSend.username
 
     if (!formDatatoSend.email || !formDatatoSend.password) {
@@ -44,14 +47,11 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       return
     }
 
-    console.log('Enviando datos de login:', formDatatoSend)
-
     try {
       const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
       const response = await api.post(endpoint, formDatatoSend, {
         withCredentials: true,
       })
-
       console.log('Respuesta del servidor:', response.data)
 
       if (activeForm === 'register') {
@@ -61,8 +61,17 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         )
       }
 
-      await verifySession() // ✅ Ahora se actualizará la sesión correctamente después del login
+      // ✔️ Guardar token en cookie y localStorage
+      document.cookie = `token=${response.data.token}; path=/;`
+      localStorage.setItem('token', response.data.token)
 
+      // ✔️  Llamar al login() para actualizar el estado de autenticación inmediatamente
+      login(response.data)
+
+      // ✔️  Mostrar mensaje de éxito
+      toast.success('Inicio de sesión exitoso.')
+
+      // ✔️ Redirigir y cerrar modal
       navigate('/dashboard')
       onClose()
     } catch (error) {
@@ -71,6 +80,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         error.response?.data || error.message
       )
       setError(error.response?.data?.message || 'Error en la autenticación')
+      toast.error(error.response?.data?.message || 'Error en la autenticación')
     }
   }
   return (

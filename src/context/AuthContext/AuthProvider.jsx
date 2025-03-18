@@ -11,6 +11,15 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
   /**
+   * Función para iniciar sesión.
+   * - Actualiza el estado global del usuario y la sesión.
+   */
+  const login = (userData) => {
+    setUser(userData)
+    setIsLoggedIn(true)
+  }
+
+  /**
    * Función para cerrar sesión.
    * - Llama al backend para eliminar la sesión
    * - Limpia el estado global del usuario
@@ -24,45 +33,31 @@ const AuthProvider = ({ children }) => {
       setUser(null)
       setIsLoggedIn(false)
       setChecking(false)
-      window.location.href = '/login' // 🔥 Redirigir al login tras cerrar sesión
+      window.location.href = '/login' // 🔚 Redirige al login tras cerrar sesión
     } else {
       console.error('Error en el logout.')
     }
   }, [])
 
   /**
-   * Verifica la sesión del usuario.
-   * - Se ejecuta al montar el componente
-   * - Se ejecuta cada vez que `isLoggedIn` cambia
+   * Verifica la sesión del usuario al montar el componente.
    */
-  const verifySession = async () => {
-    setChecking(true)
-    const sessionUser = await getUserSession()
-    if (sessionUser) {
-      setUser(sessionUser)
-      setIsLoggedIn(true)
-    } else {
-      setUser(null)
-      setIsLoggedIn(false)
-    }
-    setChecking(false)
-  }
-
-  // 🔥 Se ejecuta al montar el componente
   useEffect(() => {
-    verifySession()
+    const checkSession = async () => {
+      const sessionUser = await getUserSession()
+      if (sessionUser) {
+        setUser(sessionUser)
+        setIsLoggedIn(true)
+      }
+      setChecking(false)
+    }
+
+    checkSession()
   }, [])
-
-  // 🔥 Nuevo efecto: detecta cuando `isLoggedIn` cambia y actualiza la sesión automáticamente
-  useEffect(() => {
-    if (isLoggedIn) {
-      verifySession() // 🔥 Refresca la sesión automáticamente después del login
-    }
-  }, [isLoggedIn])
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoggedIn, checking, login, handleLogout, verifySession }}
+      value={{ user, isLoggedIn, checking, login, handleLogout }}
     >
       {children}
     </AuthContext.Provider>
