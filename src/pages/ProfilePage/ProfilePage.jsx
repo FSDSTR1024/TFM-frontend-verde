@@ -3,9 +3,9 @@ import { Eye, EyeOff } from 'lucide-react' // Importar los íconos para mostrar/
 import useAuth from '@/context/AuthContext/useAuth'
 import api from '@/services/api/axios'
 import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
-import Button from '@/components/atoms/Button'
-import Input from '@/components/atoms/Input'
-import AvatarSelector from '@/components/molecules/AvatarSelector/AvatarSelector'
+import Button from '@/Components/atoms/Button'
+import Input from '@/Components/atoms/Input'
+import AvatarSelector from '@/Components/molecules/AvatarSelector/AvatarSelector'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 

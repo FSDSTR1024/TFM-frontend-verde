@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
-import Logo from '@/components/atoms/Logo'
-import Button from '@/components/atoms/Button'
+import Logo from '@/Components/atoms/Logo'
+import Button from '@/Components/atoms/Button'
 
 // =====================================
 // Avatares predeterminados

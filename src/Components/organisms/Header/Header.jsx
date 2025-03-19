@@ -1,5 +1,5 @@
-import Logo from '@components/atoms/Logo'
-import NavLinks from '@components/molecules/NavLinks'
+import Logo from '@Components/atoms/Logo'
+import NavLinks from '@Components/molecules/NavLinks'
 
 const Header = () => (
   <header className="w-full bg-special-class shadow-md px-4 lg:px-8 h-[60px] lg:h-[68px] flex items-center justify-between">
