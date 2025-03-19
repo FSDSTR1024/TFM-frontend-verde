@@ -55,9 +55,12 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       console.log('Respuesta del servidor:', response.data)
 
       if (activeForm === 'register') {
-        localStorage.setItem(
-          'registrationSuccess',
-          'Registro exitoso, revisa tu correo para confirmarlo.'
+        toast.info(
+          'Registro exitoso. Hemos enviado un correo de bienvenida a tu bandeja de entrada. Si usas Gmail, pulsa sobre los tres puntos ("...") en la parte inferior izquierda del mensaje y selecciona "Mostrar contenido".',
+          {
+            autoClose: 10000, // ⏳ Se mostrará durante 10 segundos
+            position: 'top-center',
+          }
         )
       }
 
