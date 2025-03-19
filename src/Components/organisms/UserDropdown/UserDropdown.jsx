@@ -11,6 +11,7 @@ const UserDropdown = () => {
   const [isClosing, setIsClosing] = useState(false)
   const dropdownRef = useRef(null)
   const isAnimating = useRef(false)
+  const [profileImage, setProfileImage] = useState(user?.profileImage || '')
 
   // ============================
   // Alternar Visibilidad del Dropdown
@@ -47,8 +48,11 @@ const UserDropdown = () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
 
+    // Actualizamos la imagen cuando 'user.profileImage' cambie
+    setProfileImage(user?.profileImage)
+
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showDropdown])
+  }, [showDropdown, user?.profileImage])
 
   return (
     <Menu as="div" className="relative dropdown-container">

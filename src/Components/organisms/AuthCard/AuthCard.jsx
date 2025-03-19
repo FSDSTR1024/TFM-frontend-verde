@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import api from '@/services/api/axios'
+import api from '@/services/api/api'
 import useAuth from '@/context/AuthContext/useAuth'
+import { getUserSession } from '@/services/api/authController'
+import { toast } from 'react-toastify'
 import { X } from 'lucide-react'
 import Button from '@/Components/atoms/Button'
 import { EmailInput } from '@/Components/atoms/Input'
@@ -27,47 +29,62 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     }))
   }
 
+  // Validar los datos ingresados y hacer visible el formulario
+  const isFormValid =
+    formData.email.trim() !== '' &&
+    formData.password.trim() !== '' &&
+    (activeForm !== 'register' || formData.username.trim() !== '')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
 
     const formDatatoSend = { ...formData }
-    console.log('formDatatoSend', formDatatoSend)
-    if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
+    if (activeForm === 'login') delete formDatatoSend.username
 
-    // Lo siguiente es valdir que email y password no estén vacios antes de enviar
     if (!formDatatoSend.email || !formDatatoSend.password) {
       setError('Todos los campos son obligatorios')
       return
     }
 
-    console.log('Enviando datos:', formDatatoSend) // verifica si los datos son correctos antes de enviarlos
-
     try {
       const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
-
       const response = await api.post(endpoint, formDatatoSend, {
         withCredentials: true,
       })
 
-      console.log('Respuesta del servidor:', response.data)
+      if (activeForm === 'register') {
+        toast.info(
+          'Registro exitoso. Hemos enviado un correo de bienvenida a tu bandeja de entrada. Si usas Gmail, pulsa sobre los tres puntos ("...") en la parte inferior izquierda del mensaje y selecciona "Mostrar contenido".',
+          {
+            autoClose: 10000, // El usuario tiene 10 secs para leer el mensaje
+            position: 'top-center',
+          }
+        )
+      }
 
-      login(formDatatoSend, navigate) //  Pasamos navigate a login
+      // ✔️ Guardar token en cookie y localStorage
+      document.cookie = `token=${response.data.token}; path=/;`
+      localStorage.setItem('token', response.data.token)
+
+      // ✔️  Llamar al login() para actualizar el estado de autenticación inmediatamente
+      login(response.data)
+
+      // ✔️  Mostrar mensaje de éxito
+      toast.success('Inicio de sesión exitoso.')
+
+      // ✔️ Redirigir y cerrar modal
+      navigate('/dashboard')
       onClose()
     } catch (error) {
       console.error(
-        'Error en la autenticación:',
+        'Error en autenticación:',
         error.response?.data || error.message
       )
       setError(error.response?.data?.message || 'Error en la autenticación')
+      toast.error(error.response?.data?.message || 'Error en la autenticación')
     }
   }
-
-  const isFormValid =
-    activeForm === 'login'
-      ? formData.email.trim() && formData.password.trim()
-      : Object.values(formData).every((field) => field.trim())
-
   return (
     <div
       id="authModalBackground"
@@ -98,6 +115,10 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         >
           {activeForm === 'login' ? 'Iniciar sesión' : 'Registrarse'}
         </h2>
+
+        <p className="text-center text-sm text-primary-dark">
+          {isFormValid ? 'Formulario válido' : 'Formulario incompleto'}
+        </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-grow">
           {activeForm === 'register' && (

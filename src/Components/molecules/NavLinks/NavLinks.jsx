@@ -5,7 +5,7 @@ import AuthCard from '../../organisms/AuthCard'
 import UserDropdown from '../../organisms/UserDropdown'
 
 const NavLinks = ({ mobile, onClose }) => {
-  const { isLoggedIn, logout } = useAuth() // Estado GLOBAL directo
+  const { isLoggedIn, handleLogout } = useAuth() // Estado GLOBAL directo
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [formData, setFormData] = useState({
@@ -61,7 +61,9 @@ const NavLinks = ({ mobile, onClose }) => {
             <li>
               <Button
                 variant={mobile ? 'primary' : 'secondary'}
-                onClick={logout}
+                onClick={() => {
+                  handleLogout()
+                }}
                 ariaLabel="Cerrar sesión"
               >
                 Cerrar sesión
