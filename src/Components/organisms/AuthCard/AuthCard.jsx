@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import api from '@/services/api/axios'
+import api from '@/services/api/api'
 import useAuth from '@/context/AuthContext/useAuth'
 import { getUserSession } from '@/services/api/authController'
 import { toast } from 'react-toastify'

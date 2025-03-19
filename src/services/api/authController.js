@@ -1,4 +1,4 @@
-import api from './axios'
+import api from './api'
 
 /**
  * Inicia sesión enviando credenciales al backend.
@@ -8,13 +8,11 @@ import api from './axios'
  */
 export const logout = async () => {
   try {
-    console.log('Enviando solicitud de logout...')
     const response = await api.post(
       '/auth/logout',
       {},
       { withCredentials: true }
     )
-    console.log('Respuesta del logout:', response.data)
     return true
   } catch (error) {
     console.error('Error en logout:', error.response?.data || error.message)
@@ -24,13 +22,11 @@ export const logout = async () => {
 
 export const login = async (email, password) => {
   try {
-    console.log('Enviando login con:', { email, password })
     const response = await api.post(
       '/auth/login',
       { email, password },
       { withCredentials: true }
     )
-    console.log('Respuesta del servidor:', response.data)
     return response.data
   } catch (error) {
     console.error('Error en login:', error.response?.data || error.message)
@@ -43,7 +39,6 @@ export const login = async (email, password) => {
  */
 export const getUserSession = async () => {
   try {
-    console.log('Verificando sesión...')
 
     // Si no hay cookies en el cliente, no llamar al backend
     if (!document.cookie.includes('token')) {

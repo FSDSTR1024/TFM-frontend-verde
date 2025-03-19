@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Eye, EyeOff } from 'lucide-react' // Importar los íconos para mostrar/ocultar contraseñas
 import useAuth from '@/context/AuthContext/useAuth'
-import api from '@/services/api/axios'
+import api from '@/services/api/api'
 import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/Components/atoms/Button'
 import Input from '@/Components/atoms/Input'
