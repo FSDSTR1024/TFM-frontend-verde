@@ -54,12 +54,15 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       })
 
       if (activeForm === 'register') {
-        localStorage.setItem(
-          'registrationSuccess',
-          'Registro exitoso, revisa tu correo para confirmarlo.'
+        toast.info(
+          'Registro exitoso. Hemos enviado un correo de bienvenida a tu bandeja de entrada. Si usas Gmail, pulsa sobre los tres puntos ("...") en la parte inferior izquierda del mensaje y selecciona "Mostrar contenido".',
+          {
+            autoClose: 10000, // El usuario tiene 10 secs para leer el mensaje
+            position: 'top-center',
+          }
         )
       }
-
+      
       // ✔️ Guardar token en cookie y localStorage
       document.cookie = `token=${response.data.token}; path=/;`
       localStorage.setItem('token', response.data.token)
