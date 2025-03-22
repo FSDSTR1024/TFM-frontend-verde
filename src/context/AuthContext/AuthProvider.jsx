@@ -11,7 +11,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
   // ==============================
-  // Función de logout (Debe ir antes de `validateStoredSession`)
+  // Función de logout
   // ==============================
   const logout = useCallback(async (navigate) => {
     try {
@@ -20,14 +20,11 @@ const AuthProvider = ({ children }) => {
       console.error('Error en logout:', error)
     } finally {
       document.cookie = 'Token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
-      document.cookie =
-        'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
-
-       
+      document.cookie = 'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
       
       setUser(null)
       setIsLoggedIn(false)
-      localStorage.removeItem('userId'); // <--- Borra el userId
+      localStorage.removeItem('userId');
 
       if (navigate) navigate('/login', { replace: true })
     }
@@ -45,30 +42,32 @@ const AuthProvider = ({ children }) => {
       console.log('Validación de sesión - Respuesta completa:', response.data)
   
       if (response.data) {
-        // Identifica el ID correctamente, sea cual sea el formato
-        const userId = response.data._id || response.data.id
-        console.log('Respuesta completa:', response); // Imprime toda la respuesta
-        console.log('Datos de la respuesta:', response.data); // Imprime solo el cuerpo de la respue
-
-  
-        console.log('ID del usuario encontrado:', response.data.userId)
-       
+        // Identifica el ID - prioriza userId, luego _id, luego id
+        const userId = response.data.userId || response.data._id || response.data.id;
+        
+        console.log('Respuesta completa:', response);
+        console.log('Datos de la respuesta:', response.data);
+        console.log('ID del usuario encontrado:', userId);
         
         if (userId) {
-          localStorage.setItem('userId', userId)
-          console.log('ID guardado en localStorage:', userId)
+          localStorage.setItem('userId', userId);
+          console.log('ID guardado en localStorage:', userId);
+        } else {
+          console.warn('No se pudo identificar un ID de usuario en la respuesta');
         }
   
         setUser({
+          // Estandarizar el formato del usuario con todas las propiedades posibles
+          userId: userId,
           id: userId,
-          _id: userId, // Guardar en ambos formatos
+          _id: userId,
           username: response.data.username,
           email: response.data.email,
           role: response.data.role,
           profileImage: response.data.profileImage
-        })
+        });
         
-        setIsLoggedIn(true)
+        setIsLoggedIn(true);
       }
     } catch (error) {
       console.warn('Sesión no válida:', error.response?.data || error.message)
@@ -95,34 +94,37 @@ const AuthProvider = ({ children }) => {
           withCredentials: true,
         })
   
-        console.log('Usuario logueado (DATOS COMPLETOS):', response.data)
-        console.log('ID del usuario:', response.userId)
+        console.log('Respuesta de login completa:', response.data);
         
-        // Guarda el ID en localStorage explícitamente
-        if (response.data._id) {
-          localStorage.setItem('userId', response.data.userId)
-          console.log('ID guardado en localStorage:', response.data.userId)
+        // Identifica el ID - prioriza userId, luego _id, luego id
+        const userId = response.data.userId || response.data._id || response.data.id;
+        
+        if (userId) {
+          localStorage.setItem('userId', userId);
+          console.log('ID guardado en localStorage:', userId);
         } else {
-          console.error('Error: No se recibió _id del servidor')
+          console.error('Error: No se pudo identificar un ID de usuario en la respuesta');
         }
         
-        // Actualiza el estado con los datos correctos
+        // Actualiza el estado con los datos correctos y estandarizados
         setUser({
-          id: response.data.userId, // Asignar el _id a la propiedad id
-          _id: response.data.userId, // Mantener también el formato original
+          userId: userId,
+          id: userId,
+          _id: userId,
           username: response.data.username,
           email: response.data.email,
-          role: response.data.role
-        })
+          role: response.data.role,
+          profileImage: response.data.profileImage
+        });
         
-        setIsLoggedIn(true)
+        setIsLoggedIn(true);
         
-        navigate('/dashboard', { replace: true })
+        navigate('/dashboard', { replace: true });
       } catch (error) {
-        console.error('Error en login:', error)
+        console.error('Error en login:', error);
       }
     },
-    []  // Sin dependencia a validateStoredSession para evitar ciclos
+    []
   )
 
   // ==============================
@@ -139,10 +141,20 @@ const AuthProvider = ({ children }) => {
               { withCredentials: true }
             )
 
+            // Identifica el ID - prioriza userId, luego _id, luego id
+            const userId = response.data.userId || response.data._id || response.data.id;
+            
+            if (userId) {
+              localStorage.setItem('userId', userId);
+            }
+
             setUser((prevUser) => ({
               ...prevUser,
-              ...response.data, // Aseguramos que los datos sean los correctos
-            }))
+              userId: userId,
+              id: userId,
+              _id: userId,
+              ...response.data, 
+            }));
           } catch (error) {
             console.error('Error al renovar el token:', error)
             logout()
