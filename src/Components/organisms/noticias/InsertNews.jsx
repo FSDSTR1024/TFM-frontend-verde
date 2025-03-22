@@ -22,16 +22,16 @@ let BACKEND ;
 // Verifica el entorno usando import.meta.env.PROD
 if (import.meta.env.PROD) {
   // Configuración para Render
-  BACKEND = 'tfm-backend-verde.onrender.com';
+  BACKEND = 'https://tfm-backend-verde.onrender.com';
 } else {
   // Configuración para localhost - usa HTTP para desarrollo local
-  BACKEND = 'localhost:3000';
+  BACKEND = 'https://localhost:3000';
 }
 
 
 
       const response = await axios.post(
-        `http://${BACKEND}/noticias`, // URL sin userId
+        `${BACKEND}/noticias`, // URL sin userId
         dataToSend, // Envía el userId en el cuerpo
         {
           headers: {
