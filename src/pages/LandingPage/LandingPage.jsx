@@ -4,7 +4,7 @@
 
 import Indices from '@Components/organisms/indices/Indices'
 import StockIndicesDashboard  from '@Components/organisms/grafico/StockIndicesDashboard'
-import Noticias  from '@Components/organisms/noticias/Noticias'
+import NoticiasEconomicas  from '@Components/organisms/noticias/NoticiasEconomicas'
 import AnalisisAcciones  from '@Components/organisms/noticias/AnalisisAcciones'
 import AccionesMejorRendimiento  from '@Components/organisms/noticias/AccionesMejorRendimiento'
 import AccionesPeorRendimiento  from '@Components/organisms/noticias/AccionesPeorRendimiento'
@@ -32,7 +32,7 @@ const LandingPage = () => {
             <StockIndicesDashboard />
           </div>
           <div className="bg-blue-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 md:col-span-2 h-[520px] bg-verde-claro">
-            <Noticias />
+            <NoticiasEconomicas />
           </div>
         </div>
 

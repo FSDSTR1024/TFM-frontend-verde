@@ -36,17 +36,17 @@ const indices = {
     { symbol: "UNI", name: "SSE C" },
     { symbol: "BAC", name: "BSE" },
   ],
-};
+}
 
-let BACKEND ;
+let BACKEND 
 
 // Verifica el entorno usando import.meta.env.PROD
 if (import.meta.env.PROD) {
   // Configuración para Render
-  BACKEND = 'https://tfm-backend-verde.onrender.com';
+  BACKEND = 'https://tfm-backend-verde.onrender.com'
 } else {
   // Configuración para localhost - usa HTTP para desarrollo local
-  BACKEND = 'http://localhost:3000';
+  BACKEND = 'http://localhost:3000'
 }
  console.log('Uso este backend.....',BACKEND)
 
@@ -70,19 +70,19 @@ const Indices = () => {
 
       })
     )
-  );
+  )
 
       return responses.map((response, i) => ({
         name: indices[region][i].name,
         price: response.data?.c ?? "N/A",
         change: response.data?.d ?? 0,
         percentChange: response.data?.dp ?? 0,
-      }));
+      }))
     } catch (err) {
       console.error("Error fetching region indices:", err)
       return []
     }
-  };
+  }
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -91,17 +91,17 @@ const Indices = () => {
           fetchRegionIndices("europe"),
           fetchRegionIndices("us"),
           fetchRegionIndices("asia"),
-        ]);
+        ])
         setIndexData({ europe: europeData, us: usData, asia: asiaData })
       } catch (err) {
         console.error("Error fetching all data:", err)
       }
-    };
+    }
 
-    fetchAllData();
+    fetchAllData()
     const interval = setInterval(fetchAllData, 100000)
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="h-full flex flex-col">
@@ -169,7 +169,7 @@ const Indices = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Indices

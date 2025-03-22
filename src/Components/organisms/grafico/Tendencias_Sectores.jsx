@@ -1,6 +1,6 @@
 // Este componente grafica las proyecciones de la evolucion de los sectores
 
-import { TrendingUp, TrendingDown, Hospital, Building2, Factory, Warehouse, Car, Cpu, Smartphone, Droplet, Zap, Building, Briefcase, Trees } from 'lucide-react';
+import { TrendingUp, TrendingDown, Hospital, Building2, Factory, Warehouse, Car, Cpu, Smartphone, Droplet, Zap, Building, Briefcase, Trees } from 'lucide-react'
 
 export default function Tendencias_Sectores() {
   const sectores = [
@@ -14,15 +14,13 @@ export default function Tendencias_Sectores() {
     { nombre: "", icono: <Zap size={15} />, alza: Math.random() > 0.5 },
     { nombre: "", icono: <Droplet size={15} />, alza: Math.random() > 0.5 },
     { nombre: "", icono: <Building size={15} />, alza: Math.random() > 0.5 },
-    { nombre: "", icono: <Briefcase size={15} />, alza: Math.random() > 0.5 },
-    { nombre: "", icono: <Trees size={15} />, alza: Math.random() > 0.5 }
+   
     
-  ];
+  ]
 
   return (
     <div className="w-full h-full bg-white shadow-md rounded-xl p-4 flex flex-col">
-      <h2 className="text-lg font-semibold mb-3">Tendencias Sectoriales</h2>
-      
+            
       <div className="flex-grow overflow-y-auto grid grid-cols-2 gap-3 pr-1">
         {sectores.map((sector, index) => (
           <div key={index} className="flex items-center p-2 border rounded-lg bg-gray-50">
@@ -51,5 +49,5 @@ export default function Tendencias_Sectores() {
         Tendencias actualizadas: 21/03/2025
       </div>
     </div>
-  );
+  )
 }

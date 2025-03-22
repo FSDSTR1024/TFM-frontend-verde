@@ -4,7 +4,7 @@
 
 import Indices from '@Components/organisms/indices/Indices'
 import StockIndicesDashboard  from '@Components/organisms/grafico/StockIndicesDashboard'
-import Noticias  from '@Components/organisms/noticias/Noticias'
+import NoticiasEconomicas  from '@Components/organisms/noticias/NoticiasEconomicas'
 import Animacion from '@Components/organisms/animacion/Animacion'
 import AnalisisAcciones  from '@Components/organisms/noticias/AnalisisAcciones'
 import FinancialNews  from '@Components/organisms/noticias/FinancialNews'
@@ -13,7 +13,7 @@ import AccionesMejorRendimiento  from '@Components/organisms/noticias/AccionesMe
 import AccionesPeorRendimiento  from '@Components/organisms/noticias/AccionesPeorRendimiento'
 import MarketTrendsComponent  from '@Components/organisms/noticias/MarketTrendsComponent'
 import Calendario  from '@Components/organisms/noticias/Calendario'
-import Variaciones  from '@Components/organisms/grafico/Variaciones'
+import Tendencias_Sectores from '@Components/organisms/grafico/Tendencias_Sectores'
 
 const DashboardPage = () => {
 
@@ -32,7 +32,7 @@ const DashboardPage = () => {
             <StockIndicesDashboard />
           </div>
           <div className='bg-blue-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 md:col-span-2 h-[520px] bg-verde-claro'>
-            <Noticias />
+            <NoticiasEconomicas />
           </div>
         </div>
 
@@ -67,7 +67,7 @@ const DashboardPage = () => {
             <Calendario />
           </div>
           <div className='bg-blue-800 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro'>
-            <Variaciones />
+             <Tendencias_Sectores />
           </div>
         </div>
       </main>

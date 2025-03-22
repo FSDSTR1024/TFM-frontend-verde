@@ -29,12 +29,6 @@ const Performance = () => {
         return: 65.2,
         icon: Monitor
     },
-    {
-        symbol: 'AMZN',
-        name: 'Amazon',
-        return: 52.8,
-        icon: ShoppingCart
-    },
   ]
 
   // Usando la paleta de colores proporcionada
@@ -51,7 +45,7 @@ const Performance = () => {
     <div className="w-full h-full overflow-y-auto" style={{ backgroundColor: colors.card }}>
 
       
-      <div className="space-y-1 px-1">
+      <div className="space-y-3 px-1">
         {stocks.map((stock) => (
           <div 
             key={stock.symbol} 
