@@ -10,6 +10,10 @@ import AccionesMejorRendimiento  from '@Components/organisms/noticias/AccionesMe
 import AccionesPeorRendimiento  from '@Components/organisms/noticias/AccionesPeorRendimiento'
 import MarketTrendsComponent  from '@Components/organisms/noticias/MarketTrendsComponent'
 import Calendario  from '@Components/organisms/noticias/Calendario'
+import Variaciones  from '@Components/organisms/grafico/Variaciones'
+import Tendencias_Sectores from '@Components/organisms/grafico/Tendencias_Sectores'
+import Performance from '@Components/organisms/grafico/Performance'
+
 
 const LandingPage = () => {
 
@@ -34,17 +38,14 @@ const LandingPage = () => {
 
         {/* Segunda fila de cajas */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-          <div className="bg-purple-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-[255px] bg-verde-claro">
-           
+          <div className="w-full bg-purple-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-[260px] bg-verde-claro">
+           <Performance />
           </div>
-          <div className="bg-blue-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 md:col-span-2 h-[250px] bg-verde-claro">
+          <div className="bg-blue-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 md:col-span-2 h-[260px] bg-verde-claro">
            <AnalisisAcciones />
           </div>
-          <div className="bg-teal-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 bg-verde-claro">
-           
-          </div>
-          <div className="relative p-8 rounded-lg shadow-lg col-span-1 bg-verde-claro">
-                                         
+          <div className="bg-blue-500 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 md:col-span-2 h-[260px] bg-verde-claro">
+           <Variaciones />
           </div>
         </div>
 
@@ -63,7 +64,7 @@ const LandingPage = () => {
             <Calendario />
           </div>
           <div className="bg-blue-800 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro">
-          
+            <Tendencias_Sectores />
           </div>
         </div>
       </main>

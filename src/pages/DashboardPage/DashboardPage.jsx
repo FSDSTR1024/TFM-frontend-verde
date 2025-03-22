@@ -13,6 +13,7 @@ import AccionesMejorRendimiento  from '@Components/organisms/noticias/AccionesMe
 import AccionesPeorRendimiento  from '@Components/organisms/noticias/AccionesPeorRendimiento'
 import MarketTrendsComponent  from '@Components/organisms/noticias/MarketTrendsComponent'
 import Calendario  from '@Components/organisms/noticias/Calendario'
+import Variaciones  from '@Components/organisms/grafico/Variaciones'
 
 const DashboardPage = () => {
 
@@ -66,7 +67,7 @@ const DashboardPage = () => {
             <Calendario />
           </div>
           <div className='bg-blue-800 p-8 rounded-lg shadow-lg flex items-center justify-center col-span-1 h-64 md:h-80 lg:h-96 bg-verde-claro'>
-          
+            <Variaciones />
           </div>
         </div>
       </main>
