@@ -13,6 +13,17 @@ const AuthProvider = ({ children }) => {
   // ==============================
   // Función de logout
   // ==============================
+
+  const deleteAllCookies = () => {
+    const cookies = document.cookie.split(';'); // Obtener todas las cookies
+  
+    cookies.forEach(cookie => {
+      const [name] = cookie.split('='); // Obtener el nombre de la cookie
+      document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;`; // Borrar la cookie
+    });
+  };
+
+  
   const logout = useCallback(async (navigate) => {
     try {
       await api.post('/auth/logout', {}, { withCredentials: true })
@@ -24,7 +35,9 @@ const AuthProvider = ({ children }) => {
       
       setUser(null)
       setIsLoggedIn(false)
-      localStorage.removeItem('userId');
+      localStorage.removeItem('userId'); //Aqui borro el userId
+      localStorage.removeItem('token'); //Aqui borro el token
+      deleteAllCookies();
 
       if (navigate) navigate('/login', { replace: true })
     }
