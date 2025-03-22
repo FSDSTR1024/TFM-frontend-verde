@@ -4,15 +4,17 @@ import { useEffect, useState } from "react"
 
 export default function MarketTrendsComponent() {
   return (
-    <div className="w-full max-w-lg bg-white shadow-md rounded-xl p-4">
-      <h2 className="text-lg font-semibold mb-3">Tendencias</h2>
+    <div className="w-full max-w-lg bg-verde-claro p-4">
+   
       {/* Contenedor scrollable para los botones */}
       <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
-        <Tag icon="📈" text="Índices de mercado" />
+        <Tag icon="📈" text="Índices" />
         <Tag icon="📊" text="Mayor actividad" />
         <Tag icon="🌿" text="Ecológicas" />
         <CryptoTag icon="🪙" text="Criptomoneda" />
         <Tag icon="💱" text="Divisas" />
+        <Tag icon="🏦" text="Bancos" />
+        <Tag icon="💹" text="Bolsa" />
       </div>
     </div>
   )
@@ -20,7 +22,7 @@ export default function MarketTrendsComponent() {
 
 function Tag({ icon, text }) {
   return (
-    <button className="flex items-center gap-1 text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-200 transition whitespace-nowrap">
+    <button className="flex items-center gap-1 text-sm font-medium bg-verde-claro text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-200 transition whitespace-nowrap">
       <span>{icon}</span>
       <span>{text}</span>
     </button>
@@ -40,7 +42,7 @@ function CryptoTag({ icon, text }) {
   }, [])
 
   return (
-    <button className="flex items-center gap-1 text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-200 transition whitespace-nowrap">
+    <button className="flex items-center gap-1 text-sm font-medium bg-verde-claro text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-200 transition whitespace-nowrap">
       <span className={`transition-transform ${animate ? "scale-125 text-yellow-500" : "scale-100 text-gray-700"}`}>
         {icon}
       </span>
