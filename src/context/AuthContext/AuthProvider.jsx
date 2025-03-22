@@ -23,8 +23,11 @@ const AuthProvider = ({ children }) => {
       document.cookie =
         'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
 
+       
+      
       setUser(null)
       setIsLoggedIn(false)
+      localStorage.removeItem('userId'); // <--- Borra el userId
 
       if (navigate) navigate('/login', { replace: true })
     }
@@ -38,21 +41,33 @@ const AuthProvider = ({ children }) => {
       const response = await api.get('/auth/validate-token', {
         withCredentials: true,
       })
-
-      console.log('Sesión válida:', response.data)
-
+  
+      console.log('Validación de sesión - Respuesta completa:', response.data)
+  
       if (response.data) {
-        setUser((prevUser) => {
-          if (
-            prevUser?.id !== response.data.id ||
-            prevUser?.username !== response.data.username ||
-            prevUser?.email !== response.data.email ||
-            prevUser?.profileImage !== response.data.profileImage
-          ) {
-            return response.data // Solo actualiza si hay cambios
-          }
-          return prevUser
+        // Identifica el ID correctamente, sea cual sea el formato
+        const userId = response.data._id || response.data.id
+        console.log('Respuesta completa:', response); // Imprime toda la respuesta
+        console.log('Datos de la respuesta:', response.data); // Imprime solo el cuerpo de la respue
+
+  
+        console.log('ID del usuario encontrado:', response.data.userId)
+       
+        
+        if (userId) {
+          localStorage.setItem('userId', userId)
+          console.log('ID guardado en localStorage:', userId)
+        }
+  
+        setUser({
+          id: userId,
+          _id: userId, // Guardar en ambos formatos
+          username: response.data.username,
+          email: response.data.email,
+          role: response.data.role,
+          profileImage: response.data.profileImage
         })
+        
         setIsLoggedIn(true)
       }
     } catch (error) {
@@ -70,26 +85,44 @@ const AuthProvider = ({ children }) => {
     async (credentials, navigate) => {
       try {
         console.log('Intentando iniciar sesión con:', credentials)
-
+  
         if (!credentials?.email || !credentials?.password) {
           console.error('Error: Email o password no proporcionados.')
           return
         }
-
+  
         const response = await api.post('/auth/login', credentials, {
           withCredentials: true,
         })
-
-        console.log('Usuario logueado:', response.data)
-
-        await validateStoredSession()
-
+  
+        console.log('Usuario logueado (DATOS COMPLETOS):', response.data)
+        console.log('ID del usuario:', response.userId)
+        
+        // Guarda el ID en localStorage explícitamente
+        if (response.data._id) {
+          localStorage.setItem('userId', response.data.userId)
+          console.log('ID guardado en localStorage:', response.data.userId)
+        } else {
+          console.error('Error: No se recibió _id del servidor')
+        }
+        
+        // Actualiza el estado con los datos correctos
+        setUser({
+          id: response.data.userId, // Asignar el _id a la propiedad id
+          _id: response.data.userId, // Mantener también el formato original
+          username: response.data.username,
+          email: response.data.email,
+          role: response.data.role
+        })
+        
+        setIsLoggedIn(true)
+        
         navigate('/dashboard', { replace: true })
       } catch (error) {
         console.error('Error en login:', error)
       }
     },
-    [validateStoredSession]
+    []  // Sin dependencia a validateStoredSession para evitar ciclos
   )
 
   // ==============================
