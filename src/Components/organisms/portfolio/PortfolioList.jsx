@@ -64,7 +64,10 @@ if (import.meta.env.PROD) {
   })
 
   const fetchPortfolioData = async () => {
+   
+    userId = localStorage.getItem('userId')  //Aca recupero el userId del Local Storage
     console.log('fetchPortfolioData.....Entro',userId)
+
     try {
       if (!userId) {
         throw new Error('Usuario no encontrado. Por favor, inicie sesión nuevamente.')
