@@ -21,7 +21,7 @@ const NoticiasEconomicas = () => {
       setNoticias(response.data.articles) // NewsAPI devuelve las noticias en `articles`
       requestCount++ // Incrementa el contador de solicitudes
     } catch (error) {
-      console.error("Error al obtener noticias", error)
+      console.error("Error al obtener noticias", error.response.data)
     } finally {
       // Programa la próxima solicitud después de 6 minutos (360,000 ms)
       // Esto asegura que no se superen las 10 solicitudes por hora
