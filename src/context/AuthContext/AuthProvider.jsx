@@ -17,6 +17,10 @@ const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData)
     setIsLoggedIn(true)
+    const userId = userData._id
+    // Guardo userId en el localStorage, para despues poder referenciar el Portfolio
+    localStorage.setItem('userId', userId);
+
   }
 
   /**
@@ -31,6 +35,7 @@ const AuthProvider = ({ children }) => {
       setUser(null)
       setIsLoggedIn(false)
       setChecking(false)
+      localStorage.removeItem('userId'); //Aqui borro el userId
       window.location.href = '/login' // 🔚 Redirige al login tras cerrar sesión
     } else {
       console.error('Error en el logout.')

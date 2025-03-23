@@ -1,16 +1,15 @@
 import { useState, useContext, useCallback } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { AuthContext } from './context/AuthContext/AuthContext'
-import Navbar from "@/Components/organisms/Navbar/Navbar";
-import Footer from '@/Components/organisms/Footer/Footer'
-import PortfolioList from '@/Components/organisms/portfolio/PortfolioList'
+import Navbar from '@Components/organisms/Navbar/Navbar'
+import Footer from '@Components/organisms/Footer/Footer'
 import ProfilePage from './pages/ProfilePage/ProfilePage'
-import LandingPage from './pages/LandingPage/LandingPage'
-import AuthCard from '@/Components/organisms/AuthCard/AuthCard'
+import AuthCard from '@Components/organisms/AuthCard/AuthCard'
 import DashboardPage from './pages/DashboardPage'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import TradingDashboard from '@Components/organisms/Tradingdashboard/TradingDashboard'
+import Dashboard from '@Components/organisms/Tradingdashboard/Dashboard'
 
+import PortfolioList from '@Components/organisms/portfolio/PortfolioList'
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
@@ -30,7 +29,6 @@ const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [dropdownHeight, setDropdownHeight] = useState(0) // Nueva variable de estado
-  const { isLoggedIn } = useContext(AuthContext)
 
   const openAuthModal = useCallback((formType) => {
     setActiveForm(formType)
@@ -40,6 +38,8 @@ const App = () => {
   const handleCloseModal = useCallback(() => {
     setIsAuthModalOpen(false)
   }, [])
+
+  const isLoggedIn = !!localStorage.getItem('userId')
 
   return (
     <BrowserRouter>
@@ -56,16 +56,14 @@ const App = () => {
           }`}
         >
           <Routes>
+           
+
             <Route
-              path="/"
-              element={
-                isLoggedIn ? (
-                  <DashboardPage /> // Muestra el Dashboard si el usuario está logueado
-                ) : (
-                  <LandingPage /> // Muestra la LandingPage si no está logueado
-                )
-              }
+             path="/"
+             element={isLoggedIn ? <Dashboard /> : <TradingDashboard />}
             />
+      
+            
             <Route
               path="/profile"
               element={
@@ -74,21 +72,18 @@ const App = () => {
                 </PrivateRoute>
               }
             />
-            <Route 
+            <Route
               path="/dashboard"
               element={
                 <PrivateRoute>
-                  <DashboardPage />
+                 <Dashboard />                  
                 </PrivateRoute>
               }
             />
-            <Route 
-               path="/portfolios"    
-               element={
-                 <PrivateRoute>
-                 <PortfolioList />
-                 </PrivateRoute>
-                }
+            
+            <Route
+              path="/portfolios/"
+              element={<PortfolioList />}
             />
             <Route
               path="*"
@@ -111,13 +106,6 @@ const App = () => {
           onClose={handleCloseModal}
         />
       )}
-
-      {/* Esto permitirá que los toasts se muestren en toda la aplicación */}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-      />
     </BrowserRouter>
   )
 }
