@@ -104,7 +104,8 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         >
           <X size={20} />
         </button>
-
+        
+        // LOGO
         <header className="flex justify-center mb-4">
           <Logo />
         </header>
