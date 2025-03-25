@@ -64,7 +64,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       }
 
       // Aquí voy a retrasar la redireccion un pequeño tiempo para que el navegador procese la cookie
-      await new PromiseRejectionEvent((resolve) => setTimeout(resolve, 300))
+      await new PromiseRejectionEvent((resolve) => setTimeout(resolve, 100))
 
       // Esperado el timepo, ahora se obtienen los datos del usuario desde la cookie
       const session = await api.get('/profile', { withCredentials: true })
@@ -106,7 +106,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         >
           <X size={20} />
         </button>
-        // LOGO
+
         <header className="flex justify-center mb-4">
           <Logo />
         </header>
