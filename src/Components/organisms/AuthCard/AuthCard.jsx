@@ -63,12 +63,14 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         )
       }
 
-      // ✔️ Guardar token en cookie y localStorage
-      document.cookie = `token=${response.data.token}; path=/;`
-      localStorage.setItem('token', response.data.token)
+      // Aquí voy a retrasar la redireccion un pequeño tiempo para que el navegador procese la cookie
+      await new PromiseRejectionEvent((resolve) => setTimeout(resolve, 300))
+
+      // Esperado el timepo, ahora se obtienen los datos del usuario desde la cookie
+      const session = await api.get('/profile', { withCredentials: true })
 
       // ✔️  Llamar al login() para actualizar el estado de autenticación inmediatamente
-      login(response.data)
+      login(sesion.data.user)
 
       // ✔️  Mostrar mensaje de éxito
       toast.success('Inicio de sesión exitoso.')
@@ -104,23 +106,19 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         >
           <X size={20} />
         </button>
-        
         // LOGO
         <header className="flex justify-center mb-4">
           <Logo />
         </header>
-
         <h2
           id="auth-title"
           className="text-xl font-semibold text-primary-dark text-center mb-3"
         >
           {activeForm === 'login' ? 'Iniciar sesión' : 'Registrarse'}
         </h2>
-
         <p className="text-center text-sm text-primary-dark">
           {isFormValid ? 'Formulario válido' : 'Formulario incompleto'}
         </p>
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-grow">
           {activeForm === 'register' && (
             <Input
