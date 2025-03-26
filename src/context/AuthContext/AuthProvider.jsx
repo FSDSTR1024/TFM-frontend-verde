@@ -41,28 +41,27 @@ const AuthProvider = ({ children }) => {
    * Verifica la sesión del usuario al montar el componente.
    */
   useEffect(() => {
-    useEffect(() => {
-      const checkSession = async () => {
-        try {
-          const response = await fetch(`${API_BASE}/auth/validate-token`, {
-            method: 'GET',
-            credentials: 'include',
-          })
+    const checkSession = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/auth/validate-token`, {
+          method: 'GET',
+          credentials: 'include',
+        })
 
-          if (response.ok) {
-            const data = await response.json()
-            setUser(data)
-            setIsLoggedIn(true)
-          }
-        } catch (error) {
-          console.error('Error al validar sesión:', error)
-        } finally {
-          setChecking(false)
+        if (response.ok) {
+          const data = await response.json()
+          setUser(data)
+          setIsLoggedIn(true)
         }
+      } catch (error) {
+        console.error('Error al validar sesión:', error)
+      } finally {
+        setChecking(false)
       }
+    }
 
-      checkSession()
-    }, [])
+    checkSession()
+  }, [])
 
   return (
     <AuthContext.Provider
