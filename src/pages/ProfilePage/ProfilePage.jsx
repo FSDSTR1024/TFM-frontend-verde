@@ -228,6 +228,8 @@ const ProfilePage = () => {
   // ================================
 
   useEffect(() => {
+    if (!user) return
+    console.log('El usuario actual es:', user)
     setFormData((prev) => ({
       ...prev,
       username: user?.username || '',
