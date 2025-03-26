@@ -52,7 +52,16 @@ const App = () => {
           }`}
         >
           <Routes>
-            <Route path="/" element={<div>Inicio</div>} />
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/dashboard" replace />
+                ) : (
+                  <div>Inicio</div>
+                )
+              }
+            />
             <Route
               path="/profile"
               element={
