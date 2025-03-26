@@ -10,6 +10,8 @@ const AuthProvider = ({ children }) => {
   const [checking, setChecking] = useState(true)
   const [user, setUser] = useState(null)
 
+  const API_BASE = import.meta.env.VITE_API_BASE
+
   /**
    * Función para iniciar sesión.
    * - Actualiza el estado global del usuario y la sesión.
@@ -38,8 +40,12 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   /**
-   * Verifica la sesión del usuario al montar el componente.
+   * Función para verificar la sesión del usuario.
+   * - Llama al backend para validar la sesión
+   * - Actualiza el estado global de la sesión
+   *
    */
+
   useEffect(() => {
     const checkSession = async () => {
       try {
