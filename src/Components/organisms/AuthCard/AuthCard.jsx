@@ -67,7 +67,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       await new Promise((resolve) => setTimeout(resolve, 100))
 
       // Esperado el timepo, ahora se obtienen los datos del usuario desde la cookie
-      const session = await api.get('/profile', { withCredentials: true })
+      const session = await api.get('/auth/profile', { withCredentials: true })
 
       // ✔️  Llamar al login() para actualizar el estado de autenticación inmediatamente
       login(session.data.user)
