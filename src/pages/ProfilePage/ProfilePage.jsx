@@ -16,12 +16,12 @@ const ProfilePage = () => {
 
   // Estado para manejar el formulario
   const [formData, setFormData] = useState({
-    username: user?.username || '',
-    email: user?.email || '',
+    username: '',
+    email: '',
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: '',
-    profileImage: user?.profileImage || null,
+    profileImage: null,
   })
 
   // Estado para los errores, loading, mensaje de éxito y visibilidad de contraseñas
