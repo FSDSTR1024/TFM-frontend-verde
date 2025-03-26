@@ -42,16 +42,26 @@ const AuthProvider = ({ children }) => {
    */
   useEffect(() => {
     const checkSession = async () => {
-      const sessionUser = await getUserSession()
-      if (sessionUser) {
-        setUser(sessionUser) // Actualiza el estado global del usuario
-        setIsLoggedIn(true)
+      try {
+        const response = await fetch('/api/auth/validate-token', {
+          method: 'GET',
+          credentials: 'include',
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setUser(data)
+          setIsLoggedIn(true)
+        }
+      } catch (error) {
+        console.error('Error al validar sesión:', error)
+      } finally {
+        setChecking(false)
       }
-      setChecking(false)
     }
 
     checkSession()
-  }, [isLoggedIn, user?.profileImage])
+  }, [])
 
   return (
     <AuthContext.Provider
