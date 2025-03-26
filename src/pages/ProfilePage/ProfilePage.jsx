@@ -80,7 +80,6 @@ const ProfilePage = () => {
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev) // Alternar la visibilidad
   }
-
   // ================================
   // Alternar cambio de contraseña
   // ================================
@@ -150,7 +149,6 @@ const ProfilePage = () => {
       const updatedUserResponse = await api.put('/auth/profile/avatar', {
         profileImage: updatedImage,
       })
-
 
       // Con los cambios realizados en AuthProvider.jsx ahora usamos `login()` para actualizar el estado global del usuario
       login(updatedUserResponse.data.updatedUser)
@@ -236,7 +234,7 @@ const ProfilePage = () => {
       email: user?.email || '',
       profileImage: user?.profileImage || null,
     }))
-  }. [user])
+  }, [user])
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
