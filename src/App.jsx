@@ -27,6 +27,7 @@ const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [dropdownHeight, setDropdownHeight] = useState(0)
+  const { isLoggedIn } = useContext(AuthContext)
 
   const openAuthModal = useCallback((formType) => {
     setActiveForm(formType)
