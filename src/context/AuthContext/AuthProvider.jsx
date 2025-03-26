@@ -49,10 +49,13 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch(`${API_BASE}/auth/validate-token`, {
-          method: 'GET',
-          credentials: 'include',
-        })
+        const response = await fetch(
+          `${API_BASE.replace(/\/$/, '')}/auth/validate-token`,
+          {
+            method: 'GET',
+            credentials: 'include',
+          }
+        )
 
         if (response.ok) {
           const data = await response.json()
