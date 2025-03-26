@@ -70,7 +70,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       const session = await api.get('/profile', { withCredentials: true })
 
       // ✔️  Llamar al login() para actualizar el estado de autenticación inmediatamente
-      login(sesion.data.user)
+      login(session.data.user)
 
       // ✔️  Mostrar mensaje de éxito
       toast.success('Inicio de sesión exitoso.')
