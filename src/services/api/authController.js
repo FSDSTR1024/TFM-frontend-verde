@@ -1,5 +1,6 @@
 import api from './api'
 
+const API_BASE = import.meta.env.VITE_API_BASE
 /**
  * Inicia sesión enviando credenciales al backend.
  * @param {string} email - Correo del usuario.
@@ -8,14 +9,16 @@ import api from './api'
  */
 export const logout = async () => {
   try {
-    const response = await api.post(
-      '/auth/logout',
+    const response = await axios.post(
+      `${API_BASE.replace(/\/$/, '')}/auth/logout`,
       {},
-      { withCredentials: true }
+      {
+        withCredentials: true,
+      }
     )
-    return true
+    return response.status === 200
   } catch (error) {
-    console.error('Error en logout:', error.response?.data || error.message)
+    console.error('Logout fallido:', error)
     return false
   }
 }
@@ -39,7 +42,6 @@ export const login = async (email, password) => {
  */
 export const getUserSession = async () => {
   try {
-
     // Si no hay cookies en el cliente, no llamar al backend
     if (!document.cookie.includes('token')) {
       console.warn(
