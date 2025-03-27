@@ -1,67 +1,55 @@
 import { useState, useRef, useEffect } from 'react'
 import { Eye, EyeOff } from 'lucide-react' // Importar los íconos para mostrar/ocultar contraseñas
 import useAuth from '@/context/AuthContext/useAuth'
-import api from '@/services/api/api'
+import api from '@/services/api/axios'
 import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/Components/atoms/Button'
 import Input from '@/Components/atoms/Input'
 import AvatarSelector from '@/Components/molecules/AvatarSelector/AvatarSelector'
-<<<<<<< HEAD
-import { toast } from 'react-toastify'
-=======
->>>>>>> origin/ramaentrega
-import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
-  const { user, login } = useAuth()
+  const { user, setUser, validateStoredSession } = useAuth()
   const fileRef = useRef(null)
-<<<<<<< HEAD
-  const navigate = useNavigate()
-=======
-  const navigate = useNavigate();
->>>>>>> origin/ramaentrega
+  console.log("El componente UserDropdown se ha renderizado")
 
   // Estado para manejar el formulario
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    username: user?.username || '',
+    email: user?.email || '',
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: '',
-    profileImage: null,
+    profileImage: user?.profileImage || null,
   })
 
   // Estado para los errores, loading, mensaje de éxito y visibilidad de contraseñas
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
   const [changePassword, setChangePassword] = useState(false) // Controla si el usuario quiere cambiar su contraseña
   const [showPassword, setShowPassword] = useState(false) // Estado para controlar la visibilidad de las contraseñas
   const [showAvatarSelector, setShowAvatarSelector] = useState(false)
   const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
-  const [isLoadingProfile, setIsLoadingProfile] = useState(true)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // ================================
   // Función para mostrar mensaje de éxito
   // ================================
   const showSuccessMessage = (message) => {
-    setErrors({}) // Limpiar errores previos
+    setErrors({})
+    setSuccessMessage(message)
+    setShowSuccessModal(true)
 
-    toast.success(message, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light',
-    })
+    setTimeout(() => {
+      setShowSuccessModal(false)
+    }, 3000) // El mensaje se oculta después de 3 segundos
   }
 
   // ================================
   // Manejo de Inputs
   // ================================
   const handleChange = (e) => {
+    console.log(`Valor ingresado en ${e.target.name}:`, e.target.value)
     const { name, value } = e.target
 
     // Verificar si el campo modificado es `username` y capitalizarlo correctamente
@@ -76,8 +64,7 @@ const ProfilePage = () => {
   // ================================
   // Manejo de Subida de Imagenes
   // ================================
-  const handleSaveChanges = async (e) => {
-    e.preventDefault()
+  const handleSaveChanges = async () => {
     const { profileImage, ...dataWithoutImage } = formData // Eliminar la imagen antes de enviar los datos
     await updateProfile(dataWithoutImage) // Llamamos `updateProfile` sin `profileImage`
   }
@@ -88,6 +75,7 @@ const ProfilePage = () => {
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev) // Alternar la visibilidad
   }
+
   // ================================
   // Alternar cambio de contraseña
   // ================================
@@ -125,6 +113,21 @@ const ProfilePage = () => {
   }
 
   // ================================
+  // Restaurar valores originales
+  // ================================
+  const handleCancel = () => {
+    setFormData({
+      username: user?.username || '',
+      email: user?.email || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+      profileImage: user?.profileImage || null,
+    }) 
+    setShowAvatarSelector(false)  // Asegurar cierre del modal
+  } 
+
+  // ================================
   // Subir imagen de perfil a Cloudinary y actualizar AuthContext
   // ================================
   const handleImageChange = async (e) => {
@@ -132,69 +135,84 @@ const ProfilePage = () => {
     if (!file) return
 
     const formDataImage = new FormData()
-    formDataImage.append('file', file) // Clave esperada por Cloudinary
-    formDataImage.append('upload_preset', 'user_profile') // Configuración de Cloudinary
-    formDataImage.append('cloud_name', 'dwsnf2wlr') // Configuración de Cloudinary
+    formDataImage.append('file', file) // Se usa 'file' como clave igual que se hace en postman
+    formDataImage.append('upload_preset', 'user_profile') // Usa "upload_preset" como clave para configurar el preset de cloudinary
 
     setLoading(true)
     try {
-      // Subir la imagen a Cloudinary
+      // Subir la imagen directamente a Cloudinary
       const response = await api.post(
         'https://api.cloudinary.com/v1_1/dwsnf2wlr/image/upload',
         formDataImage,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: false,
-          timeout: 30000,
+          withCredentials: false, // Evitar enviar cookies
+          timeout: 30000, // Damos más timepo de guardado para la imagen en equipos y redes muy lentas
         }
       )
 
       const updatedImage = response.data.secure_url
-      if (!updatedImage)
-        throw new Error('No se pudo obtener la URL de la imagen.')
+      if (!updatedImage) {
+        throw new Error(
+          'No se pudo obtener la URL de la imagen desde Cloudinary.'
+        )
+      }
+      console.log('Imagen de perfil actualizada:', updatedImage)
 
-      // Envia la URL de la imagen al backend para actualizarla
-      const updatedUserResponse = await api.put('/auth/profile/avatar', {
+      // Enviar la URL al backend para actualizar el perfil del usuario
+      await api.put('/auth/profile/avatar', { profileImage: updatedImage })
+
+      // Actualizar el estado global y la vista previa
+      setUser((prevUser) => ({
+        ...prevUser,
         profileImage: updatedImage,
-      })
+      }))
+      setPreviewImage(updatedImage)
 
-      // Con los cambios realizados en AuthProvider.jsx ahora usamos `login()` para actualizar el estado global del usuario
-      login(updatedUserResponse.data.updatedUser)
-
-      setPreviewImage(updatedImage) // Sigue actualizando la previsualización de la imagen
-
-      toast.success('Imagen de perfil actualizada con éxito.')
-
-      return updatedImage
+      await validateStoredSession()
+      showSuccessMessage('Imagen actualizada con éxito.')
     } catch (error) {
-      console.error('Error en handleImageChange:', error)
+      if (error.response && error.response.data) {
+        console.error('Error de Cloudinary:', error.response.data)
+      }
       setErrors({ api: error.message || 'Error al actualizar la imagen.' })
-      return null
+      console.error('Error en handleImageChange:', error)
     } finally {
       setLoading(false)
     }
   }
+
   // ================================
   // Actualizar perfil en Backend (Perfil Completo)
   // ================================
   const updateProfile = async (data) => {
     setLoading(true)
+    setSuccessMessage('')
 
     try {
-      if (data.newPassword && !validatePasswords()) return
+      // Validar contraseñas si se intenta cambiar
+      if (data.newPassword && !validatePasswords()) {
+        setLoading(false)
+        return
+      }
 
-      const updatedUserData = { ...user }
-
+      // Actualizar nombre de usuario si se proporciona
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
-        updatedUserData.username = data.username
+
+        // Actualizar estado inmediatamente para reflejar el cambio en la UI
+        setUser((prevUser) => ({
+          ...prevUser,
+          username: data.username,
+        }))
       }
 
+      // Actualizar correo electrónico si se proporciona
       if (data.email) {
         await api.put('/auth/profile/email', { email: data.email })
-        updatedUserData.email = data.email
       }
 
+      // Actualizar contraseña si se proporciona
       if (data.newPassword) {
         await api.put('/auth/profile/password', {
           currentPassword: data.currentPassword,
@@ -203,36 +221,43 @@ const ProfilePage = () => {
         })
       }
 
-      if (data.profileImage instanceof File) {
-        const updatedImage = await handleImageChange({
-          target: { files: [data.profileImage] },
-        })
-        if (updatedImage) {
-          updatedUserData.profileImage = updatedImage
+      // Manejo de imagen de perfil
+      if (data.profileImage) {
+        if (data.profileImage instanceof File) {
+          // Caso: Imagen personalizada (objeto File), se sube a Cloudinary
+          const updatedImage = await handleImageChange({
+            target: { files: [data.profileImage] },
+          })
+
+          if (updatedImage) {
+            setPreviewImage(updatedImage) // Asegurar que se refleje en la UI
+          }
+        } else if (typeof data.profileImage === 'string') {
+          // Caso: Avatar predefinido (URL), se actualiza directamente sin subir a Cloudinary
+          await api.put('/auth/profile/avatar', {
+            profileImage: data.profileImage,
+          })
+
+          // Reflejar la nueva imagen inmediatamente en el estado global
+          setUser((prevUser) => ({
+            ...prevUser,
+            profileImage: data.profileImage,
+          }))
+          setPreviewImage(data.profileImage)
         }
-      } else if (typeof data.profileImage === 'string') {
-        const updatedUserResponse = await api.put('/auth/profile/avatar', {
-          profileImage: data.profileImage,
-        })
-        Object.assign(updatedUserData, updatedUserResponse.data.updatedUser)
       }
 
-      // Actualiza el contexto global y el formulario
-      login(updatedUserData)
+      // Retrasar la sincronización con el backend para evitar traer datos antiguos
+      setTimeout(async () => {
+        await validateStoredSession()
+      }, 500) // Se da tiempo para que el backend refleje los cambios antes de actualizar el estado global
 
-      setFormData((prev) => ({
-        ...prev,
-        username: updatedUserData.username,
-        email: updatedUserData.email,
-        profileImage: updatedUserData.profileImage || null,
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: '',
-      }))
-
+      console.log('Estado global actualizado:', user)
       showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
       console.error('Error en updateProfile:', error)
+
+      // Capturar y mostrar mensaje de error detallado
       setErrors({ api: error.message || 'Error al actualizar perfil.' })
     } finally {
       setLoading(false)
@@ -244,40 +269,26 @@ const ProfilePage = () => {
   // ================================
   console.log("Ejecutando useEffect")
   useEffect(() => {
-    console.log('User en useEffect:', user)
-    console.log('ProfileImage actual:', user?.profileImage)
-    console.log('PreviewImage:', previewImage)
+    console.log('User en useEffect:', user) 
+    console.log('ProfileImage actual:', user?.profileImage) 
+    console.log('PreviewImage:', previewImage) 
     setPreviewImage(user?.profileImage ?? null) // Usamos `??` para asegurar que el valor sea `null` en lugar de `undefined`
   }, [user?.profileImage])
-
-  // ================================
-  // Sincronizar formData con el estado global del usuario
-  // ================================
-  // pages/ProfilePage/ProfilePage.jsx
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username || '',
-        email: user.email || '',
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: '',
-        profileImage: user.profileImage || null,
-      })
-      setPreviewImage(user.profileImage || null)
-      setIsLoadingProfile(false)
-    }
-  }, [user])
-
-  if (isLoadingProfile) {
-    return <div className="text-center mt-10">Cargando perfil...</div>
-  }
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
       <h2 className="text-4xl font-semibold text-primary-dark mb-8 tracking-wide animate-fade-in">
         Editar Perfil
       </h2>
+
+      {/* Mensaje flotante de éxito */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+            {successMessage}
+          </div>
+        </div>
+      )}
 
       {/* Imagen de perfil */}
       <div className="relative">
@@ -393,17 +404,10 @@ const ProfilePage = () => {
 
         {/* Botones */}
         <div className="flex justify-end gap-3 mt-6">
-          {/* Boton de Ir al Dashboard */}
-          <Button
-            variant="primary"
-            type="button"
-            onClick={() => navigate('/dashboard')} // Redirigir al Dashboard
-          >
+          <Button variant="primary" type="button" onClick={handleCancel}>
             <XCircle className="w-5 h-5 mr-2" />
-            Ir al Inicio
+            Cancelar
           </Button>
-
-          {/* Boton de Guardar cambios */}
           <Button
             variant="primary"
             type="submit"

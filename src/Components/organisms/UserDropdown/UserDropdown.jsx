@@ -14,7 +14,7 @@ const UserDropdown = () => {
   const [profileImage, setProfileImage] = useState(user?.profileImage || '')
 
   // ============================
-  // Alternar Visibilidad del Dropdown
+  // Dropdown Toggle Logic
   // ============================
   const toggleDropdown = (e) => {
     e.stopPropagation()
@@ -29,7 +29,7 @@ const UserDropdown = () => {
   }
 
   // ============================
-  // Cerrar el Dropdown al hacer clic fuera con animación controlada
+  // Click Outside Handling
   // ============================
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -56,23 +56,29 @@ const UserDropdown = () => {
 
   return (
     <Menu as="div" className="relative dropdown-container">
-      {/* Botón de usuario con efecto Glassmorphism */}
+      {/* User Button */}
       <Menu.Button
         onClick={toggleDropdown}
         className="w-14 h-14 rounded-full flex items-center justify-center border-2 border-secondary-dark bg-special-class shadow-xl
                   hover:scale-105 transition-all duration-200 ease-out hover:shadow-2xl backdrop-blur-lg"
       >
-        {user?.profileImage ? (
+        {isLoggedIn && profileImage ? (
           <img
-            src={user.profileImage}
+            src={profileImage}
             alt="Foto de perfil"
             className="w-full h-full rounded-full object-cover"
+            onError={(e) => {
+              console.error('Image load error', e);
+              e.target.onerror = null; // Prevent infinite loop
+              e.target.src = ''; // Fallback to default icon
+            }}
           />
         ) : (
           <UserRound className="text-secondary-dark w-9 h-9" />
         )}
       </Menu.Button>
 
+      {/* Dropdown Menu */}
       <Transition
         as="div"
         show={showDropdown}
@@ -121,21 +127,6 @@ const UserDropdown = () => {
                     Cartera
                   </li>
                 </Transition.Child>
-
-                <Transition.Child
-                  enter="transition ease-out duration-500 delay-300"
-                  enterFrom="opacity-0 -translate-x-2"
-                  enterTo="opacity-100 translate-x-0"
-                >
-                  <li
-                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
-                            hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
-                    onClick={() => navigate('/news')}
-                  >
-                    <Newspaper className="w-5 h-5 text-primary-light" />
-                    Noticias
-                  </li>
-                </Transition.Child>
               </>
             ) : (
               <>
@@ -151,21 +142,6 @@ const UserDropdown = () => {
                   >
                     <LogIn className="w-5 h-5 text-primary-light" />
                     Iniciar Sesión
-                  </li>
-                </Transition.Child>
-
-                <Transition.Child
-                  enter="transition ease-out duration-500 delay-200"
-                  enterFrom="opacity-0 -translate-x-2"
-                  enterTo="opacity-100 translate-x-0"
-                >
-                  <li
-                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg border-l-4 border-transparent
-                              hover:bg-hover-state hover:border-secondary-dark transition-all duration-300 hover:scale-105"
-                    onClick={() => navigate('/register')}
-                  >
-                    <UserPlus className="w-5 h-5 text-primary-light" />
-                    Registrarse
                   </li>
                 </Transition.Child>
               </>

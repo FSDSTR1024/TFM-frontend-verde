@@ -1,19 +1,25 @@
 import { useState, useContext, useCallback } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { AuthContext } from './context/AuthContext/AuthContext'
-import Navbar from './Components/organisms/Navbar/Navbar'
-import Footer from './Components/organisms/Footer/Footer'
+
+// Organismos
+import Navbar from '@/Components/organisms/Navbar/Navbar'
+import Footer from '@/Components/organisms/Footer/Footer'
+import AuthCard from '@/Components/organisms/AuthCard/AuthCard'
+
+// Páginas
 import ProfilePage from './pages/ProfilePage/ProfilePage'
-import AuthCard from './Components/organisms/AuthCard/AuthCard'
 import DashboardPage from './pages/DashboardPage'
+import LandingPage from './pages/LandingPage/LandingPage'
+import PortfolioList from '@/Components/organisms/portfolio/PortfolioList'
+
+// Toastify
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-/**
- * Ruta privada que solo permite el acceso si el usuario ha iniciado sesión.
- * - Muestra un loader mientras se verifica la sesión.
- * - Redirige a la raíz si no hay sesión activa.
- */
+// =======================================
+// RUTA PRIVADA
+// =======================================
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
 
@@ -25,13 +31,17 @@ const PrivateRoute = ({ children }) => {
     )
   }
 
-  return isLoggedIn ? children : <Navigate to="/" replace={true} />
+  return isLoggedIn ? children : <Navigate to="/" replace />
 }
 
+// =======================================
+// COMPONENTE PRINCIPAL
+// =======================================
 const App = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [activeForm, setActiveForm] = useState('login')
   const [dropdownHeight, setDropdownHeight] = useState(0)
+
   const { isLoggedIn } = useContext(AuthContext)
 
   const openAuthModal = useCallback((formType) => {
@@ -50,31 +60,25 @@ const App = () => {
         setDropdownHeight={setDropdownHeight}
       />
 
-      {/* Asegurar que el contenido empuje al footer */}
       <main
         className={`flex-1 pt-[68px] pb-20 px-4 lg:px-8 bg-primary-light ${
           dropdownHeight > 0 ? 'mt-10' : ''
         }`}
       >
         <Routes>
+          {/* Página de inicio: si logueado → dashboard, si no → landing */}
           <Route
             path="/"
             element={
               isLoggedIn ? (
                 <Navigate to="/dashboard" replace />
               ) : (
-                <div>Inicio</div>
+                <LandingPage />
               )
             }
           />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
+
+          {/* Página protegida: dashboard */}
           <Route
             path="/dashboard"
             element={
@@ -83,6 +87,28 @@ const App = () => {
               </PrivateRoute>
             }
           />
+
+          {/* Página protegida: perfil */}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Página protegida: portfolios */}
+          <Route
+            path="/portfolios"
+            element={
+              <PrivateRoute>
+                <PortfolioList />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Página 404 */}
           <Route
             path="*"
             element={
@@ -96,6 +122,7 @@ const App = () => {
 
       <Footer />
 
+      {/* Modal de login/register */}
       {isAuthModalOpen && (
         <AuthCard
           activeForm={activeForm}
@@ -104,7 +131,7 @@ const App = () => {
         />
       )}
 
-      {/* Esto permitirá que los toasts se muestren en toda la aplicación */}
+      {/* Toast global */}
       <ToastContainer
         position="top-center"
         autoClose={3000}
