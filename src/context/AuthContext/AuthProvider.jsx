@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
-import { login, logout, getUserSession } from '@/services/api/authController'
+import { login as loginRequest, logout } from '@/services/api/authController'
 import { AuthContext } from './AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * Proveedor de Autenticación que gestiona el estado global de la sesión del usuario.
@@ -9,6 +10,7 @@ const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [checking, setChecking] = useState(true)
   const [user, setUser] = useState(null)
+  const navigate = useNavigate()
 
   const API_BASE = import.meta.env.VITE_API_BASE
 
@@ -37,7 +39,7 @@ const AuthProvider = ({ children }) => {
     } else {
       console.error('Error en el logout.')
     }
-  }, [])
+  }, [navigate])
 
   /**
    * Función para verificar la sesión del usuario.
@@ -45,12 +47,11 @@ const AuthProvider = ({ children }) => {
    * - Actualiza el estado global de la sesión
    *
    */
-
   useEffect(() => {
     const checkSession = async () => {
       try {
         const response = await fetch(
-          `${API_BASE.replace(/\/$/, '')}/auth/validate-token`,
+          `${API_BASE.replace(/\/$/, '')}/auth/refresh-token`,
           {
             method: 'GET',
             credentials: 'include',
@@ -59,7 +60,7 @@ const AuthProvider = ({ children }) => {
 
         if (response.ok) {
           const data = await response.json()
-          setUser(data)
+          setUser(data.user) // Aseguramos que se reciba el usuario
           setIsLoggedIn(true)
         }
       } catch (error) {
@@ -70,7 +71,11 @@ const AuthProvider = ({ children }) => {
     }
 
     checkSession()
-  }, [])
+  }, [API_BASE])
+
+  if (checking) {
+    return <div>Cargando usuario...</div>
+  }
 
   return (
     <AuthContext.Provider

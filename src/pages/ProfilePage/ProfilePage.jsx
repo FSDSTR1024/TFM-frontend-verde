@@ -241,15 +241,24 @@ const ProfilePage = () => {
   // ================================
   // Sincronizar formData con el estado global del usuario
   // ================================
+  // pages/ProfilePage/ProfilePage.jsx
   useEffect(() => {
-    if (!user || Object.keys(user).length === 0) return
-    setFormData((prev) => ({
-      ...prev,
-      username: user.username || '',
-      email: user.email || '',
-      profileImage: user.profileImage || null,
-    }))
+    if (user) {
+      setFormData({
+        username: user.username || '',
+        email: user.email || '',
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+        profileImage: user.profileImage || null,
+      })
+      setPreviewImage(user.profileImage || null)
+    }
   }, [user])
+
+  if (!user) {
+    return <div>Cargando perfil...</div>
+  }
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
