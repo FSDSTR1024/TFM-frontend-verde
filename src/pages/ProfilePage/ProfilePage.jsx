@@ -173,17 +173,18 @@ const ProfilePage = () => {
     setLoading(true)
 
     try {
-      // Validar contraseñas si se intenta cambiar
       if (data.newPassword && !validatePasswords()) return
+
+      const updatedUserData = { ...user }
 
       if (data.username) {
         await api.put('/auth/profile/username', { username: data.username })
-        login({ ...user, username: data.username }) // Usamos `login()`
+        updatedUserData.username = data.username
       }
 
       if (data.email) {
         await api.put('/auth/profile/email', { email: data.email })
-        login({ ...user, email: data.email }) // Usamos `login()`
+        updatedUserData.email = data.email
       }
 
       if (data.newPassword) {
@@ -199,14 +200,27 @@ const ProfilePage = () => {
           target: { files: [data.profileImage] },
         })
         if (updatedImage) {
-          login({ ...user, profileImage: updatedImage }) // Conservamos los datos del usuario
+          updatedUserData.profileImage = updatedImage
         }
       } else if (typeof data.profileImage === 'string') {
         const updatedUserResponse = await api.put('/auth/profile/avatar', {
           profileImage: data.profileImage,
         })
-        login(updatedUserResponse.data.updatedUser) // Usamos `login()`
+        Object.assign(updatedUserData, updatedUserResponse.data.updatedUser)
       }
+
+      // Actualiza el contexto global y el formulario
+      login(updatedUserData)
+
+      setFormData((prev) => ({
+        ...prev,
+        username: updatedUserData.username,
+        email: updatedUserData.email,
+        profileImage: updatedUserData.profileImage || null,
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      }))
 
       showSuccessMessage('Perfil actualizado correctamente.')
     } catch (error) {
@@ -216,6 +230,7 @@ const ProfilePage = () => {
       setLoading(false)
     }
   }
+
   // ================================
   // Sincronizar previewImage con el estado global del usuario
   // ================================
