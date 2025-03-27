@@ -238,22 +238,6 @@ const ProfilePage = () => {
     setPreviewImage(user?.profileImage ?? null) // Usamos `??` para asegurar que el valor sea `null` en lugar de `undefined`
   }, [user?.profileImage])
 
-  // ================================
-  // Sincronizar formData con el estado global del usuario
-  // ================================
-
-  useEffect(() => {
-    if (!user) return
-    console.log('El usuario actual es:', user)
-    setFormData({
-      username: user.username || '',
-      email: user.email || '',
-      profileImage: user.profileImage || null,
-      currentPassword: '',
-      newPassword: '',
-      confirmNewPassword: '',
-    })
-  }, [user?.username, user?.email, user?.profileImage])
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-[68px] px-4 bg-primary-light mb-20">
