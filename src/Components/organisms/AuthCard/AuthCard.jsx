@@ -53,29 +53,30 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
         withCredentials: true,
       })
 
+      // ✔️ Mostrar mensaje específico si es registro
       if (activeForm === 'register') {
         toast.info(
           'Registro exitoso. Hemos enviado un correo de bienvenida a tu bandeja de entrada. Si usas Gmail, pulsa sobre los tres puntos ("...") en la parte inferior izquierda del mensaje y selecciona "Mostrar contenido".',
           {
-            autoClose: 10000, // El usuario tiene 10 secs para leer el mensaje
+            autoClose: 10000,
             position: 'top-center',
           }
         )
       }
 
-      // Aquí voy a retrasar la redireccion un pequeño tiempo para que el navegador procese la cookie
+      // ✔️ Dar un pequeño delay para asegurar que la cookie sea procesada por el navegador
       await new Promise((resolve) => setTimeout(resolve, 100))
 
-      // Esperado el timepo, ahora se obtienen los datos del usuario desde la cookie
-      const session = await api.get('/auth/profile', { withCredentials: true })
+      // ✔️ Paso crítico: recuperar datos actualizados del usuario para sincronizar el contexto
+      const { data: user } = await api.get('/auth/profile', {
+        withCredentials: true,
+      })
 
-      // ✔️  Llamar al login() para actualizar el estado de autenticación inmediatamente
-      login(session.data.user)
+      // ✔️ Actualizar el estado global de autenticación
+      login(user)
 
-      // ✔️  Mostrar mensaje de éxito
+      // ✔️ Mostrar mensaje y redirigir
       toast.success('Inicio de sesión exitoso.')
-
-      // ✔️ Redirigir y cerrar modal
       navigate('/dashboard')
       onClose()
     } catch (error) {
@@ -87,6 +88,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       toast.error(error.response?.data?.message || 'Error en la autenticación')
     }
   }
+
   return (
     <div
       id="authModalBackground"

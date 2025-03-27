@@ -256,8 +256,8 @@ const ProfilePage = () => {
     }
   }, [user])
 
-  if (!user) {
-    return <div>Cargando perfil...</div>
+  if (!user || !formData.username) {
+    return <div className="text-center mt-10">Cargando perfil...</div>
   }
 
   return (
