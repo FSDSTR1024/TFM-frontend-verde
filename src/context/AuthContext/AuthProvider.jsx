@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
    * - Actualiza el estado global del usuario y la sesión.
    */
   const login = (userData) => {
-    setUser(userData)
+    setUser({ ...userData })
     setIsLoggedIn(true)
   }
 
