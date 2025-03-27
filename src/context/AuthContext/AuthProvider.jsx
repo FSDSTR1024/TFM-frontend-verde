@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
         const response = await fetch(
           `${API_BASE.replace(/\/$/, '')}/auth/refresh-token`,
           {
-            method: 'GET',
+            method: 'POST',
             credentials: 'include',
           }
         )
