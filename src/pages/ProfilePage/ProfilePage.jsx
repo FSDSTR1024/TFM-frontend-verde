@@ -31,6 +31,7 @@ const ProfilePage = () => {
   const [showPassword, setShowPassword] = useState(false) // Estado para controlar la visibilidad de las contraseñas
   const [showAvatarSelector, setShowAvatarSelector] = useState(false)
   const [previewImage, setPreviewImage] = useState(user?.profileImage || null)
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true)
 
   // ================================
   // Función para mostrar mensaje de éxito
@@ -253,10 +254,11 @@ const ProfilePage = () => {
         profileImage: user.profileImage || null,
       })
       setPreviewImage(user.profileImage || null)
+      setIsLoadingProfile(false)
     }
   }, [user])
 
-  if (!user || !formData.username) {
+  if (isLoadingProfile) {
     return <div className="text-center mt-10">Cargando perfil...</div>
   }
 
