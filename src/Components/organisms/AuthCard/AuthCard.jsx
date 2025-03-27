@@ -32,18 +32,48 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
     setError(null)
   
     const formDatatoSend = { ...formData }
-    if (activeForm === 'login') delete formDatatoSend.username
-    
-    if (!formDatatoSend.email || !formDatatoSend.password) {
-      setError('Todos los campos son obligatorios')
+    const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
+  
+    // Para login, elimina username
+    if (activeForm === 'login') {
+      delete formDatatoSend.username
+    }
+  
+    // Validación básica
+    const requiredFields = activeForm === 'login' 
+      ? ['email', 'password'] 
+      : ['username', 'email', 'password']
+  
+    const missingFields = requiredFields.filter(field => !formDatatoSend[field]?.trim())
+  
+    if (missingFields.length > 0) {
+      setError(`Los siguientes campos son obligatorios: ${missingFields.join(', ')}`)
       return
     }
   
     try {
-      // En lugar de hacer la petición directamente aquí, delega todo a la función login
-      // del contexto de autenticación
-      login(formDatatoSend, navigate)
-      onClose()
+      const response = await api.post(endpoint, formDatatoSend, {
+        withCredentials: true,
+      })
+  
+      console.log('Respuesta del servidor:', response.data)
+
+      //localStorage.setItem('profileImage5',response.data.profile)
+      
+  
+      // Si es registro, muestra mensaje
+      if (activeForm === 'register') {
+        alert('Registro exitoso. Por favor, inicia sesión.')
+        setActiveForm('login')
+        // NO llamas a login aquí
+      } else {
+        // Si es login, procede con la autenticación
+        login({ 
+          email: formDatatoSend.email, 
+          password: formDatatoSend.password 
+        }, navigate)
+        onClose()
+      }
     } catch (error) {
       console.error(
         'Error en la autenticación:',

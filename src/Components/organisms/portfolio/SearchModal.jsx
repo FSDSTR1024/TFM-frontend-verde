@@ -38,17 +38,11 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
     redHover: "#223536"      // Hover del botón "vender"
   }
 
-  let BACKEND ;
 
-  // Verifica el entorno usando import.meta.env.PROD
-  if (import.meta.env.PROD) {
-    // Configuración para Render
-    BACKEND = 'http://tfm-backend-verde.onrender.com';
-  } else {
-    // Configuración para localhost - usa HTTP para desarrollo local
-    BACKEND = 'http://localhost:3000';
-  }
   
+
+
+   let  BACKEND= import.meta.env.VITE_API_URL || 'https://tfm-backend-verde.onrender.com'
 
 
   // Efecto para cargar las acciones al abrir el modal
@@ -56,6 +50,7 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
     const fetchStocks = async () => {
       try {
         setLoadingStocks(true)
+        {console.log('Este es el backend usando para las acciones',BACKEND)}
         const response = await axios.get(
           `${BACKEND}/accions`, // URL sin userId
           {
@@ -65,16 +60,18 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
             },
             timeout: 15000, // 15 segundos para dar tiempo a Render
           }
+          
         )
   
 
-
+        console.log("Datos de la API:", response.data)
 
 
 
         if (Array.isArray(response.data.accions)) { // Verifica si la respuesta es un array
           setStocks(response.data.accions)
           setFilteredStocks(response.data.accions.slice(0, 5)) // Muestra las primeras 5 acciones
+          console.log("Stocks almacenados en el estado:", response.data.accions);
           setError(null)
         } else {
           throw new Error('La respuesta de la API no es un array')
@@ -105,6 +102,9 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
           stock.ticker?.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .slice(0, 5) // Filtra y muestra las primeras 5 coincidencias
+        console.log("Término de búsqueda:", searchTerm);
+        console.log("Cantidad de acciones filtradas:", filtered.length);
+        console.log("Ejemplo de acción filtrada:", filtered[0]);
       setFilteredStocks(filtered)
     }
   }, [searchTerm, stocks])
@@ -223,10 +223,13 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
               <div className="text-center py-4">No se encontraron acciones</div>
             ) : (
               filteredStocks.map((item) => {
+                
+                
                 if (!item.title || !item.ticker || !item.price || !item.change) {
+                  console.log("❌ Acción omitida por datos incompletos:", item);
                   return null
                 }
-
+                console.log("✅ Acción renderizada:", item);
                 const isSelected = selectedStock?.id === item.id
 
                 return (

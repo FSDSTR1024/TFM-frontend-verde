@@ -1,9 +1,4 @@
-// =======================================
-// axios.js - Configuración de API
-// =======================================
 import axios from 'axios'
-import { useContext } from 'react'
-import { AuthContext } from '@/context/AuthContext/AuthContext'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://tfm-backend-verde.onrender.com',
@@ -44,11 +39,7 @@ api.interceptors.response.use(
 
         console.log('Token renovado correctamente.')
 
-        // Acceder al contexto global para actualizar el usuario
-        const { validateStoredSession } = useContext(AuthContext)
-        if (validateStoredSession) {
-          await validateStoredSession()
-        }
+        // Eliminé la parte de useContext
 
         // Reintentar la solicitud original con el nuevo token
         error.config.headers['Authorization'] =

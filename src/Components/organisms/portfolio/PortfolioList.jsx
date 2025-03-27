@@ -60,7 +60,7 @@ if (import.meta.env.PROD) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}` // Aqui envio el token
     },
-    timeout: 10000, // 10 seconds timeout
+    timeout: 15000, // 10 seconds timeout
   })
 
   const fetchPortfolioData = async () => {

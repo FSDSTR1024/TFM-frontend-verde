@@ -15,14 +15,12 @@ const AuthProvider = ({ children }) => {
   // ==============================
 
   const deleteAllCookies = () => {
-    const cookies = document.cookie.split(';'); // Obtener todas las cookies
+    document.cookie.split(';').forEach((cookie) => {
+      const [name] = cookie.split('=')
+      document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;`
+    })
+  }
   
-    cookies.forEach(cookie => {
-      const [name] = cookie.split('='); // Obtener el nombre de la cookie
-      document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;`; // Borrar la cookie
-    });
-  };
-
   
   const logout = useCallback(async (navigate) => {
     try {
@@ -30,14 +28,15 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Error en logout:', error)
     } finally {
-      document.cookie = 'Token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
-      document.cookie = 'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
+      document.cookie = 'Token=  Path=/  Expires=Thu, 01 Jan 1970 00:00:00 GMT '
+      document.cookie = 'refreshToken=  Path=/  Expires=Thu, 01 Jan 1970 00:00:00 GMT '
       
       setUser(null)
       setIsLoggedIn(false)
-      localStorage.removeItem('userId'); //Aqui borro el userId
-      localStorage.removeItem('token'); //Aqui borro el token
-      deleteAllCookies();
+      localStorage.removeItem('userId')  //Aqui borro el userId
+      localStorage.removeItem('token')  //Aqui borro el token
+      
+      deleteAllCookies() 
 
       if (navigate) navigate('/login', { replace: true })
     }
@@ -52,21 +51,21 @@ const AuthProvider = ({ children }) => {
         withCredentials: true,
       })
   
-      console.log('Validación de sesión - Respuesta completa:', response.data)
+      console.log('Datos de sesión validada:', response.data) 
   
       if (response.data) {
         // Identifica el ID - prioriza userId, luego _id, luego id
-        const userId = response.data.userId || response.data._id || response.data.id;
+        const userId = response.data.userId || response.data._id || response.data.id 
         
-        console.log('Respuesta completa:', response);
-        console.log('Datos de la respuesta:', response.data);
-        console.log('ID del usuario encontrado:', userId);
+        console.log('Respuesta completa:', response) 
+        console.log('Datos de la respuesta:', response.data) 
+        console.log('ID del usuario encontrado:', userId) 
         
         if (userId) {
-          localStorage.setItem('userId', userId);
-          console.log('ID guardado en localStorage:', userId);
+          localStorage.setItem('userId', userId) 
+          console.log('ID guardado en localStorage:', userId) 
         } else {
-          console.warn('No se pudo identificar un ID de usuario en la respuesta');
+          console.warn('No se pudo identificar un ID de usuario en la respuesta') 
         }
   
         setUser({
@@ -77,10 +76,11 @@ const AuthProvider = ({ children }) => {
           username: response.data.username,
           email: response.data.email,
           role: response.data.role,
-          profileImage: response.data.profileImage
-        });
-        
-        setIsLoggedIn(true);
+          profileImage: response.data.profile
+        }) 
+
+
+        setIsLoggedIn(true) 
       }
     } catch (error) {
       console.warn('Sesión no válida:', error.response?.data || error.message)
@@ -93,33 +93,27 @@ const AuthProvider = ({ children }) => {
   // ==============================
   // Función de login
   // ==============================
+
   const login = useCallback(
     async (credentials, navigate) => {
       try {
+        console.log('URL base de axios:', api.defaults.baseURL) 
         console.log('Intentando iniciar sesión con:', credentials)
   
-        if (!credentials?.email || !credentials?.password) {
-          console.error('Error: Email o password no proporcionados.')
-          return
-        }
+        const response = await api.post('/auth/login', credentials)
   
-        const response = await api.post('/auth/login', credentials, {
-          withCredentials: true,
-        })
-  
-        console.log('Respuesta de login completa:', response.data);
+        console.log('Respuesta de login completa:', response) 
+        console.log('Datos de la respuesta:', response.data) 
         
         // Identifica el ID - prioriza userId, luego _id, luego id
-        const userId = response.data.userId || response.data._id || response.data.id;
-        
+        const userId = response.data.userId || response.data._id || response.data.id 
+      
         if (userId) {
-          localStorage.setItem('userId', userId);
-          console.log('ID guardado en localStorage:', userId);
-        } else {
-          console.error('Error: No se pudo identificar un ID de usuario en la respuesta');
+          localStorage.setItem('userId', userId) 
+          localStorage.setItem('token', response.data.token) 
+         // localStorage.setItem('profileImage', response.data.profile) 
         }
-        
-        // Actualiza el estado con los datos correctos y estandarizados
+  
         setUser({
           userId: userId,
           id: userId,
@@ -127,14 +121,22 @@ const AuthProvider = ({ children }) => {
           username: response.data.username,
           email: response.data.email,
           role: response.data.role,
-          profileImage: response.data.profileImage
-        });
+          profileImage: response.data.profile
+        }) 
+    
         
-        setIsLoggedIn(true);
-        
-        navigate('/dashboard', { replace: true });
+        setIsLoggedIn(true)
+  
+        if (navigate) {
+          navigate('/dashboard', { replace: true }) 
+        }
       } catch (error) {
-        console.error('Error en login:', error);
+      
+        console.error('Configuración de la solicitud:', error.config) 
+       
+        
+        // Optional: Add error handling, e.g., show error message to user
+        throw error  // Re-throw to allow caller to handle
       }
     },
     []
@@ -155,10 +157,10 @@ const AuthProvider = ({ children }) => {
             )
 
             // Identifica el ID - prioriza userId, luego _id, luego id
-            const userId = response.data.userId || response.data._id || response.data.id;
+            const userId = response.data.userId || response.data._id || response.data.id 
             
             if (userId) {
-              localStorage.setItem('userId', userId);
+              localStorage.setItem('userId', userId) 
             }
 
             setUser((prevUser) => ({
@@ -167,7 +169,7 @@ const AuthProvider = ({ children }) => {
               id: userId,
               _id: userId,
               ...response.data, 
-            }));
+            })) 
           } catch (error) {
             console.error('Error al renovar el token:', error)
             logout()

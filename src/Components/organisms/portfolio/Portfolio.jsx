@@ -40,7 +40,10 @@ export default function Portfolio() {
       try {
         console.log(`Intentando cargar portfolios para userId: ${userId}`)
         // Usa la URL completa para evitar problemas con las rutas relativas
-        const response = await axios.get(`https://tfm-backend-kalx.onrender.com/portfolios?userId=${userId}`)
+       // const response = await axios.get(`https://tfm-backend-kalx.onrender.com/portfolios?userId=${userId}`)
+      const  baseURL= import.meta.env.VITE_API_URL || 'https://tfm-backend-verde.onrender.com'
+
+      const response = await axios.get(`${baseURL}/portfolios?userId=${userId}`)
         
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           setPortfolios(response.data)
@@ -113,7 +116,7 @@ export default function Portfolio() {
       return
     }
     try {
-      const response = await axios.post("https://tfm-backend-kalx.onrender.com/portfolios", {
+        const response = await axios.post(`${baseURL}/portfolios`, {
         userId,
         name: newPortfolioName,
         stocks: []
@@ -140,7 +143,7 @@ export default function Portfolio() {
   
     try {
       // Enviar userId y portfolioName en la solicitud DELETE
-      await axios.delete(`https://tfm-backend-kalx.onrender.com/portfolios/${userId}/${selectedPortfolio.name}`)
+      await axios.delete(`${baseURL}/portfolios/${userId}/${selectedPortfolio.name}`)
       
       // Actualizar el estado de las carteras
       const updatedPortfolios = portfolios.filter(p => p.name !== selectedPortfolio.name)

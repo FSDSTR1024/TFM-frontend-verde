@@ -30,30 +30,44 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
-
+  
     const formDatatoSend = { ...formData }
-    console.log('formDatatoSend', formDatatoSend)
-    if (activeForm === 'login') delete formDatatoSend.username // debemos eliminar username si estamos en login
-
-    // Lo siguiente es valdir que email y password no estén vacios antes de enviar
-    if (!formDatatoSend.email || !formDatatoSend.password) {
-      setError('Todos los campos son obligatorios')
+    const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
+  
+    // Para login, elimina username
+    if (activeForm === 'login') {
+      delete formDatatoSend.username
+    }
+  
+    // Validación básica
+    const requiredFields = activeForm === 'login' 
+      ? ['email', 'password'] 
+      : ['username', 'email', 'password']
+  
+    const missingFields = requiredFields.filter(field => !formDatatoSend[field]?.trim())
+  
+    if (missingFields.length > 0) {
+      setError(`Los siguientes campos son obligatorios: ${missingFields.join(', ')}`)
       return
     }
-
-    console.log('Enviando datos:', formDatatoSend) // verifica si los datos son correctos antes de enviarlos
-
+  
     try {
-      const endpoint = activeForm === 'login' ? '/auth/login' : '/auth/register'
-
       const response = await api.post(endpoint, formDatatoSend, {
         withCredentials: true,
       })
-
+  
       console.log('Respuesta del servidor:', response.data)
-
-      login(formDatatoSend, navigate) //  Pasamos navigate a login
-      onClose()
+  
+      // Si es registro, muestra mensaje o redirige
+      if (activeForm === 'register') {
+        // Opcional: Muestra mensaje de registro exitoso
+        alert('Registro exitoso. Por favor, inicia sesión.')
+        setActiveForm('login')
+      } else {
+        // Si es login, procede con la autenticación
+        login(formDatatoSend, navigate)
+        onClose()
+      }
     } catch (error) {
       console.error(
         'Error en la autenticación:',
@@ -62,7 +76,7 @@ const AuthCard = ({ activeForm, setActiveForm, onClose }) => {
       setError(error.response?.data?.message || 'Error en la autenticación')
     }
   }
-
+  
   const isFormValid =
     activeForm === 'login'
       ? formData.email.trim() && formData.password.trim()

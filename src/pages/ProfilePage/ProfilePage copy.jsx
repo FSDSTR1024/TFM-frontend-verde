@@ -6,12 +6,11 @@ import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/Components/atoms/Button'
 import Input from '@/Components/atoms/Input'
 import AvatarSelector from '@/Components/molecules/AvatarSelector/AvatarSelector'
-import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
   const { user, setUser, validateStoredSession } = useAuth()
   const fileRef = useRef(null)
-  const navigate = useNavigate();
+  console.log("El componente UserDropdown se ha renderizado")
 
   // Estado para manejar el formulario
   const [formData, setFormData] = useState({
@@ -124,11 +123,9 @@ const ProfilePage = () => {
       newPassword: '',
       confirmNewPassword: '',
       profileImage: user?.profileImage || null,
-    })
-    setPreviewImage(user?.profileImage || null)
-    setShowAvatarSelector(false)
-    navigate("/dashboard");
-  }
+    }) 
+    setShowAvatarSelector(false)  // Asegurar cierre del modal
+  } 
 
   // ================================
   // Subir imagen de perfil a Cloudinary y actualizar AuthContext
