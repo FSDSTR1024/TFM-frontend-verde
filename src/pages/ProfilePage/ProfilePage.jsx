@@ -6,20 +6,13 @@ import { UserRound, Upload, Camera, CheckCircle, XCircle } from 'lucide-react'
 import Button from '@/Components/atoms/Button'
 import Input from '@/Components/atoms/Input'
 import AvatarSelector from '@/Components/molecules/AvatarSelector/AvatarSelector'
-<<<<<<< HEAD
 import { toast } from 'react-toastify'
-=======
->>>>>>> origin/ramaentrega
 import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
   const { user, login } = useAuth()
   const fileRef = useRef(null)
-<<<<<<< HEAD
   const navigate = useNavigate()
-=======
-  const navigate = useNavigate();
->>>>>>> origin/ramaentrega
 
   // Estado para manejar el formulario
   const [formData, setFormData] = useState({
@@ -253,7 +246,6 @@ const ProfilePage = () => {
   // ================================
   // Sincronizar formData con el estado global del usuario
   // ================================
-  // pages/ProfilePage/ProfilePage.jsx
   useEffect(() => {
     if (user) {
       setFormData({
