@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
       setUser(null)
       setIsLoggedIn(false)
       setChecking(false)
-      window.location.href = '/login' // 🔚 Redirige al login tras cerrar sesión
+      navigate('/', { replace: true }) // 🔚 Redirige a la raiz
     } else {
       console.error('Error en el logout.')
     }
