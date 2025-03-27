@@ -70,7 +70,9 @@ const AuthProvider = ({ children }) => {
       }
     }
 
-    checkSession()
+    const timeout = setTimeout(checkSession, 150)
+
+    return () => clearTimeout(timeout)
   }, [API_BASE])
 
   if (checking) {
