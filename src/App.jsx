@@ -1,5 +1,5 @@
 import { useState, useContext, useCallback } from 'react'
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import { AuthContext } from './context/AuthContext/AuthContext'
 import Navbar from './Components/organisms/Navbar/Navbar'
 import Footer from './Components/organisms/Footer/Footer'
@@ -9,6 +9,11 @@ import DashboardPage from './pages/DashboardPage'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+/**
+ * Ruta privada que solo permite el acceso si el usuario ha iniciado sesión.
+ * - Muestra un loader mientras se verifica la sesión.
+ * - Redirige a la raíz si no hay sesión activa.
+ */
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn, checking } = useContext(AuthContext)
 
@@ -39,59 +44,57 @@ const App = () => {
   }, [])
 
   return (
-    <BrowserRouter>
-      <div className="flex flex-col min-h-screen bg-primary-light">
-        <Navbar
-          openAuthModal={openAuthModal}
-          setDropdownHeight={setDropdownHeight}
-        />
+    <div className="flex flex-col min-h-screen bg-primary-light">
+      <Navbar
+        openAuthModal={openAuthModal}
+        setDropdownHeight={setDropdownHeight}
+      />
 
-        {/* Asegurar que el contenido empuje al footer */}
-        <main
-          className={`flex-1 pt-[68px] pb-20 px-4 lg:px-8 bg-primary-light ${
-            dropdownHeight > 0 ? 'mt-10' : ''
-          }`}
-        >
-          <Routes>
-            <Route
-              path="/"
-              element={
-                isLoggedIn ? (
-                  <Navigate to="/dashboard" replace />
-                ) : (
-                  <div>Inicio</div>
-                )
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <PrivateRoute>
-                  <ProfilePage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <DashboardPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <div className="text-center mt-10 text-lg font-medium">
-                  Página no encontrada
-                </div>
-              }
-            />
-          </Routes>
-        </main>
+      {/* Asegurar que el contenido empuje al footer */}
+      <main
+        className={`flex-1 pt-[68px] pb-20 px-4 lg:px-8 bg-primary-light ${
+          dropdownHeight > 0 ? 'mt-10' : ''
+        }`}
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <div>Inicio</div>
+              )
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <DashboardPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <div className="text-center mt-10 text-lg font-medium">
+                Página no encontrada
+              </div>
+            }
+          />
+        </Routes>
+      </main>
 
-        <Footer />
-      </div>
+      <Footer />
 
       {isAuthModalOpen && (
         <AuthCard
@@ -107,7 +110,7 @@ const App = () => {
         autoClose={3000}
         hideProgressBar={false}
       />
-    </BrowserRouter>
+    </div>
   )
 }
 

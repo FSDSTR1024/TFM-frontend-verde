@@ -8,9 +8,11 @@ try {
   const root = createRoot(document.getElementById('root'))
   root.render(
     <StrictMode>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
     </StrictMode>
   )
 } catch (error) {
