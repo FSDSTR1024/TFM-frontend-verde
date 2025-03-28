@@ -1,28 +1,28 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react' 
+import { Link } from 'react-router-dom' 
 
 const ParticleAnimation = () => {
-  const [particles, setParticles] = useState([]);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const containerRef = useRef(null);
-  const svgRef = useRef(null);
-  const animationRef = useRef(null);
-  const particleCount = 15;
+  const [particles, setParticles] = useState([]) 
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 }) 
+  const containerRef = useRef(null) 
+  const svgRef = useRef(null) 
+  const animationRef = useRef(null) 
+  const particleCount = 15 
 
   // Función para actualizar dimensiones y partículas
   const updateDimensions = () => {
-    if (!containerRef.current || !svgRef.current) return;
+    if (!containerRef.current || !svgRef.current) return 
     
     // Obtener dimensiones reales del contenedor
-    const rect = containerRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
+    const rect = containerRef.current.getBoundingClientRect() 
+    const width = rect.width 
+    const height = rect.height 
     
     // Actualizar el tamaño del SVG explícitamente
-    svgRef.current.setAttribute('width', width);
-    svgRef.current.setAttribute('height', height);
+    svgRef.current.setAttribute('width', width) 
+    svgRef.current.setAttribute('height', height) 
     
-    setDimensions({ width, height });
+    setDimensions({ width, height }) 
     
     // Reposicionar partículas dentro de las nuevas dimensiones
     setParticles(prev => {
@@ -34,92 +34,92 @@ const ParticleAnimation = () => {
           vx: (Math.random() - 0.5) * 2,
           vy: (Math.random() - 0.5) * 2,
           size: Math.random() * 2 + 2
-        }));
+        })) 
       } else {
         // Ajustar partículas existentes a las nuevas dimensiones
         return prev.map(p => ({
           ...p,
           x: Math.min(p.x, width),
           y: Math.min(p.y, height)
-        }));
+        })) 
       }
-    });
-  };
+    })
+  } 
 
   // Inicializar y manejar cambios de tamaño
   useEffect(() => {
     // Ejecutar después del renderizado inicial
-    setTimeout(updateDimensions, 0);
+    setTimeout(updateDimensions, 0) 
     
     // Configurar observer para detectar cambios de tamaño
     const observer = new ResizeObserver(() => {
-      updateDimensions();
-    });
+      updateDimensions() 
+    }) 
     
     if (containerRef.current) {
-      observer.observe(containerRef.current);
+      observer.observe(containerRef.current) 
     }
     
     // Agregar listener para cambios de ventana también
-    window.addEventListener('resize', updateDimensions);
+    window.addEventListener('resize', updateDimensions) 
     
     return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', updateDimensions);
-      cancelAnimationFrame(animationRef.current);
-    };
-  }, []);
+      observer.disconnect() 
+      window.removeEventListener('resize', updateDimensions) 
+      cancelAnimationFrame(animationRef.current) 
+    } 
+  }, []) 
 
   // Animar partículas
   useEffect(() => {
-    if (!dimensions.width || !dimensions.height || particles.length === 0) return;
+    if (!dimensions.width || !dimensions.height || particles.length === 0) return 
     
     const animate = () => {
       setParticles(prevParticles => 
         prevParticles.map(particle => {
           // Actualizar posición
-          let newX = particle.x + particle.vx;
-          let newY = particle.y + particle.vy;
+          let newX = particle.x + particle.vx 
+          let newY = particle.y + particle.vy 
           
           // Rebotar en los bordes
           if (newX <= 0 || newX >= dimensions.width) {
-            particle.vx *= -1;
-            newX = Math.max(0, Math.min(newX, dimensions.width));
+            particle.vx *= -1 
+            newX = Math.max(0, Math.min(newX, dimensions.width)) 
           }
           
           if (newY <= 0 || newY >= dimensions.height) {
-            particle.vy *= -1;
-            newY = Math.max(0, Math.min(newY, dimensions.height));
+            particle.vy *= -1 
+            newY = Math.max(0, Math.min(newY, dimensions.height)) 
           }
           
           return {
             ...particle,
             x: newX,
             y: newY
-          };
+          } 
         })
-      );
+      ) 
       
-      animationRef.current = requestAnimationFrame(animate);
-    };
+      animationRef.current = requestAnimationFrame(animate) 
+    } 
     
-    animationRef.current = requestAnimationFrame(animate);
+    animationRef.current = requestAnimationFrame(animate) 
     
     return () => {
-      cancelAnimationFrame(animationRef.current);
-    };
-  }, [dimensions, particles.length]);
+      cancelAnimationFrame(animationRef.current) 
+    } 
+  }, [dimensions, particles.length]) 
 
   // Calcular distancia entre partículas
   const getDistance = (p1, p2) => {
-    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-  };
+    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)) 
+  } 
 
   // Determinar si dibujar línea entre partículas
   const shouldDrawLine = (p1, p2) => {
-    const maxDistance = Math.min(dimensions.width, dimensions.height) / 4;
-    return getDistance(p1, p2) < maxDistance;
-  };
+    const maxDistance = Math.min(dimensions.width, dimensions.height) / 4 
+    return getDistance(p1, p2) < maxDistance 
+  } 
 
 
   return (

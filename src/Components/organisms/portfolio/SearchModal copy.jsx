@@ -70,7 +70,7 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
 
         if (Array.isArray(response.data.accions)) { // Verifica si la respuesta es un array
           setStocks(response.data.accions)
-          setFilteredStocks(response.data.accions.slice(0, 3)) // Muestra las primeras 3 acciones
+          setFilteredStocks(response.data.accions.slice(0, 5)) // Muestra las primeras 5 acciones
           console.log("Stocks almacenados en el estado:", response.data.accions);
           setError(null)
         } else {
@@ -101,7 +101,7 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
           stock.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           stock.ticker?.toLowerCase().includes(searchTerm.toLowerCase())
         )
-        .slice(0, 3) // Filtra y muestra las primeras 3 coincidencias
+        .slice(0, 5) // Filtra y muestra las primeras 5 coincidencias
         console.log("Término de búsqueda:", searchTerm);
         console.log("Cantidad de acciones filtradas:", filtered.length);
         console.log("Ejemplo de acción filtrada:", filtered[0]);
@@ -193,6 +193,14 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-16">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-lg">
+
+      <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
+        >
+          <X size={20} />
+        </button>
+
         <div className="p-4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-medium">Añadir a cartera - {selectedPortfolio.name}</h2>
@@ -272,15 +280,7 @@ const SearchModal = ({ isOpen, onClose, selectedPortfolio, portfolioId, onStockU
                           className="w-16 text-center border border-gray-300 rounded-lg bg-white text-gray-800"
                           min="1"
                         />
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            incrementQuantity()
-                          }}
-                          className="p-1 bg-gray-200 rounded-full"
-                        >
-                          <Plus size={16} />
-                        </button>
+
                       </div>
                     )}
                   </div>
